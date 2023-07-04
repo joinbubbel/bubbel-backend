@@ -30,7 +30,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Migrations
-      run: cargo install diesel_cli --verbose && diesel migrations run
+      run: |
+        cargo install diesel_cli --verbose 
+        cd bubbel-bath
+        DATABASE_URL="postgresql://postgres:abc@localhost:5432" diesel migrations run
+        cd ..
     - name: Build
       run: cargo build --verbose
     - name: Run tests
