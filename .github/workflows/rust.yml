@@ -33,7 +33,7 @@ jobs:
       run: |
         cargo install diesel_cli --verbose 
         cd bubbel-bath
-        DATABASE_URL="postgresql://postgres:abc@localhost:5432" diesel migrations run
+        DATABASE_URL="postgresql://postgres:abc@localhost:5432" diesel migration run
         cd ..
     - name: Build
       run: cargo build --verbose
