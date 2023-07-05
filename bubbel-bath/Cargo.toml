@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 diesel = { version = "2.1.0", features = ["postgres"] }
-password-hash = "0.5"
-bcrypt-pbkdf = "0.10"
+password-hash = { version = "0.5", features = ["getrandom"] }
+argon2 = "0.5"
+regex = "1"

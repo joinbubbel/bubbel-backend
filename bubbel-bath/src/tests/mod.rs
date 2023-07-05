@@ -1,13 +1,18 @@
-use super::{schema::users::dsl::*, *};
-use diesel::{pg::PgConnection, prelude::*};
+use super::*;
 
-pub fn new_test_database() -> PgConnection {
-    let pg = "postgresql://postgres:abc@localhost:5432";
-    PgConnection::establish(pg).unwrap()
-}
+mod test_create_user;
 
-#[test]
-pub fn test() {
-    let mut conn = new_test_database();
-    let _ = users.select(User::as_select()).load(&mut conn).unwrap();
+pub fn new_data_state() -> DataState {
+    let db_url = "postgresql://postgres:abc@localhost:5432";
+
+    std::process::Command::new("diesel")
+        .arg("migration")
+        .arg("redo")
+        .arg("--database-url")
+        .arg(db_url)
+        .spawn()
+        .unwrap();
+
+    let db = PgConnection::establish(db_url).unwrap();
+    DataState { db }
 }
