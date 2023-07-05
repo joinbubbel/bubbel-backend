@@ -45,7 +45,7 @@ async fn root() -> &'static str {
 #[derive(Serialize, Deserialize)]
 struct InCreateUser {
     #[serde(flatten)]
-    pub req: CreateUser,
+    req: CreateUser,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -67,12 +67,14 @@ async fn api_create_user(
 #[derive(Serialize, Deserialize)]
 struct InAuthUser {
     #[serde(flatten)]
-    pub req: AuthUser,
+    req: AuthUser,
 }
 
 #[derive(Serialize, Deserialize)]
 struct ResAuthUser {
     error: Option<AuthUserError>,
+    #[serde(flatten)]
+    res: Option<AuthUserOut>,
 }
 
 async fn api_auth_user(
@@ -83,15 +85,21 @@ async fn api_auth_user(
     let mut auth = state.auth.write().unwrap();
 
     Json(match auth_user(&mut db, &mut auth, req.req) {
-        Ok(_) => ResAuthUser { error: None },
-        Err(e) => ResAuthUser { error: Some(e) },
+        Ok(res) => ResAuthUser {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResAuthUser {
+            error: Some(e),
+            res: None,
+        },
     })
 }
 
 #[derive(Serialize, Deserialize)]
 struct InDeauthUser {
     #[serde(flatten)]
-    pub req: DeauthUser,
+    req: DeauthUser,
 }
 
 #[derive(Serialize, Deserialize)]

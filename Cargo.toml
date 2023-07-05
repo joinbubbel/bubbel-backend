@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "bubbel-bath",
-    "bubbel-backend"
+    "bubbel-backend",
+    "bubbel-codegen"
 ]
