@@ -1,6 +1,7 @@
 use super::*;
 use argon2::Argon2;
-use password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, SaltString};
+use password_hash::{PasswordHash, PasswordHasher, SaltString};
+use rand::rngs::OsRng;
 
 const USERNAME_MIN_LENGTH: usize = 5;
 const USERNAME_MAX_LENGTH: usize = 15;
@@ -53,7 +54,7 @@ pub enum CreateUserError {
 }
 
 pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUserError> {
-    use crate::schema::users::dsl::*;
+    use crate::schema::users::dsl;
 
     validate_username(&req.username)
         .then_some(())
@@ -81,7 +82,7 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
         email: req.email,
     };
 
-    diesel::insert_into(users)
+    diesel::insert_into(dsl::users)
         .values(&new_user)
         .execute(&mut db.db)
         .map_err(|e| CreateUserError::DatabaseError(e.into()))?;
