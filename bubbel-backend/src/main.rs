@@ -26,9 +26,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(root))
-        .route("/create_user", post(api_create_user))
-        .route("/auth_user", post(api_auth_user))
-        .route("/deauth_user", post(api_deauth_user))
+        .route("/api/create_user", post(api_create_user))
+        .route("/api/auth_user", post(api_auth_user))
+        .route("/api/deauth_user", post(api_deauth_user))
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
