@@ -32,14 +32,14 @@ fn validate_email(email: &str) -> bool {
     re.find(email).is_some()
 }
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CreateUser {
     pub email: String,
     pub username: String,
     pub password: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum CreateUserError {
     /// Got an error from database.
     DatabaseError(DatabaseError),

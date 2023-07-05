@@ -3,17 +3,20 @@ use argon2::Argon2;
 use password_hash::{PasswordHash, PasswordVerifier};
 use rand::{prelude::*, rngs::OsRng};
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AuthUser {
     pub username: String,
     pub password: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AuthUserOut {
     pub token: UserToken,
     pub username: String,
     pub email: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum AuthUserError {
     DatabaseError(DatabaseError),
     InvalidCredentials,
@@ -65,6 +68,7 @@ pub fn auth_user(
     })
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DeauthUser {
     pub token: UserToken,
 }

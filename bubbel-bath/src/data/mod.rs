@@ -9,21 +9,22 @@ pub struct DataState {
 }
 
 impl DataState {
-    pub fn new(db: PgConnection) -> Self {
-        DataState { db }
+    pub fn new(db_url: &str) -> Result<Self, ConnectionError> {
+        let db = PgConnection::establish(db_url)?;
+        Ok(DataState { db })
     }
 }
 
 //  Diesel doesn't allow implementing PartialEq or Eq for error types, so let's do it ourselves.
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum DatabaseError {
     Database(DatabaseErrorKind),
     NotFound,
     Unknown(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum DatabaseErrorKind {
     UniqueViolation,
     ForeignKeyViolation,

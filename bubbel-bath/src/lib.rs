@@ -14,3 +14,4 @@ pub use auth::{AuthState, UserId, UserToken};
 pub use auth_user::{auth_user, deauth_user, AuthUser, AuthUserError, AuthUserOut, DeauthUser};
 pub use create_user::{create_user, CreateUser, CreateUserError};
 pub use data::{DataState, DatabaseError, DatabaseErrorKind, User};
+pub use serde::{Deserialize, Serialize};

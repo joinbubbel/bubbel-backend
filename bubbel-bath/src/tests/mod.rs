@@ -13,6 +13,5 @@ pub fn new_data_state() -> DataState {
         .spawn()
         .unwrap();
 
-    let db = PgConnection::establish(db_url).unwrap();
-    DataState { db }
+    DataState::new(db_url).unwrap()
 }
