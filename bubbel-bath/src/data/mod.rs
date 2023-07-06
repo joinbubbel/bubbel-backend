@@ -60,12 +60,12 @@ impl From<diesel::result::Error> for DatabaseError {
                     DatabaseError::ClosedConnection
                 }
                 e => DatabaseError::Unknown {
-                    uerror: format!("{:#?}", e),
+                    uerror: format!("(UKi) {:#?}", e),
                 },
             },
             diesel::result::Error::NotFound => DatabaseError::NotFound,
             e => DatabaseError::Unknown {
-                uerror: format!("{:#?}", e),
+                uerror: format!("(U) {:#?}", e),
             },
         }
     }
