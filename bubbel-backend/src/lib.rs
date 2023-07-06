@@ -1,11 +1,13 @@
 //! All types here follow the same convention:
 //!
-//! ```
+//! ```rust,ignore
+//! #[derive(Serialize, Deserialize)]
 //! struct InFooBar {
 //!     #[serde(flatten)]
 //!     pub req: FooBar
 //! }
 //!
+//! #[derive(Serialize, Deserialize)]
 //! struct ResFooBar {
 //!     error: Option<FooBarError>,
 //!     #[serde(flatten)]
