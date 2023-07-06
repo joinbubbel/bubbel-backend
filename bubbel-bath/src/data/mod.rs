@@ -18,14 +18,11 @@ impl DataState {
 //  Diesel doesn't allow implementing PartialEq or Eq for error types, so let's do it ourselves.
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(tag = "type")]
 pub enum DatabaseError {
-    Database(DatabaseErrorKind),
     NotFound,
-    Unknown(String),
-}
+    Unknown { uerror: String },
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-pub enum DatabaseErrorKind {
     UniqueViolation,
     ForeignKeyViolation,
     UnableToSendCommand,
@@ -34,41 +31,42 @@ pub enum DatabaseErrorKind {
     NotNullViolation,
     CheckViolation,
     ClosedConnection,
-    Unknown(String),
 }
 
 impl From<diesel::result::Error> for DatabaseError {
     fn from(value: diesel::result::Error) -> Self {
         match value {
-            diesel::result::Error::DatabaseError(kind, _) => DatabaseError::Database(match kind {
+            diesel::result::Error::DatabaseError(kind, _) => match kind {
                 diesel::result::DatabaseErrorKind::UniqueViolation => {
-                    DatabaseErrorKind::UniqueViolation
+                    DatabaseError::UniqueViolation
                 }
                 diesel::result::DatabaseErrorKind::ForeignKeyViolation => {
-                    DatabaseErrorKind::ForeignKeyViolation
+                    DatabaseError::ForeignKeyViolation
                 }
                 diesel::result::DatabaseErrorKind::UnableToSendCommand => {
-                    DatabaseErrorKind::UnableToSendCommand
+                    DatabaseError::UnableToSendCommand
                 }
                 diesel::result::DatabaseErrorKind::SerializationFailure => {
-                    DatabaseErrorKind::SerializationFailure
+                    DatabaseError::SerializationFailure
                 }
                 diesel::result::DatabaseErrorKind::ReadOnlyTransaction => {
-                    DatabaseErrorKind::ReadOnlyTransaction
+                    DatabaseError::ReadOnlyTransaction
                 }
                 diesel::result::DatabaseErrorKind::NotNullViolation => {
-                    DatabaseErrorKind::NotNullViolation
+                    DatabaseError::NotNullViolation
                 }
-                diesel::result::DatabaseErrorKind::CheckViolation => {
-                    DatabaseErrorKind::CheckViolation
-                }
+                diesel::result::DatabaseErrorKind::CheckViolation => DatabaseError::CheckViolation,
                 diesel::result::DatabaseErrorKind::ClosedConnection => {
-                    DatabaseErrorKind::ClosedConnection
+                    DatabaseError::ClosedConnection
                 }
-                e => DatabaseErrorKind::Unknown(format!("{:#?}", e)),
-            }),
+                e => DatabaseError::Unknown {
+                    uerror: format!("{:#?}", e),
+                },
+            },
             diesel::result::Error::NotFound => DatabaseError::NotFound,
-            e => DatabaseError::Unknown(format!("{:#?}", e)),
+            e => DatabaseError::Unknown {
+                uerror: format!("{:#?}", e),
+            },
         }
     }
 }

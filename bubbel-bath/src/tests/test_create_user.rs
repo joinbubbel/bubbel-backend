@@ -67,8 +67,8 @@ pub fn test_create_multiple_users() {
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Err(CreateUserError::DatabaseError(DatabaseError::Database(
-            DatabaseErrorKind::UniqueViolation
-        )))
+        Err(CreateUserError::DatabaseError {
+            dberror: DatabaseError::UniqueViolation
+        })
     );
 }

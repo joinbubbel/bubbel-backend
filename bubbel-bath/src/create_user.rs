@@ -40,9 +40,8 @@ pub struct CreateUser {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(tag = "type")]
 pub enum CreateUserError {
-    /// Got an error from database.
-    DatabaseError(DatabaseError),
     /// Email is not valid by backend standards.
     InvalidEmail,
     /// Username is not valid by backend standards.
@@ -51,6 +50,8 @@ pub enum CreateUserError {
     InvalidPassword,
     /// Password failed to be encrypted.
     InvalidPasswordCryto,
+    /// Got an error from database.
+    DatabaseError { dberror: DatabaseError },
 }
 
 pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUserError> {
@@ -85,7 +86,7 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
     diesel::insert_into(dsl::users)
         .values(&new_user)
         .execute(&mut db.db)
-        .map_err(|e| CreateUserError::DatabaseError(e.into()))?;
+        .map_err(|e| CreateUserError::DatabaseError { dberror: e.into() })?;
 
     Ok(())
 }

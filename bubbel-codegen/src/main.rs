@@ -1,12 +1,12 @@
 use bubbel_backend::*;
 use schemajen::{accumulator_choose_with_str, codegen, generate, TypeAccumulator};
 
-pub fn gen_ty<T: Serialize>(mut acc: Box<dyn TypeAccumulator>, name: &str, sample: T) {
+fn gen_ty<T: Serialize>(mut acc: Box<dyn TypeAccumulator>, name: &str, sample: T) {
     let json = serde_json::to_string(&sample).unwrap();
-    eprintln!("{}\n", generate(acc.as_mut(), name, &json).unwrap());
+    println!("{}\n", generate(acc.as_mut(), name, &json).unwrap());
 }
 
-pub fn new_acc(lang: &str) -> Box<dyn TypeAccumulator> {
+fn new_acc(lang: &str) -> Box<dyn TypeAccumulator> {
     accumulator_choose_with_str(lang).unwrap_or_else(|| {
         panic!(
             "Got bad codegen language, could be {:?}.",
@@ -38,7 +38,11 @@ fn main() {
         new_acc(&lang),
         "ResCreateUser",
         ResCreateUser {
-            error: Some(CreateUserError::InvalidEmail),
+            error: Some(CreateUserError::DatabaseError {
+                dberror: DatabaseError::Unknown {
+                    uerror: "".to_string(),
+                },
+            }),
         },
     );
 
@@ -59,7 +63,11 @@ fn main() {
         new_acc(&lang),
         "ResAuthUser",
         ResAuthUser {
-            error: Some(AuthUserError::UserNotFound),
+            error: Some(AuthUserError::DatabaseError {
+                dberror: DatabaseError::Unknown {
+                    uerror: "".to_owned(),
+                },
+            }),
             res: Some(AuthUserOut {
                 token: UserToken("".to_owned()),
                 username: "".to_owned(),

@@ -17,11 +17,12 @@ pub struct AuthUserOut {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "type")]
 pub enum AuthUserError {
-    DatabaseError(DatabaseError),
     InvalidCredentials,
     InvalidPasswordCryto,
     UserNotFound,
+    DatabaseError { dberror: DatabaseError },
 }
 
 const USER_TOKEN_LENGTH: usize = 32;
@@ -47,7 +48,7 @@ pub fn auth_user(
         .select((dsl::id, dsl::username, dsl::password_hash, dsl::email))
         .filter(dsl::username.eq(req.username))
         .first(&mut db.db)
-        .map_err(|e| AuthUserError::DatabaseError(e.into()))?;
+        .map_err(|e| AuthUserError::DatabaseError { dberror: e.into() })?;
     let user_id = UserId(user_id);
 
     let algs: &[&dyn PasswordVerifier] = &[&Argon2::default()];
