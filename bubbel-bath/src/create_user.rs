@@ -85,8 +85,8 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
 
     let e = diesel::insert_into(dsl::users)
         .values(&new_user)
-        .execute(&mut db.db)
-        .map_err(|e| CreateUserError::DatabaseError { dberror: e.into() });
+        .execute(&mut db.db);
+        // .map_err(|e| CreateUserError::DatabaseError { dberror: e.into() });
 
     eprintln!("{:#?}", e);
 
