@@ -1,7 +1,6 @@
 use super::*;
 use argon2::Argon2;
-use password_hash::{PasswordHash, PasswordHasher, SaltString};
-use rand::rngs::OsRng;
+use password_hash::{PasswordHasher, SaltString};
 
 const USERNAME_MIN_LENGTH: usize = 5;
 const USERNAME_MAX_LENGTH: usize = 15;
@@ -67,13 +66,10 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
         .then_some(())
         .ok_or(CreateUserError::InvalidEmail)?;
 
-    let salt = SaltString::generate(&mut OsRng);
+    let salt = SaltString::from_b64(&db.user_salt).unwrap();
     let argon2 = Argon2::default();
     let password = argon2
         .hash_password(&req.password.into_bytes(), &salt)
-        .map_err(|_| CreateUserError::InvalidPasswordCryto)?
-        .to_string();
-    let password = PasswordHash::new(&password)
         .map_err(|_| CreateUserError::InvalidPasswordCryto)?
         .to_string();
 

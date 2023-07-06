@@ -1,6 +1,6 @@
 use super::*;
 use argon2::Argon2;
-use password_hash::{PasswordHash, PasswordVerifier};
+use password_hash::{PasswordHasher, SaltString};
 use rand::{prelude::*, rngs::OsRng};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -51,13 +51,16 @@ pub fn auth_user(
         .map_err(|e| AuthUserError::DatabaseError { dberror: e.into() })?;
     let user_id = UserId(user_id);
 
-    let algs: &[&dyn PasswordVerifier] = &[&Argon2::default()];
-    let password =
-        PasswordHash::new(&password_hash).map_err(|_| AuthUserError::InvalidPasswordCryto)?;
+    let salt = SaltString::from_b64(&db.user_salt).unwrap();
+    let argon2 = Argon2::default();
+    let password = argon2
+        .hash_password(&req.password.into_bytes(), &salt)
+        .map_err(|_| AuthUserError::InvalidPasswordCryto)?
+        .to_string();
 
-    password
-        .verify_password(algs, &password_hash)
-        .map_err(|_| AuthUserError::InvalidCredentials)?;
+    (password == password_hash)
+        .then_some(())
+        .ok_or(AuthUserError::InvalidCredentials)?;
 
     let token = UserToken(generate_token());
     auth.tokens.insert(token.clone(), user_id);

@@ -9,6 +9,7 @@ use std::{
     sync::{Arc, Mutex, RwLock},
 };
 
+const USER_SALT_ENV: &str = "BUBBEL_USER_SALT";
 const DB_URL_ENV: &str = "BUBBEL_DATABASE_URL";
 
 pub struct AppState {
@@ -19,8 +20,9 @@ pub struct AppState {
 #[tokio::main]
 async fn main() {
     let (_, db_url) = std::env::vars().find(|(k, _)| k == DB_URL_ENV).unwrap();
+    let (_, user_salt) = std::env::vars().find(|(k, _)| k == USER_SALT_ENV).unwrap();
     let state = Arc::new(AppState {
-        db: Mutex::new(DataState::new(&db_url).unwrap()),
+        db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
     });
 
