@@ -56,6 +56,7 @@ func bubbelApiCreateUser(bath: String, req: InCreateUser) async throws -> ResCre
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.httpBody = json
+    request.addValue("Content-Type", forHTTPHeaderField: "application/json")
     let (data, response) = await URLSession.shared.data(request)
     guard let httpResponse = response as? HTTPURLResponse,
         httpResponse.statusCode == 200 else {
@@ -75,6 +76,7 @@ func bubbelApiAuthUser(bath: String, req: InAuthUser) async throws -> ResAuthUse
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.httpBody = json
+    request.addValue("Content-Type", forHTTPHeaderField: "application/json")
     let (data, response) = await URLSession.shared.data(request)
     guard let httpResponse = response as? HTTPURLResponse,
         httpResponse.statusCode == 200 else {

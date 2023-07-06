@@ -13,5 +13,5 @@ pub fn new_data_state() -> DataState {
         .spawn()
         .unwrap();
 
-    DataState::new(db_url).unwrap()
+    DataState::new(db_url, "yummy").unwrap()
 }
