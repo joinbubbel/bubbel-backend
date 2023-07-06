@@ -120,7 +120,7 @@ Uses `InCreateUser`, returning `ResCreateUser`.
 Authenticate a user, generating a new session token.
 Uses `InAuthUser`, returning `ResAuthUser`
 
-### `bubbelApiDeauthUser`
+### `bubbelApiDeauthUser` / `POST /api/deauth_user`
 
 Invalidate a user's session token.
 Uses `InDeauthUser`, returning nothing.
