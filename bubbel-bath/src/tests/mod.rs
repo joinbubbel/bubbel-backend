@@ -1,6 +1,7 @@
 use super::*;
 
 mod test_create_user;
+mod test_deauth_user;
 
 pub fn new_data_state() -> DataState {
     let db_url = "postgresql://postgres:abc@localhost:5432";
@@ -13,5 +14,5 @@ pub fn new_data_state() -> DataState {
         .spawn()
         .unwrap();
 
-    DataState::new(db_url, "yummy").unwrap()
+    DataState::new(db_url, "abcdefghijklmnop").unwrap()
 }
