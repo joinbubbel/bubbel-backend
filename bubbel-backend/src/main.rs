@@ -3,7 +3,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use bubbel_bath::*;
+use bubbel_backend::*;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex, RwLock},
@@ -42,17 +42,6 @@ async fn root() -> &'static str {
     "Hello, World"
 }
 
-#[derive(Serialize, Deserialize)]
-struct InCreateUser {
-    #[serde(flatten)]
-    req: CreateUser,
-}
-
-#[derive(Serialize, Deserialize)]
-struct ResCreateUser {
-    error: Option<CreateUserError>,
-}
-
 async fn api_create_user(
     State(state): State<Arc<AppState>>,
     Json(req): Json<InCreateUser>,
@@ -62,19 +51,6 @@ async fn api_create_user(
         Ok(_) => ResCreateUser { error: None },
         Err(e) => ResCreateUser { error: Some(e) },
     })
-}
-
-#[derive(Serialize, Deserialize)]
-struct InAuthUser {
-    #[serde(flatten)]
-    req: AuthUser,
-}
-
-#[derive(Serialize, Deserialize)]
-struct ResAuthUser {
-    error: Option<AuthUserError>,
-    #[serde(flatten)]
-    res: Option<AuthUserOut>,
 }
 
 async fn api_auth_user(
@@ -94,17 +70,6 @@ async fn api_auth_user(
             res: None,
         },
     })
-}
-
-#[derive(Serialize, Deserialize)]
-struct InDeauthUser {
-    #[serde(flatten)]
-    req: DeauthUser,
-}
-
-#[derive(Serialize, Deserialize)]
-struct ResDeauthUser {
-    error: Option<()>,
 }
 
 async fn api_deauth_user(
