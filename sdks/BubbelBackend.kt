@@ -66,7 +66,7 @@ fun bubbelApiAuthUser(bath: String, req: InAuthUser): ResAuthUser {
     return Json.decodeFromString<ResAuthUser>(response.body());
 }
 
-fun bubbelApiDeauthUser(bath: String, req: InDeauthUser): ResDeauthUser {
+fun bubbelApiDeauthUser(bath: String, req: InDeauthUser) {
     val client = HttpClient.newBuilder().build();
     val json = Json.encodeToString(req)
     val request = HttpRequest.newBuilder()
@@ -75,6 +75,5 @@ fun bubbelApiDeauthUser(bath: String, req: InDeauthUser): ResDeauthUser {
         .build();
         
     val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    return Json.decodeFromString<ResDeauthUser>(response.body());
 }
 
