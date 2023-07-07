@@ -16,6 +16,7 @@ path = "src/main.rs"
 
 [dependencies]
 axum = "0.6"
+serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros"] }
 bubbel-bath = { version = "*", path = "../bubbel-bath/" }
