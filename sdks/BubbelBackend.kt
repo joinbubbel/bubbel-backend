@@ -1,9 +1,10 @@
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 // -- Types --
 
@@ -60,38 +61,54 @@ class InDeauthUser {
 
 const val BUBBEL_BATH_DEV = "https://bubbel-bath.onrender.com";
 
-fun bubbelApiCreateUser(bath: String, req: InCreateUser): ResCreateUser {
-    val client = HttpClient.newBuilder().build();
+suspend fun bubbelApiCreateUser(bath: String, req: InCreateUser): ResCreateUser {
+    val client = OkHttpClient()
     val json = Json.encodeToString(req)
-    val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/api/create_user"))
-        .POST(HttpRequest.BodyPublishers.ofString(json))
-        .build();
-        
-    val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    return Json.decodeFromString<ResCreateUser>(response.body());
+    val requestBody = json.toRequestBody("application/json".toMediaType())
+    val request = Request.Builder()
+        .url("$bath/api/create_user")
+        .post(requestBody)
+        .build()
+
+    return withContext(Dispatchers.IO) {
+        val response = client.newCall(request).execute()
+        val body = response.body?.string()
+        response.close()
+
+        Json.decodeFromString<ResCreateUser>(body ?: throw Exception("Empty response body"))
+    }
 }
 
-fun bubbelApiAuthUser(bath: String, req: InAuthUser): ResAuthUser {
-    val client = HttpClient.newBuilder().build();
+suspend fun bubbelApiAuthUser(bath: String, req: InAuthUser): ResAuthUser {
+    val client = OkHttpClient()
     val json = Json.encodeToString(req)
-    val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/api/auth_user"))
-        .POST(HttpRequest.BodyPublishers.ofString(json))
-        .build();
-        
-    val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    return Json.decodeFromString<ResAuthUser>(response.body());
+    val requestBody = json.toRequestBody("application/json".toMediaType())
+    val request = Request.Builder()
+        .url("$bath/api/auth_user")
+        .post(requestBody)
+        .build()
+
+    return withContext(Dispatchers.IO) {
+        val response = client.newCall(request).execute()
+        val body = response.body?.string()
+        response.close()
+
+        Json.decodeFromString<ResAuthUser>(body ?: throw Exception("Empty response body"))
+    }
 }
 
-fun bubbelApiDeauthUser(bath: String, req: InDeauthUser) {
-    val client = HttpClient.newBuilder().build();
+suspend fun bubbelApiDeauthUser(bath: String, req: InDeauthUser) {
+    val client = OkHttpClient()
     val json = Json.encodeToString(req)
-    val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/api/deauth_user"))
-        .POST(HttpRequest.BodyPublishers.ofString(json))
-        .build();
-        
-    val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    val requestBody = json.toRequestBody("application/json".toMediaType())
+    val request = Request.Builder()
+        .url("$bath/api/deauth_user")
+        .post(requestBody)
+        .build()
+
+    return withContext(Dispatchers.IO) {
+        val response = client.newCall(request).execute()
+        response.close()
+    }
 }
 

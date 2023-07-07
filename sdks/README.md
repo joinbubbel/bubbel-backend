@@ -6,6 +6,8 @@ Currently, only Kotlin and Swift SDKs are provided.
 
 ### Kotlin Notes
 
+1. Depends on OkHttp.
+
 ### Swift Notes
 
 1. All member names will be in camel case, not snake case.
