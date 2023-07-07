@@ -58,13 +58,13 @@ class InDeauthUser {
 
 // -- API Bridge --
 
-const val BUBBEL_BATH_DEV = "https://bubbel-bath.onrender.com/api";
+const val BUBBEL_BATH_DEV = "https://bubbel-bath.onrender.com";
 
 fun bubbelApiCreateUser(bath: String, req: InCreateUser): ResCreateUser {
     val client = HttpClient.newBuilder().build();
     val json = Json.encodeToString(req)
     val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/create_user"))
+        .uri(URI.create(bath + "/api/create_user"))
         .POST(HttpRequest.BodyPublishers.ofString(json))
         .build();
         
@@ -76,7 +76,7 @@ fun bubbelApiAuthUser(bath: String, req: InAuthUser): ResAuthUser {
     val client = HttpClient.newBuilder().build();
     val json = Json.encodeToString(req)
     val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/auth_user"))
+        .uri(URI.create(bath + "/api/auth_user"))
         .POST(HttpRequest.BodyPublishers.ofString(json))
         .build();
         
@@ -88,7 +88,7 @@ fun bubbelApiDeauthUser(bath: String, req: InDeauthUser) {
     val client = HttpClient.newBuilder().build();
     val json = Json.encodeToString(req)
     val request = HttpRequest.newBuilder()
-        .uri(URI.create(bath + "/deauth_user"))
+        .uri(URI.create(bath + "/api/deauth_user"))
         .POST(HttpRequest.BodyPublishers.ofString(json))
         .build();
         

@@ -43,7 +43,7 @@ class InDeauthUser: Codable {
 
 // -- API Bridge --
 
-let bubbelBathDev = "https://bubbel-bath.onrender.com/api";
+let bubbelBathDev = "https://bubbel-bath.onrender.com";
 
 enum BubbelError: Error {
     case fetchError
