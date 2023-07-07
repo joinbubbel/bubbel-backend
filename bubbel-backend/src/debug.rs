@@ -1,6 +1,5 @@
 use super::*;
 use serde::{Deserialize, Serialize};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 const DEBUG_STATE_BUF_COUNT: usize = 15;
 
@@ -16,6 +15,8 @@ pub struct DebugState {
     outgoing_current: usize,
     #[serde(skip)]
     password: String,
+    #[serde(skip)]
+    debug_id: u64,
 }
 
 impl DebugState {
@@ -36,27 +37,22 @@ impl DebugState {
             incoming_current: 0,
             outgoing_current: 0,
             password: password.unwrap(),
+            debug_id: 0,
         }
     }
 
     pub fn push_incoming<T: Serialize>(&mut self, data: &T) {
-        let timestamp = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
         let s = serde_json::to_string_pretty(data).unwrap();
-        self.incoming[self.incoming_current] = Some((timestamp, s));
+        self.incoming[self.incoming_current] = Some((self.debug_id, s));
         self.incoming_current = (self.incoming_current + 1) % DEBUG_STATE_BUF_COUNT;
+        self.debug_id += 1;
     }
 
     pub fn push_outgoing<T: Serialize>(&mut self, data: &T) {
-        let timestamp = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
         let s = serde_json::to_string_pretty(data).unwrap();
-        self.outgoing[self.outgoing_current] = Some((timestamp, s));
+        self.outgoing[self.outgoing_current] = Some((self.debug_id, s));
         self.outgoing_current = (self.outgoing_current + 1) % DEBUG_STATE_BUF_COUNT;
+        self.debug_id += 1;
     }
 }
 

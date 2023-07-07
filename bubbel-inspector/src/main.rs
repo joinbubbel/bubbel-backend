@@ -9,7 +9,6 @@ pub struct InDebug {
 
 #[derive(Serialize, Deserialize)]
 pub struct ResDebugState {
-    enabled: bool,
     incoming: Vec<Option<(u64, String)>>,
     outgoing: Vec<Option<(u64, String)>>,
 }
@@ -24,8 +23,9 @@ fn main() {
     let mut password = String::new();
     let mut stdin = std::io::stdin().lock();
     stdin.read_line(&mut password).unwrap();
+    password.pop();
 
-    let mut used_timestamps = vec![];
+    let mut used_ids = vec![];
     let req = InDebug { password };
     let url = base_url + "/api/debug";
 
@@ -40,22 +40,22 @@ fn main() {
 
         if let Some(res) = res {
             res.incoming.iter().for_each(|o| {
-                if let Some((timestamp, s)) = o {
-                    if !used_timestamps.iter().any(|t| t == timestamp) {
+                if let Some((id, s)) = o {
+                    if !used_ids.iter().any(|t| t == id) {
                         println!("<========== Incoming ==========>\n");
                         println!("{}\n", s.to_colored_json_auto().unwrap());
-                        used_timestamps.push(*timestamp);
-                        clamp_vec(&mut used_timestamps);
+                        used_ids.push(*id);
+                        clamp_vec(&mut used_ids);
                     }
                 }
             });
             res.outgoing.iter().for_each(|o| {
-                if let Some((timestamp, s)) = o {
-                    if !used_timestamps.iter().any(|t| t == timestamp) {
+                if let Some((id, s)) = o {
+                    if !used_ids.iter().any(|t| t == id) {
                         println!("<========== Outgoing ==========>\n");
                         println!("{}\n", s.to_colored_json_auto().unwrap());
-                        used_timestamps.push(*timestamp);
-                        clamp_vec(&mut used_timestamps);
+                        used_ids.push(*id);
+                        clamp_vec(&mut used_ids);
                     }
                 }
             });
