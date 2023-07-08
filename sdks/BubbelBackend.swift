@@ -32,9 +32,9 @@ class AuthUserError: Codable {
 
 class ResAuthUser: Codable {
 	var error: AuthUserError?
-	var token: String
-	var username: String
-	var email: String
+	var token: String?
+	var username: String?
+	var email: String?
 }
 
 class InDeauthUser: Codable {
@@ -51,55 +51,55 @@ enum BubbelError: Error {
 
 func bubbelApiCreateUser(bath: String, req: InCreateUser) async throws -> ResCreateUser {
     let encoder = JSONEncoder()
-    let json = encoder.encode(req)
+    let json = try encoder.encode(req)
+    let jsonString = String(data: json, encoding: .utf8) ?? ""
+    
     let url = URL(string: bath + "/api/create_user")!
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.httpBody = json
-    request.addValue("Content-Type", forHTTPHeaderField: "application/json")
-    let (data, response) = await URLSession.shared.data(request)
-    guard let httpResponse = response as? HTTPURLResponse,
-        httpResponse.statusCode == 200 else {
-            throw BubbelError.fetchError
-        }
-    if let data = data, let dataString = String(data: data, encoding: .utf8) {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try decoder.decode(ResCreateUser.self, from: dataString)
-    }
+    var urlRequest = URLRequest(url: url)
+    urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    urlRequest.httpMethod = "POST"
+    urlRequest.httpBody = json
+    
+    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+    let (dataString) = String(data: data, encoding: .utf8) ?? ""
+    
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    let result = try decoder.decode(ResCreateUser.self, from: data)
+    return result
 }
 
 func bubbelApiAuthUser(bath: String, req: InAuthUser) async throws -> ResAuthUser {
     let encoder = JSONEncoder()
-    let json = encoder.encode(req)
+    let json = try encoder.encode(req)
+    let jsonString = String(data: json, encoding: .utf8) ?? ""
+    
     let url = URL(string: bath + "/api/auth_user")!
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.httpBody = json
-    request.addValue("Content-Type", forHTTPHeaderField: "application/json")
-    let (data, response) = await URLSession.shared.data(request)
-    guard let httpResponse = response as? HTTPURLResponse,
-        httpResponse.statusCode == 200 else {
-            throw BubbelError.fetchError
-        }
-    if let data = data, let dataString = String(data: data, encoding: .utf8) {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try decoder.decode(ResAuthUser.self, from: dataString)
-    }
+    var urlRequest = URLRequest(url: url)
+    urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    urlRequest.httpMethod = "POST"
+    urlRequest.httpBody = json
+    
+    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+    let (dataString) = String(data: data, encoding: .utf8) ?? ""
+    
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    let result = try decoder.decode(ResAuthUser.self, from: data)
+    return result
 }
 
 func bubbelApiDeauthUser(bath: String, req: InDeauthUser) async throws {
     let encoder = JSONEncoder()
-    let json = encoder.encode(req)
+    let json = try encoder.encode(req)
+    let jsonString = String(data: json, encoding: .utf8) ?? ""
+    
     let url = URL(string: bath + "/api/deauth_user")!
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.httpBody = json
-    let (data, response) = await URLSession.shared.data(request)
-    guard let httpResponse = response as? HTTPURLResponse,
-        httpResponse.statusCode == 200 else {
-            throw BubbelError.fetchError
-        }
+    var urlRequest = URLRequest(url: url)
+    urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    urlRequest.httpMethod = "POST"
+    urlRequest.httpBody = json
+    
+    try await URLSession.shared.data(for: urlRequest)
 }
 

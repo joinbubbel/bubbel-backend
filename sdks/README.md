@@ -77,9 +77,9 @@ password: String
 
 ```
 error: MaybeNull<AuthUserError>
-token: String
-username: String
-email: String
+token: MaybeNull<String>
+username: MaybeNull<String>
+email: MaybeNull<String>
 ```
 
 ### `AuthUserError`
