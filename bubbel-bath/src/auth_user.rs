@@ -31,7 +31,7 @@ fn generate_token() -> String {
     let mut token = String::with_capacity(USER_TOKEN_LENGTH);
     let mut rng = OsRng::default();
     for _ in 0..USER_TOKEN_LENGTH {
-        token.push(rng.gen_range(b'!'..b'z') as char);
+        token.push(rng.gen_range(b'0'..b'z') as char);
     }
 
     token
