@@ -6,14 +6,9 @@ class InCreateUser: Codable {
 	var password: String
 }
 
-class DatabaseError: Codable {
-	var type: String
-	var uerror: String?
-}
-
 class CreateUserError: Codable {
 	var type: String
-	var dberror: DatabaseError?
+	var ierror: String?
 }
 
 class ResCreateUser: Codable {
@@ -27,7 +22,7 @@ class InAuthUser: Codable {
 
 class AuthUserError: Codable {
 	var type: String
-    var dberror: DatabaseError?
+    var ierror: String?
 }
 
 class ResAuthUser: Codable {

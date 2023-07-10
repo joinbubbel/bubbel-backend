@@ -15,16 +15,29 @@ pub fn test_basic_deauth_user() {
     )
     .unwrap();
 
-    //  TODO
-    assert!(auth_user(
-        &mut db,
-        &mut auth,
-        AuthUser {
-            username: "usr21p1".to_owned(),
-            password: "password".to_owned(),
-        },
-    )
-    .is_err());
+    assert_eq!(
+        auth_user(
+            &mut db,
+            &mut auth,
+            AuthUser {
+                username: "usr21p1".to_owned(),
+                password: "password".to_owned(),
+            },
+        ),
+        Err(AuthUserError::InvalidCredentials)
+    );
+
+    assert_eq!(
+        auth_user(
+            &mut db,
+            &mut auth,
+            AuthUser {
+                username: "usr21p".to_owned(),
+                password: "password123".to_owned(),
+            },
+        ),
+        Err(AuthUserError::UserNotFound)
+    );
 
     let auth_user_res = auth_user(
         &mut db,

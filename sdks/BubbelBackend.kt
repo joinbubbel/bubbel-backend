@@ -16,15 +16,9 @@ class InCreateUser {
 }
 
 @Serializable
-class DatabaseError {
-	val type: String,
-	val uerror: String?,
-}
-
-@Serializable
 class CreateUserError {
 	val type: String,
-	val dberror: DatabaseError?,
+	val ierror: String?,
 }
 
 @Serializable
@@ -41,7 +35,7 @@ class InAuthUser {
 @Serializable
 class AuthUserError {
 	val type: String,
-	val dberror: DatabaseError?,
+	val ierror: String?,
 }
 
 @Serializable

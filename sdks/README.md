@@ -13,30 +13,6 @@ Currently, only Kotlin and Swift SDKs are provided.
 1. All member names will be in camel case, not snake case.
 2. `BubbelError` may be thrown if a network error occurs.
 
-### `DatabaseError`
-
-```
-type: |
-    "NotFound"
-    "UniqueViolation"
-    "ForeignKeyViolation"
-    "UnableToSendCommand"
-    "SerializationFailure"
-    "ReadOnlyTransaction"
-    "NotNullViolation"
-    "CheckViolation"
-    "ClosedConnection"
-    "Unknown"
-uerror: MaybeNull<String>
-```
-
-1. `uerror` will have a value if `type` is `Unknown`.
-2. Currently, you need to pay attention to `UniqueViolation` and `NotNullViolation`.
-The rest are mostly internal errors that shouldn't ever occur.
-3. The rest of these errors come directly
-from [here](https://docs.rs/diesel/latest/diesel/result/enum.DatabaseErrorKind.html)
-and [here](https://docs.rs/diesel/latest/diesel/result/enum.Error.html).
-
 ### `InCreateUser`
 
 ```
@@ -59,11 +35,12 @@ type: |
     "InvalidUsername"
     "InvalidPassword"
     "InvalidPasswordCrypto"
-    "DatabaseError"
-dberror: MaybeNull<DatabaseError>
+    "EmailOrPasswordTaken"
+    "Internal"
+ierror: MaybeNull<String>
 ```
 
-1. `dberror` will have a value if `type` is `"DatabaseError"`.
+1. `ierror` will have a value if `type` is `"Internal"`.
 2. `"InvalidPasswordCrypto"` should pretty much never happen, but if it does, you can treat it as `"InvalidPassword"`.
 
 ### `InAuthUser`
@@ -89,11 +66,11 @@ type: |
     "InvalidCredentials"
     "InvalidPasswordCryto"
     "UserNotFound"
-    "DatabaseError"
-dberror: DatabaseError
+    "Internal"
+ierror: MaybeNull<String>
 ```
 
-1. `dberror` will have a value if `type` is `"DatabaseError"`.
+1. `ierror` will have a value if `type` is `"Internal"`.
 
 ### `InDeauthUser`
 

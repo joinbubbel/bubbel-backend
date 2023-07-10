@@ -1,4 +1,5 @@
 use super::*;
+use std::string::ToString;
 
 mod user;
 
@@ -19,57 +20,45 @@ impl DataState {
     }
 }
 
-//  Diesel doesn't allow implementing PartialEq or Eq for error types, so let's do it ourselves.
-
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum DatabaseError {
     NotFound,
-    Unknown { uerror: String },
-
     UniqueViolation,
     ForeignKeyViolation,
-    UnableToSendCommand,
-    SerializationFailure,
-    ReadOnlyTransaction,
     NotNullViolation,
     CheckViolation,
-    ClosedConnection,
+    Internal { ierror: String },
+}
+
+impl ToString for DatabaseError {
+    fn to_string(&self) -> String {
+        match self {
+            DatabaseError::NotFound => "NotFound".to_owned(),
+            DatabaseError::Internal { ierror } => ierror.clone(),
+            DatabaseError::UniqueViolation => "UniqueViolation".to_owned(),
+            DatabaseError::ForeignKeyViolation => "ForeignKeyViolation".to_owned(),
+            DatabaseError::NotNullViolation => "NotNullViolation".to_owned(),
+            DatabaseError::CheckViolation => "CheckViolation".to_owned(),
+        }
+    }
 }
 
 impl From<diesel::result::Error> for DatabaseError {
     fn from(value: diesel::result::Error) -> Self {
         match value {
+            diesel::result::Error::NotFound => Self::NotFound,
             diesel::result::Error::DatabaseError(kind, _) => match kind {
-                diesel::result::DatabaseErrorKind::UniqueViolation => {
-                    DatabaseError::UniqueViolation
-                }
-                diesel::result::DatabaseErrorKind::ForeignKeyViolation => {
-                    DatabaseError::ForeignKeyViolation
-                }
-                diesel::result::DatabaseErrorKind::UnableToSendCommand => {
-                    DatabaseError::UnableToSendCommand
-                }
-                diesel::result::DatabaseErrorKind::SerializationFailure => {
-                    DatabaseError::SerializationFailure
-                }
-                diesel::result::DatabaseErrorKind::ReadOnlyTransaction => {
-                    DatabaseError::ReadOnlyTransaction
-                }
-                diesel::result::DatabaseErrorKind::NotNullViolation => {
-                    DatabaseError::NotNullViolation
-                }
-                diesel::result::DatabaseErrorKind::CheckViolation => DatabaseError::CheckViolation,
-                diesel::result::DatabaseErrorKind::ClosedConnection => {
-                    DatabaseError::ClosedConnection
-                }
-                e => DatabaseError::Unknown {
-                    uerror: format!("(UKi) {:#?}", e),
+                diesel::result::DatabaseErrorKind::UniqueViolation => Self::UniqueViolation,
+                diesel::result::DatabaseErrorKind::ForeignKeyViolation => Self::ForeignKeyViolation,
+                diesel::result::DatabaseErrorKind::NotNullViolation => Self::NotNullViolation,
+                diesel::result::DatabaseErrorKind::CheckViolation => Self::CheckViolation,
+                _ => Self::Internal {
+                    ierror: value.to_string(),
                 },
             },
-            diesel::result::Error::NotFound => DatabaseError::NotFound,
-            e => DatabaseError::Unknown {
-                uerror: format!("(U) {:#?}", e),
+            _ => Self::Internal {
+                ierror: value.to_string(),
             },
         }
     }

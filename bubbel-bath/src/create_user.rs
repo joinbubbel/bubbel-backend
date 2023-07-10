@@ -31,7 +31,7 @@ fn validate_email(email: &str) -> bool {
     re.find(email).is_some()
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct CreateUser {
     pub email: String,
     pub username: String,
@@ -49,8 +49,11 @@ pub enum CreateUserError {
     InvalidPassword,
     /// Password failed to be encrypted.
     InvalidPasswordCryto,
-    /// Got an error from database.
-    DatabaseError { dberror: DatabaseError },
+    /// Email or Username already taken.
+    EmailOrUsernametaken,
+    Internal {
+        ierror: String,
+    },
 }
 
 pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUserError> {
@@ -82,7 +85,12 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
     diesel::insert_into(dsl::users)
         .values(&new_user)
         .execute(&mut db.db)
-        .map_err(|e| CreateUserError::DatabaseError { dberror: e.into() })?;
+        .map_err(|e| match DatabaseError::from(e) {
+            DatabaseError::UniqueViolation => CreateUserError::EmailOrUsernametaken,
+            e => CreateUserError::Internal {
+                ierror: e.to_string(),
+            },
+        })?;
 
     Ok(())
 }

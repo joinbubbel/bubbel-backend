@@ -3,26 +3,26 @@ use argon2::Argon2;
 use password_hash::{PasswordHasher, SaltString};
 use rand::{prelude::*, rngs::OsRng};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUser {
     pub username: String,
     pub password: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUserOut {
     pub token: UserToken,
     pub username: String,
     pub email: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum AuthUserError {
     InvalidCredentials,
     InvalidPasswordCryto,
     UserNotFound,
-    DatabaseError { dberror: DatabaseError },
+    Internal { ierror: String },
 }
 
 const USER_TOKEN_LENGTH: usize = 32;
@@ -48,7 +48,12 @@ pub fn auth_user(
         .select((dsl::id, dsl::username, dsl::password_hash, dsl::email))
         .filter(dsl::username.eq(req.username))
         .first(&mut db.db)
-        .map_err(|e| AuthUserError::DatabaseError { dberror: e.into() })?;
+        .map_err(|e| match DatabaseError::from(e) {
+            DatabaseError::NotFound => AuthUserError::UserNotFound,
+            e => AuthUserError::Internal {
+                ierror: e.to_string(),
+            },
+        })?;
     let user_id = UserId(user_id);
 
     let salt = SaltString::from_b64(&db.user_salt).unwrap();

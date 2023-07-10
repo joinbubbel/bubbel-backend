@@ -23,7 +23,7 @@ fn main() {
     //  InCreateUser
     gen_ty(
         new_acc(&lang),
-        "InCreateUser",
+        stringify!(InCreateUser),
         InCreateUser {
             req: CreateUser {
                 email: "".to_owned(),
@@ -36,12 +36,10 @@ fn main() {
     //  ResCreateUser
     gen_ty(
         new_acc(&lang),
-        "ResCreateUser",
+        stringify!(ResCreateUser),
         ResCreateUser {
-            error: Some(CreateUserError::DatabaseError {
-                dberror: DatabaseError::Unknown {
-                    uerror: "".to_string(),
-                },
+            error: Some(CreateUserError::Internal {
+                ierror: "".to_owned(),
             }),
         },
     );
@@ -49,7 +47,7 @@ fn main() {
     //  InAuthUser
     gen_ty(
         new_acc(&lang),
-        "InAuthUser",
+        stringify!(InAuthUser),
         InAuthUser {
             req: AuthUser {
                 username: "".to_owned(),
@@ -61,12 +59,10 @@ fn main() {
     //  ResAuthUser
     gen_ty(
         new_acc(&lang),
-        "ResAuthUser",
+        stringify!(ResAuthUser),
         ResAuthUser {
-            error: Some(AuthUserError::DatabaseError {
-                dberror: DatabaseError::Unknown {
-                    uerror: "".to_owned(),
-                },
+            error: Some(AuthUserError::Internal {
+                ierror: "".to_owned(),
             }),
             res: Some(AuthUserOut {
                 token: UserToken("".to_owned()),
@@ -79,7 +75,7 @@ fn main() {
     //  InDeauthUser
     gen_ty(
         new_acc(&lang),
-        "InDeauthUser",
+        stringify!(InDeauthUser),
         InDeauthUser {
             req: DeauthUser {
                 token: UserToken("".to_owned()),
@@ -90,7 +86,7 @@ fn main() {
     //  ResDeauthUser
     gen_ty(
         new_acc(&lang),
-        "ResDeauthUser",
+        stringify!(ResDeauthUser),
         ResDeauthUser { error: Some(()) },
     );
 }

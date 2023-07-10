@@ -62,13 +62,23 @@ pub fn test_create_multiple_users() {
         create_user(
             &mut db,
             CreateUser {
-                email: "g@gmail.com".to_owned(),
+                email: "other@gmail.com".to_owned(),
                 username: "fskdjfklakfdsb".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Err(CreateUserError::DatabaseError {
-            dberror: DatabaseError::UniqueViolation
-        })
+        Err(CreateUserError::EmailOrUsernametaken)
+    );
+
+    assert_eq!(
+        create_user(
+            &mut db,
+            CreateUser {
+                email: "g@gmail.com".to_owned(),
+                username: "abcdef".to_owned(),
+                password: "gfjkdlsfjkds".to_owned(),
+            },
+        ),
+        Err(CreateUserError::EmailOrUsernametaken)
     );
 }
