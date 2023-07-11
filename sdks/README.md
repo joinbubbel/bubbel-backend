@@ -17,6 +17,10 @@ Currently, only Kotlin, Swift, and Typescript SDKs are provided.
 
 ### Typescript Notes
 
+1. None
+
+### Bindings
+
 ### `InCreateUser`
 
 ```
