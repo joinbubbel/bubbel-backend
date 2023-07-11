@@ -3,12 +3,12 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use tower_http::cors::{CorsLayer};
 use bubbel_backend::*;
 use std::{
     net::SocketAddr,
     sync::{Arc, Mutex, RwLock},
 };
+use tower_http::cors::CorsLayer;
 
 mod debug;
 
