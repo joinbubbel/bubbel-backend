@@ -4,6 +4,16 @@ The SDKs are in this directory.
 Please these files.
 Currently, only Kotlin, Swift, and Typescript SDKs are provided.
 
+TLDR: Every API call should look something like this:
+
+```typescript
+//  Typescript example.
+//  bubbelBathDev refers to our dev instance, may vary in the future.
+bubbelApiCreateUser(bubbelBathDev, {
+    ...
+});
+```
+
 ## Reference
 
 ### Kotlin Notes
@@ -84,17 +94,6 @@ ierror: MaybeNull<String>
 
 ```
 token: String
-```
-
-### `BUBBEL_BATH_DEV` / `bubbelBathDev`
-
-This value represents the base url of Bubbel's API.
-You will need this value for every SDK call.
-
-Swift example:
-
-```swift
-bubbelApiAuthUser(bubbelBathDev, ...)
 ```
 
 ### `bubbelApiCreateUser` / `POST /api/create_user`
