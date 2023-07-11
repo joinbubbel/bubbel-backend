@@ -1,6 +1,8 @@
 # SDKs
 
-Currently, only Kotlin and Swift SDKs are provided.
+The SDKs are in this directory.
+Please these files.
+Currently, only Kotlin, Swift, and Typescript SDKs are provided.
 
 ## Reference
 
@@ -12,6 +14,8 @@ Currently, only Kotlin and Swift SDKs are provided.
 
 1. All member names will be in camel case, not snake case.
 2. `BubbelError` may be thrown if a network error occurs.
+
+### Typescript Notes
 
 ### `InCreateUser`
 

@@ -3,6 +3,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use tower_http::cors::{CorsLayer};
 use bubbel_backend::*;
 use std::{
     net::SocketAddr,
@@ -39,12 +40,15 @@ async fn main() {
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
     });
 
+    let cors = CorsLayer::very_permissive();
+
     let app = Router::new()
         .route("/", get(root))
         .route("/api/debug", post(api_debug))
         .route("/api/create_user", post(api_create_user))
         .route("/api/auth_user", post(api_auth_user))
         .route("/api/deauth_user", post(api_deauth_user))
+        .layer(cors)
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
