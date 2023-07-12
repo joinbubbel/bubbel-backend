@@ -14,10 +14,14 @@ pub struct ResDebugState {
 }
 
 fn main() {
-    let Some(base_url) = std::env::args().nth(1) else {
+    let Some(mut base_url) = std::env::args().nth(1) else {
         println!("Expected base url eg: 'https://mybackend.com'");
         return;
     };
+
+    if let Some('/') = base_url.chars().last() {
+        base_url.pop();
+    }
 
     println!("Enter password: ");
     let mut password = String::new();
