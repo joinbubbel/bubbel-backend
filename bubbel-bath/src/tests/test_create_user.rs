@@ -1,6 +1,7 @@
 use super::*;
 
 #[test]
+#[serial_test::serial]
 pub fn test_create_multiple_users() {
     let mut db = new_data_state();
     assert_eq!(
@@ -45,7 +46,7 @@ pub fn test_create_multiple_users() {
                 password: "gfdjksafdljksa".to_owned(),
             },
         ),
-        Ok(())
+        Ok(UserId(1))
     );
     assert_eq!(
         create_user(
@@ -56,7 +57,7 @@ pub fn test_create_multiple_users() {
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Ok(())
+        Ok(UserId(2))
     );
     assert_eq!(
         create_user(

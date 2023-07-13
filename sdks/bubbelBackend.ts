@@ -29,6 +29,7 @@ interface AuthUserError {
     | "InvalidCredentials"
     | "InvalidPasswordCryto"
     | "UserNotFound"
+    | "UserNotVerified"
     | "Internal";
     ierror: string | null;
 }

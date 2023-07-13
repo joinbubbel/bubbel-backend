@@ -13,3 +13,6 @@ rand = { version = "0.8", features = ["getrandom"] }
 regex = "1"
 bimap = "0.6"
 serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+serial_test = "0.4"

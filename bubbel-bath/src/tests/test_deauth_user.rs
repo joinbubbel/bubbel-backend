@@ -1,11 +1,13 @@
 use super::*;
 
 #[test]
+#[serial_test::serial]
 pub fn test_basic_deauth_user() {
     let mut db = new_data_state();
     let mut auth = AuthState::default();
+    let mut acc_limbo = AccountLimboState::default();
 
-    create_user(
+    let acc = create_user(
         &mut db,
         CreateUser {
             email: "a@gmail.com".to_owned(),
@@ -14,6 +16,9 @@ pub fn test_basic_deauth_user() {
         },
     )
     .unwrap();
+    acc_limbo.push_user(acc);
+
+    waive_user_verification(&mut db, &mut acc_limbo);
 
     assert_eq!(
         auth_user(

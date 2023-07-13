@@ -56,7 +56,7 @@ pub enum CreateUserError {
     },
 }
 
-pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUserError> {
+pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<UserId, CreateUserError> {
     use crate::schema::users::dsl;
 
     validate_username(&req.username)
@@ -77,9 +77,10 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
         .to_string();
 
     let new_user = User {
-        username: req.username,
+        username: req.username.clone(),
         password_hash: password,
         email: req.email,
+        is_verified: false,
     };
 
     diesel::insert_into(dsl::users)
@@ -92,5 +93,15 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<(), CreateUser
             },
         })?;
 
-    Ok(())
+    let ids = dsl::users
+        .select(dsl::id)
+        .filter(dsl::username.eq(req.username))
+        .load::<i32>(&mut db.db)
+        .map_err(|e| CreateUserError::Internal {
+            ierror: e.to_string(),
+        })?;
+    assert_eq!(ids.len(), 1);
+    let id = UserId(*ids.first().unwrap());
+
+    Ok(id)
 }

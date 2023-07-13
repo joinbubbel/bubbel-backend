@@ -1,7 +1,7 @@
 use super::*;
 use argon2::Argon2;
 use password_hash::{PasswordHasher, SaltString};
-use rand::{prelude::*, rngs::OsRng};
+use rand::{distributions::Alphanumeric, prelude::*, rngs::OsRng};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUser {
@@ -22,19 +22,18 @@ pub enum AuthUserError {
     InvalidCredentials,
     InvalidPasswordCryto,
     UserNotFound,
+    UserNotVerified,
     Internal { ierror: String },
 }
 
 const USER_TOKEN_LENGTH: usize = 32;
 
-fn generate_token() -> String {
-    let mut token = String::with_capacity(USER_TOKEN_LENGTH);
-    let mut rng = OsRng::default();
-    for _ in 0..USER_TOKEN_LENGTH {
-        token.push(rng.gen_range(b'0'..b'z') as char);
-    }
-
-    token
+pub fn generate_token_alphanumeric(length: usize) -> String {
+    OsRng::default()
+        .sample_iter(&Alphanumeric)
+        .take(length)
+        .map(char::from)
+        .collect()
 }
 
 pub fn auth_user(
@@ -44,8 +43,20 @@ pub fn auth_user(
 ) -> Result<AuthUserOut, AuthUserError> {
     use crate::schema::users::dsl;
 
-    let (user_id, username, password_hash, email): (i32, String, String, String) = dsl::users
-        .select((dsl::id, dsl::username, dsl::password_hash, dsl::email))
+    let (user_id, username, password_hash, email, is_verified): (
+        i32,
+        String,
+        String,
+        String,
+        bool,
+    ) = dsl::users
+        .select((
+            dsl::id,
+            dsl::username,
+            dsl::password_hash,
+            dsl::email,
+            dsl::is_verified,
+        ))
         .filter(dsl::username.eq(req.username))
         .first(&mut db.db)
         .map_err(|e| match DatabaseError::from(e) {
@@ -55,6 +66,9 @@ pub fn auth_user(
             },
         })?;
     let user_id = UserId(user_id);
+    is_verified
+        .then_some(())
+        .ok_or(AuthUserError::UserNotVerified)?;
 
     let salt = SaltString::from_b64(&db.user_salt).unwrap();
     let argon2 = Argon2::default();
@@ -67,7 +81,7 @@ pub fn auth_user(
         .then_some(())
         .ok_or(AuthUserError::InvalidCredentials)?;
 
-    let token = UserToken(generate_token());
+    let token = UserToken(generate_token_alphanumeric(USER_TOKEN_LENGTH));
     auth.tokens.insert(token.clone(), user_id);
 
     Ok(AuthUserOut {

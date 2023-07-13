@@ -84,6 +84,7 @@ type: |
     "InvalidCredentials"
     "InvalidPasswordCryto"
     "UserNotFound"
+    "UserNotVerified"
     "Internal"
 ierror: MaybeNull<String>
 ```
