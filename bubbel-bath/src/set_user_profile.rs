@@ -17,7 +17,7 @@ pub enum SetUserProfileError {
 
 pub fn set_user_profile(
     db: &mut DataState,
-    auth: &mut AuthState,
+    auth: &AuthState,
     req: SetUserProfile,
 ) -> Result<(), SetUserProfileError> {
     let user_id = auth

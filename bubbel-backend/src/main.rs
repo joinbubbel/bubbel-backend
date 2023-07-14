@@ -53,6 +53,7 @@ async fn main() {
         .route("/api/auth_user", post(api_auth_user))
         .route("/api/deauth_user", post(api_deauth_user))
         .route("/api/verify_user", post(api_verify_user))
+        .route("/api/set_user_profile", post(api_set_user_profile))
         .layer(cors)
         .with_state(state);
 
@@ -141,6 +142,25 @@ async fn api_verify_user(
     let res = match verify_user(&mut db, &mut acc_limbo, req.req) {
         Ok(_) => ResVerifyAccount { error: None },
         Err(e) => ResVerifyAccount { error: Some(e) },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_set_user_profile(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InSetUserProfile>,
+) -> Json<ResSetUserProfile> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match set_user_profile(&mut db, &auth, req.req) {
+        Ok(_) => ResSetUserProfile { error: None },
+        Err(e) => ResSetUserProfile { error: Some(e) },
     };
     debug.push_outgoing(&res);
 

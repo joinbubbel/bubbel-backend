@@ -27,4 +27,10 @@ fn main() {
 
     print!(InDeauthUser);
     print!(ResDeauthUser);
+
+    print!(InVerifyAccount);
+    print!(ResVerifyAccount);
+
+    print!(InSetUserProfile);
+    print!(ResSetUserProfile);
 }

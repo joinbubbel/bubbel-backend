@@ -67,3 +67,14 @@ pub struct InVerifyAccount {
 pub struct ResVerifyAccount {
     pub error: Option<VerifyAccountError>,
 }
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InSetUserProfile {
+    #[serde(flatten)]
+    pub req: SetUserProfile,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct ResSetUserProfile {
+    pub error: Option<SetUserProfileError>,
+}
