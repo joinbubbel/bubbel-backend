@@ -18,6 +18,7 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_DB: bubbel-test
           POSTGRES_PASSWORD: abc
         options: >-
           --health-cmd pg_isready
@@ -37,7 +38,7 @@ jobs:
       run: |
         cargo install diesel_cli --verbose 
         cd bubbel-bath
-        DATABASE_URL="postgresql://postgres:abc@localhost:5432" diesel migration run
+        DATABASE_URL="postgresql://postgres:abc@localhost:5432/bubbel-test" diesel migration run
         cd ..
     - name: Build
       run: cargo build --verbose
