@@ -1,7 +1,6 @@
 use super::*;
 use argon2::Argon2;
 use password_hash::{PasswordHasher, SaltString};
-use rand::{distributions::Alphanumeric, prelude::*, rngs::OsRng};
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUser {
@@ -24,16 +23,6 @@ pub enum AuthUserError {
     UserNotFound,
     UserNotVerified,
     Internal { ierror: String },
-}
-
-const USER_TOKEN_LENGTH: usize = 32;
-
-pub fn generate_token_alphanumeric(length: usize) -> String {
-    OsRng::default()
-        .sample_iter(&Alphanumeric)
-        .take(length)
-        .map(char::from)
-        .collect()
 }
 
 pub fn auth_user(
@@ -81,8 +70,7 @@ pub fn auth_user(
         .then_some(())
         .ok_or(AuthUserError::InvalidCredentials)?;
 
-    let token = UserToken(generate_token_alphanumeric(USER_TOKEN_LENGTH));
-    auth.tokens.insert(token.clone(), user_id);
+    let token = auth.unchecked_auth_user(&user_id);
 
     Ok(AuthUserOut {
         token,
@@ -97,5 +85,5 @@ pub struct DeauthUser {
 }
 
 pub fn deauth_user(auth: &mut AuthState, req: DeauthUser) {
-    auth.tokens.remove_by_left(&req.token);
+    auth.deauth_user(&req.token);
 }

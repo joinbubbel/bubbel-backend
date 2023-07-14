@@ -41,7 +41,6 @@ pub fn test_account_collect_garbage() {
     .unwrap();
 
     acc_limbo.collect_garbage_with_expire(&mut db, std::time::Duration::from_secs(0));
-    eprintln!("{:?}", acc_limbo);
 
     let usernames: Vec<String> = dsl::users
         .select(dsl::username)
