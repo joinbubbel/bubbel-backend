@@ -56,3 +56,14 @@ pub struct InDeauthUser {
 pub struct ResDeauthUser {
     pub error: Option<()>,
 }
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InVerifyAccount {
+    #[serde(flatten)]
+    pub req: VerifyAccount,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct ResVerifyAccount {
+    pub error: Option<VerifyAccountError>,
+}

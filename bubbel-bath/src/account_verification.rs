@@ -36,12 +36,13 @@ impl AccountLimboState {
     }
 }
 
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct VerifyAccount {
     pub code: String,
     pub user_id: UserId,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum VerifyAccountError {
     InvalidCode,

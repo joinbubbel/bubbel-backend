@@ -10,6 +10,7 @@ use std::{
 };
 use tower_http::cors::CorsLayer;
 
+mod collect_garbage;
 mod debug;
 
 use debug::{api_debug, DebugState};
@@ -23,6 +24,7 @@ pub struct AppState {
     db: Mutex<DataState>,
     auth: RwLock<AuthState>,
     debug: RwLock<DebugState>,
+    acc_limbo: Mutex<AccountLimboState>,
 }
 
 #[tokio::main]
@@ -38,7 +40,9 @@ async fn main() {
         db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
+        acc_limbo: Mutex::new(AccountLimboState::default()),
     });
+    let garbage_state = Arc::clone(&state);
 
     let cors = CorsLayer::very_permissive();
 
@@ -48,14 +52,18 @@ async fn main() {
         .route("/api/create_user", post(api_create_user))
         .route("/api/auth_user", post(api_auth_user))
         .route("/api/deauth_user", post(api_deauth_user))
+        .route("/api/verify_user", post(api_verify_user))
         .layer(cors)
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+
+    tokio::join!(
+        axum::Server::bind(&addr).serve(app.into_make_service()),
+        collect_garbage::collect_garbage(garbage_state)
+    )
+    .0
+    .unwrap();
 }
 
 async fn root() -> &'static str {
@@ -115,6 +123,25 @@ async fn api_deauth_user(
     deauth_user(&mut auth, req.req);
 
     let res = ResDeauthUser { error: None };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_verify_user(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InVerifyAccount>,
+) -> Json<ResVerifyAccount> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let mut acc_limbo = state.acc_limbo.lock().unwrap();
+
+    let res = match verify_user(&mut db, &mut acc_limbo, req.req) {
+        Ok(_) => ResVerifyAccount { error: None },
+        Err(e) => ResVerifyAccount { error: Some(e) },
+    };
     debug.push_outgoing(&res);
 
     Json(res)
