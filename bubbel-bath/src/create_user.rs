@@ -103,5 +103,9 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<UserId, Create
     assert_eq!(ids.len(), 1);
     let id = UserId(*ids.first().unwrap());
 
+    UserProfile::insert_new(db, &id).map_err(|e| CreateUserError::Internal {
+        ierror: e.to_string(),
+    })?;
+
     Ok(id)
 }
