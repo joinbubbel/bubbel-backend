@@ -20,8 +20,7 @@ impl DataState {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-#[serde(tag = "type")]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DatabaseError {
     NotFound,
     UniqueViolation,
@@ -34,8 +33,8 @@ pub enum DatabaseError {
 impl ToString for DatabaseError {
     fn to_string(&self) -> String {
         match self {
-            DatabaseError::NotFound => "NotFound".to_owned(),
             DatabaseError::Internal { ierror } => ierror.clone(),
+            DatabaseError::NotFound => "NotFound".to_owned(),
             DatabaseError::UniqueViolation => "UniqueViolation".to_owned(),
             DatabaseError::ForeignKeyViolation => "ForeignKeyViolation".to_owned(),
             DatabaseError::NotNullViolation => "NotNullViolation".to_owned(),

@@ -19,38 +19,40 @@
 //!
 
 pub use bubbel_bath::*;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InCreateUser {
     #[serde(flatten)]
     pub req: CreateUser,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct ResCreateUser {
     pub error: Option<CreateUserError>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InAuthUser {
     #[serde(flatten)]
     pub req: AuthUser,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct ResAuthUser {
     pub error: Option<AuthUserError>,
     #[serde(flatten)]
     pub res: Option<AuthUserOut>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InDeauthUser {
     #[serde(flatten)]
     pub req: DeauthUser,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct ResDeauthUser {
     pub error: Option<()>,
 }

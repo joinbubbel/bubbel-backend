@@ -3,20 +3,20 @@ use argon2::Argon2;
 use password_hash::{PasswordHasher, SaltString};
 use rand::{distributions::Alphanumeric, prelude::*, rngs::OsRng};
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUser {
     pub username: String,
     pub password: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct AuthUserOut {
     pub token: UserToken,
     pub username: String,
     pub email: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum AuthUserError {
     InvalidCredentials,
@@ -91,7 +91,7 @@ pub fn auth_user(
     })
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 pub struct DeauthUser {
     pub token: UserToken,
 }

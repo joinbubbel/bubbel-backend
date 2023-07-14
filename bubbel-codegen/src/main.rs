@@ -1,92 +1,30 @@
 use bubbel_backend::*;
-use schemajen::{accumulator_choose_with_str, codegen, generate, TypeAccumulator};
+use colored_json::prelude::*;
+use schemars::schema_for;
+use serde_json::to_string_pretty;
 
-fn gen_ty<T: Serialize>(mut acc: Box<dyn TypeAccumulator>, name: &str, sample: T) {
-    let json = serde_json::to_string(&sample).unwrap();
-    println!("{}\n", generate(acc.as_mut(), name, &json).unwrap());
-}
-
-fn new_acc(lang: &str) -> Box<dyn TypeAccumulator> {
-    accumulator_choose_with_str(lang).unwrap_or_else(|| {
-        panic!(
-            "Got bad codegen language, could be {:?}.",
-            codegen::ACCUMULATOR_SUPPORT_LIST
-        )
-    })
+macro_rules! print {
+    ($T: ty) => {
+        println!("\n<=====================>\n");
+        println!(
+            "{}",
+            to_string_pretty(&schema_for!($T))
+                .unwrap()
+                .to_colored_json_auto()
+                .unwrap()
+        );
+    };
 }
 
 fn main() {
-    let Some(lang) = std::env::args().nth(1) else {
-        panic!("Expected codegen language, could be: {:?}.", codegen::ACCUMULATOR_SUPPORT_LIST)
-    };
+    print!(InCreateUser);
+    print!(CreateUserError);
+    print!(ResCreateUser);
 
-    //  InCreateUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(InCreateUser),
-        InCreateUser {
-            req: CreateUser {
-                email: "".to_owned(),
-                username: "".to_owned(),
-                password: "".to_owned(),
-            },
-        },
-    );
+    print!(InAuthUser);
+    print!(AuthUserError);
+    print!(ResAuthUser);
 
-    //  ResCreateUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(ResCreateUser),
-        ResCreateUser {
-            error: Some(CreateUserError::Internal {
-                ierror: "".to_owned(),
-            }),
-        },
-    );
-
-    //  InAuthUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(InAuthUser),
-        InAuthUser {
-            req: AuthUser {
-                username: "".to_owned(),
-                password: "".to_owned(),
-            },
-        },
-    );
-
-    //  ResAuthUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(ResAuthUser),
-        ResAuthUser {
-            error: Some(AuthUserError::Internal {
-                ierror: "".to_owned(),
-            }),
-            res: Some(AuthUserOut {
-                token: UserToken("".to_owned()),
-                username: "".to_owned(),
-                email: "".to_owned(),
-            }),
-        },
-    );
-
-    //  InDeauthUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(InDeauthUser),
-        InDeauthUser {
-            req: DeauthUser {
-                token: UserToken("".to_owned()),
-            },
-        },
-    );
-
-    //  ResDeauthUser
-    gen_ty(
-        new_acc(&lang),
-        stringify!(ResDeauthUser),
-        ResDeauthUser { error: Some(()) },
-    );
+    print!(InDeauthUser);
+    print!(ResDeauthUser);
 }

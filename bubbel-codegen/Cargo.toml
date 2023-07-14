@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 serde_json = "1"
+schemars = "0.8"
+colored_json = "3"
 bubbel-backend = { version = "*", path = "../bubbel-backend/" }
-schemajen = { version = "*", git = "https://github.com/davnotdev/schemajen" }

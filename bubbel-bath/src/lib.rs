@@ -1,5 +1,7 @@
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 mod account_verification;
 mod auth;
@@ -21,4 +23,3 @@ pub use auth_user::{
 };
 pub use create_user::{create_user, CreateUser, CreateUserError};
 pub use data::{DataState, DatabaseError, User};
-pub use serde::{Deserialize, Serialize};
