@@ -23,7 +23,7 @@ async fn collect_auth_garbage(app: &Arc<AppState>) {
 const ACC_LIMBO_COLLECT_GARBAGE_INTERVAL: Duration = Duration::from_secs(43200);
 async fn collect_acc_limbo_garbage(app: &Arc<AppState>) {
     loop {
-        tokio::time::sleep(AUTH_COLLECT_GARBAGE_INTERVAL).await;
+        tokio::time::sleep(ACC_LIMBO_COLLECT_GARBAGE_INTERVAL).await;
         {
             let mut db = app.db.lock().unwrap();
             let mut acc_limbo = app.acc_limbo.lock().unwrap();
