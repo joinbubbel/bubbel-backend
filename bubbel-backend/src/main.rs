@@ -67,7 +67,7 @@ async fn main() {
         .route("/api/create_user", post(api_create_user))
         .route("/api/auth_user", post(api_auth_user))
         .route("/api/deauth_user", post(api_deauth_user))
-        .route("/api/verify_user", post(api_verify_user))
+        .route("/api/verify_account", post(api_verify_user))
         .route("/api/set_user_profile", post(api_set_user_profile))
         .route("/api/delete_user", post(api_delete_user))
         .layer(cors)

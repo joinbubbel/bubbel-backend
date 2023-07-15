@@ -18,11 +18,9 @@ macro_rules! print {
 
 fn main() {
     print!(InCreateUser);
-    print!(CreateUserError);
     print!(ResCreateUser);
 
     print!(InAuthUser);
-    print!(AuthUserError);
     print!(ResAuthUser);
 
     print!(InDeauthUser);
@@ -33,4 +31,7 @@ fn main() {
 
     print!(InSetUserProfile);
     print!(ResSetUserProfile);
+
+    print!(InDeleteUser);
+    print!(ResDeleteUser);
 }
