@@ -58,10 +58,11 @@ pub fn test_set_user_profile() {
     assert_eq!(
         set_user_profile(
             &mut db,
-            &mut auth,
+            &auth,
             SetUserProfile {
                 token: UserToken("donuts".to_owned()),
                 name: Some("Jeff".to_owned()),
+                display_name: None,
                 pfp: None,
                 banner: None,
             },
@@ -71,10 +72,11 @@ pub fn test_set_user_profile() {
 
     set_user_profile(
         &mut db,
-        &mut auth,
+        &auth,
         SetUserProfile {
             token: acc1.clone(),
             name: Some("David Zhong".to_owned()),
+            display_name: None,
             pfp: None,
             banner: None,
         },
@@ -87,6 +89,7 @@ pub fn test_set_user_profile() {
         SetUserProfile {
             token: acc1.clone(),
             name: None,
+            display_name: None,
             pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
             banner: None,
         },
@@ -102,12 +105,14 @@ pub fn test_set_user_profile() {
             UserProfile {
                 user_id: 1,
                 name: Some("David Zhong".to_owned()),
+                display_name: None,
                 pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
                 banner: None
             },
             UserProfile {
                 user_id: 2,
                 name: None,
+                display_name: None,
                 pfp: None,
                 banner: None
             }

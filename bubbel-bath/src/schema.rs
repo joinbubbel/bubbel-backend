@@ -4,6 +4,7 @@ diesel::table! {
     user_profiles (user_id) {
         user_id -> Int4,
         name -> Nullable<Varchar>,
+        display_name -> Nullable<Varchar>,
         pfp -> Nullable<Varchar>,
         banner -> Nullable<Varchar>,
     }

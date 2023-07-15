@@ -6,6 +6,7 @@ use super::*;
 pub struct UserProfile {
     pub user_id: i32,
     pub name: Option<String>,
+    pub display_name: Option<String>,
     pub pfp: Option<String>,
     pub banner: Option<String>,
 }
@@ -18,6 +19,7 @@ impl UserProfile {
             .values(&UserProfile {
                 user_id: user_id.0,
                 name: None,
+                display_name: None,
                 pfp: None,
                 banner: None,
             })

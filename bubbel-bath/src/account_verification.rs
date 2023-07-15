@@ -76,7 +76,7 @@ pub fn verify_user(
     Ok(())
 }
 
-pub(crate) fn waive_user_verification(db: &mut DataState, acc_limbo: &mut AccountLimboState) {
+pub fn waive_user_verification(db: &mut DataState, acc_limbo: &mut AccountLimboState) {
     acc_limbo
         .account_codes
         .clone()
