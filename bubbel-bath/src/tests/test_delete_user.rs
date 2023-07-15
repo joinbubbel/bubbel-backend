@@ -53,18 +53,8 @@ pub fn test_delete_user() {
     assert_eq!(usernames, vec!["davnotdev2"]);
 
     assert_eq!(
-        set_user_profile(
-            &mut db,
-            &auth,
-            SetUserProfile {
-                token: acc.clone(),
-                display_name: None,
-                name: None,
-                pfp: None,
-                banner: None,
-            },
-        ),
-        Err(SetUserProfileError::NoAuth),
+        delete_user(&mut db, &mut auth, DeleteUser { token: acc }),
+        Err(DeleteUserError::NoAuth),
     );
 
     assert_eq!(
