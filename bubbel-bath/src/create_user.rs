@@ -51,6 +51,8 @@ pub enum CreateUserError {
     InvalidPasswordCryto,
     /// Email or Username already taken.
     EmailOrUsernametaken,
+    /// Error while sending verification.
+    SendVerification,
     Internal {
         ierror: String,
     },

@@ -23,3 +23,4 @@ tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros"] }
 bubbel-bath = { version = "*", path = "../bubbel-bath/" }
 serde = { version = "1", features = ["derive"] }
 schemars = "0.8"
+lettre = "0.10"

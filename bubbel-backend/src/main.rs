@@ -12,6 +12,7 @@ use tower_http::cors::CorsLayer;
 
 mod collect_garbage;
 mod debug;
+mod email;
 
 use debug::{api_debug, DebugState};
 
@@ -19,12 +20,18 @@ const USER_SALT_ENV: &str = "BUBBEL_USER_SALT";
 const DB_URL_ENV: &str = "BUBBEL_DATABASE_URL";
 const DEBUG_ENABLED_ENV: &str = "BUBBEL_ENABLE_DEBUG_INSPECTOR";
 const DEBUG_PASSWORD_ENV: &str = "BUBBEL_DEBUG_INSPECTOR_PASSWORD";
+const ACCOUNT_VERIFICATION_FROM_EMAIL: &str = "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL";
+const ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD: &str =
+    "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD";
 
 pub struct AppState {
     db: Mutex<DataState>,
     auth: RwLock<AuthState>,
     debug: RwLock<DebugState>,
     acc_limbo: Mutex<AccountLimboState>,
+
+    account_verification_email: String,
+    account_verification_email_password: String,
 }
 
 #[tokio::main]
@@ -35,12 +42,20 @@ async fn main() {
     let debug_password = std::env::vars()
         .find(|(k, _)| k == DEBUG_PASSWORD_ENV)
         .map(|(_, p)| p);
+    let (_, account_verification_email) = std::env::vars()
+        .find(|(k, _)| k == ACCOUNT_VERIFICATION_FROM_EMAIL)
+        .unwrap();
+    let (_, account_verification_email_password) = std::env::vars()
+        .find(|(k, _)| k == ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD)
+        .unwrap();
 
     let state = Arc::new(AppState {
         db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
         acc_limbo: Mutex::new(AccountLimboState::default()),
+        account_verification_email,
+        account_verification_email_password,
     });
     let garbage_state = Arc::clone(&state);
 
@@ -79,8 +94,34 @@ async fn api_create_user(
     debug.push_incoming(&req);
 
     let mut db = state.db.lock().unwrap();
+    let mut acc_limbo = state.acc_limbo.lock().unwrap();
+    let email = req.req.email.clone();
     let res = match create_user(&mut db, req.req) {
-        Ok(_) => ResCreateUser { error: None },
+        Ok(user_id) => {
+            let code = acc_limbo.push_user(user_id);
+            if email::send_verify_account_email(
+                &state.account_verification_email,
+                &state.account_verification_email_password,
+                &email,
+                &code,
+                &user_id.0.to_string(),
+            )
+            .is_err()
+            {
+                let rem = User::remove(&mut db, user_id).map_err(|e| CreateUserError::Internal {
+                    ierror: e.to_string(),
+                });
+                if let Err(e) = rem {
+                    ResCreateUser { error: Some(e) }
+                } else {
+                    ResCreateUser {
+                        error: Some(CreateUserError::SendVerification),
+                    }
+                }
+            } else {
+                ResCreateUser { error: None }
+            }
+        }
         Err(e) => ResCreateUser { error: Some(e) },
     };
     debug.push_outgoing(&res);

@@ -36,12 +36,19 @@ impl DebugState {
 
             incoming_current: 0,
             outgoing_current: 0,
-            password: password.unwrap(),
+            password: if enabled {
+                password.unwrap()
+            } else {
+                String::new()
+            },
             debug_id: 0,
         }
     }
 
     pub fn push_incoming<T: Serialize>(&mut self, data: &T) {
+        if !self.enabled {
+            return;
+        }
         let s = serde_json::to_string_pretty(data).unwrap();
         self.incoming[self.incoming_current] = Some((self.debug_id, s));
         self.incoming_current = (self.incoming_current + 1) % DEBUG_STATE_BUF_COUNT;
@@ -49,6 +56,9 @@ impl DebugState {
     }
 
     pub fn push_outgoing<T: Serialize>(&mut self, data: &T) {
+        if !self.enabled {
+            return;
+        }
         let s = serde_json::to_string_pretty(data).unwrap();
         self.outgoing[self.outgoing_current] = Some((self.debug_id, s));
         self.outgoing_current = (self.outgoing_current + 1) % DEBUG_STATE_BUF_COUNT;
