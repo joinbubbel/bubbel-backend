@@ -78,3 +78,14 @@ pub struct InSetUserProfile {
 pub struct ResSetUserProfile {
     pub error: Option<SetUserProfileError>,
 }
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InDeleteUser {
+    #[serde(flatten)]
+    pub req: DeleteUser,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct ResDeleteUser {
+    pub error: Option<DeleteUserError>,
+}
