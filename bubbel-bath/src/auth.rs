@@ -89,7 +89,7 @@ impl AuthState {
 }
 
 pub fn generate_token_alphanumeric(length: usize) -> String {
-    OsRng::default()
+    OsRng
         .sample_iter(&Alphanumeric)
         .take(length)
         .map(char::from)
