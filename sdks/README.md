@@ -4,26 +4,16 @@ The SDKs are in this directory.
 Please these files.
 Currently, only Kotlin, Swift, and Typescript SDKs are provided.
 
-TLDR: Every API call should look something like this:
-
-```typescript
-//  Typescript example.
-//  bubbelBathDev refers to our dev instance, may vary in the future.
-bubbelApiCreateUser(bubbelBathDev, {
-    ...
-});
-```
-
 ## Reference
 
 ### Kotlin Notes
 
 1. Depends on OkHttp.
+2. Must enable serialization with kotlinx.
 
 ### Swift Notes
 
 1. All member names will be in camel case, not snake case.
-2. `BubbelError` may be thrown if a network error occurs.
 
 ### Typescript Notes
 
@@ -54,6 +44,7 @@ type: |
     "InvalidPassword"
     "InvalidPasswordCrypto"
     "EmailOrPasswordTaken"
+    "SendVerification"
     "Internal"
 ierror: MaybeNull<String>
 ```
@@ -97,6 +88,88 @@ ierror: MaybeNull<String>
 token: String
 ```
 
+### `ResDeauthUser`
+
+```
+error: Null
+```
+
+### `InVerifyAccount`
+
+```
+code: String
+user_id: Integer
+```
+
+### `ResVerifyAccount`
+
+```
+error: MaybeNull<VerifyAccountError>
+```
+
+### `VerifyAccountError`
+
+```
+type: |
+    "CodeTimedOutOrInvalidUser"
+    "InvalidCode"
+    "Internal"
+ierror: MaybeNull<String>
+```
+
+1. `ierror` will have a value if `type` is `"Internal"`.
+
+### `InSetUserProfile`
+
+```
+token: String
+name: String
+display_name: String
+description: String
+pfp: String
+banner: String
+```
+
+### `ResSetUserProfile`
+
+```
+error: MaybeNull<SetUserProfileError>
+```
+
+### `SetUserProfileError`
+
+```
+type: |
+    "NoAuth"
+    "Internal"
+ierror: MaybeNull<String>
+```
+
+1. `ierror` will have a value if `type` is `"Internal"`.
+
+### `InDeleteUser`
+
+```
+token: String
+```
+
+### `ResDeleteUser`
+
+```
+error: MaybeNull<DeleteUserError>
+```
+
+### `DeleteUserError`
+
+```
+type: |
+    "NoAuth"
+    "Internal"
+ierror: MaybeNull<String>
+```
+
+1. `ierror` will have a value if `type` is `"Internal"`.
+
 ### `bubbelApiCreateUser` / `POST /api/create_user`
 
 Create a new user account.
@@ -111,3 +184,16 @@ Uses `InAuthUser`, returning `ResAuthUser`
 
 Invalidate a user's session token.
 Uses `InDeauthUser`, returning nothing.
+
+### `bubbelApiVerifyAccount` / `POST /api/verify_account`
+
+Verify a user's account using a user ID and code.
+
+### `bubbelApiSetUserProfile` / `POST /api/set_user_profile`
+
+Set the user's profile data.
+A `null` field has no effect on the currently stored data.
+
+### `bubbelApiDeleteUser` / `POST /api/set_user_profile`
+
+Delete a user's account, logging them out and deleting all of their data.

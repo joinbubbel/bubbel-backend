@@ -525,10 +525,10 @@ func newJSONEncoder() -> JSONEncoder {
 
 let bubbelBathDev = "https://bubbel-bath.onrender.com";
 
-func bubbelApiCreateUser(bath: String, req: InCreateUser) async throws -> ResCreateUser {
+func bubbelApiCreateUser(req: InCreateUser) async throws -> ResCreateUser {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/create_user")!
+    let url = URL(string: bubbelBathDev + "/api/create_user")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"
@@ -543,10 +543,10 @@ func bubbelApiCreateUser(bath: String, req: InCreateUser) async throws -> ResCre
     return result
 }
 
-func bubbelApiAuthUser(bath: String, req: InAuthUser) async throws -> ResAuthUser {
+func bubbelApiAuthUser(req: InAuthUser) async throws -> ResAuthUser {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/auth_user")!
+    let url = URL(string: bubbelBathDev + "/api/auth_user")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"
@@ -561,10 +561,10 @@ func bubbelApiAuthUser(bath: String, req: InAuthUser) async throws -> ResAuthUse
     return result
 }
 
-func bubbelApiDeauthUser(bath: String, req: InDeauthUser) async throws -> ResDeauthUser {
+func bubbelApiDeauthUser(req: InDeauthUser) async throws -> ResDeauthUser {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/deauth_user")!
+    let url = URL(string: bubbelBathDev + "/api/deauth_user")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"
@@ -579,10 +579,10 @@ func bubbelApiDeauthUser(bath: String, req: InDeauthUser) async throws -> ResDea
     return result
 }
 
-func bubbelApiVerifyAccount(bath: String, req: InVerifyAccount) async throws -> ResVerifyAccount {
+func bubbelApiVerifyAccount(req: InVerifyAccount) async throws -> ResVerifyAccount {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/verify_account")!
+    let url = URL(string: bubbelBathDev + "/api/verify_account")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"
@@ -597,10 +597,10 @@ func bubbelApiVerifyAccount(bath: String, req: InVerifyAccount) async throws -> 
     return result
 }
 
-func bubbelApiSetUserProfile(bath: String, req: InSetUserProfile) async throws -> ResSetUserProfile {
+func bubbelApiSetUserProfile(req: InSetUserProfile) async throws -> ResSetUserProfile {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/set_user_profile")!
+    let url = URL(string: bubbelBathDev + "/api/set_user_profile")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"
@@ -615,10 +615,10 @@ func bubbelApiSetUserProfile(bath: String, req: InSetUserProfile) async throws -
     return result
 }
 
-func bubbelApiDeleteUser(bath: String, req: InDeleteUser) async throws -> ResDeleteUser {
+func bubbelApiDeleteUser(req: InDeleteUser) async throws -> ResDeleteUser {
     let jsonString = try req.jsonString()
     
-    let url = URL(string: bath + "/api/delete_user")!
+    let url = URL(string: bubbelBathDev + "/api/delete_user")!
     var urlRequest = URLRequest(url: url)
     urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
     urlRequest.httpMethod = "POST"

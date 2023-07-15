@@ -1,3 +1,5 @@
+// -- Types --
+
 export interface InCreateUser {
     email: string;
     password: string;
@@ -134,13 +136,14 @@ export enum DeleteUserErrorType {
     NoAuth = "NoAuth",
 }
 
-export var bubbelBathDev = "https://bubbel-bath.onrender.com";
+// -- API Bridge --
+
+const bubbelBathDev = "https://bubbel-bath.onrender.com";
 
 export async function bubbelApiCreateUser(
-    bath: String,
     req: InCreateUser,
 ): Promise<ResCreateUser> {
-    let fetchRes = await fetch(bath + "/api/create_user", {
+    let fetchRes = await fetch(bubbelBathDev + "/api/create_user", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
@@ -152,11 +155,8 @@ export async function bubbelApiCreateUser(
     return JSON.parse(resText);
 }
 
-export async function bubbelApiAuthUser(
-    bath: String,
-    req: InAuthUser,
-): Promise<ResAuthUser> {
-    let fetchRes = await fetch(bath + "/api/auth_user", {
+export async function bubbelApiAuthUser(req: InAuthUser): Promise<ResAuthUser> {
+    let fetchRes = await fetch(bubbelBathDev + "/api/auth_user", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
@@ -169,10 +169,9 @@ export async function bubbelApiAuthUser(
 }
 
 export async function bubbelApiDeauthUser(
-    bath: String,
     req: InDeauthUser,
 ): Promise<ResDeauthUser> {
-    let fetchRes = await fetch(bath + "/api/deauth_user", {
+    let fetchRes = await fetch(bubbelBathDev + "/api/deauth_user", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
@@ -185,10 +184,9 @@ export async function bubbelApiDeauthUser(
 }
 
 export async function bubbelApiVerifyAccount(
-    bath: String,
     req: InDeauthUser,
 ): Promise<ResDeauthUser> {
-    let fetchRes = await fetch(bath + "/api/verify_account", {
+    let fetchRes = await fetch(bubbelBathDev + "/api/verify_account", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
@@ -201,10 +199,9 @@ export async function bubbelApiVerifyAccount(
 }
 
 export async function bubbelApiSetUserProfile(
-    bath: String,
     req: InSetUserProfile,
 ): Promise<ResSetUserProfile> {
-    let fetchRes = await fetch(bath + "/api/set_user_profile", {
+    let fetchRes = await fetch(bubbelBathDev + "/api/set_user_profile", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
@@ -217,10 +214,9 @@ export async function bubbelApiSetUserProfile(
 }
 
 export async function bubbelApiDeleteUser(
-    bath: String,
     req: InDeleteUser,
 ): Promise<ResDeleteUser> {
-    let fetchRes = await fetch(bath + "/api/delete_user", {
+    let fetchRes = await fetch(bubbelBathDev + "/api/delete_user", {
         method: "post",
         headers: {
             "Content-Type": "application/json",
