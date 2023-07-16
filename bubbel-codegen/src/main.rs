@@ -29,6 +29,9 @@ fn main() {
     print!(InVerifyAccount);
     print!(ResVerifyAccount);
 
+    print!(InSendVerify);
+    print!(ResSendVerify);
+
     print!(InSetUserProfile);
     print!(ResSetUserProfile);
 
