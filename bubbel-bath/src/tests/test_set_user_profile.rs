@@ -31,7 +31,7 @@ pub fn test_set_user_profile() {
     .unwrap();
     acc_limbo.push_user(acc2);
 
-    waive_user_verification(&mut db, &mut acc_limbo);
+    acc_limbo.waive_user_verification(&mut db);
 
     let acc1 = auth_user(
         &mut db,

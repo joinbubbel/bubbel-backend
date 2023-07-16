@@ -18,7 +18,7 @@ pub fn test_basic_deauth_user() {
     .unwrap();
     acc_limbo.push_user(acc);
 
-    waive_user_verification(&mut db, &mut acc_limbo);
+    acc_limbo.waive_user_verification(&mut db);
 
     assert_eq!(
         auth_user(

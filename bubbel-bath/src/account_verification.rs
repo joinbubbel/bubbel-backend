@@ -13,6 +13,26 @@ const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(10000);
 const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 8;
 
 impl AccountLimboState {
+    pub fn get_code(&self, user: &UserId) -> Option<&String> {
+        self.account_codes.get(user).map(|(code, _)| code)
+    }
+
+    pub fn unchecked_verify_user(
+        &mut self,
+        db: &mut DataState,
+        user: &UserId,
+    ) -> Result<(), DatabaseError> {
+        use crate::schema::users::dsl;
+
+        self.account_codes.remove(user);
+
+        diesel::update(dsl::users.filter(dsl::id.eq(user.0)))
+            .set(dsl::is_verified.eq(true))
+            .execute(&mut db.db)
+            .map(|_| ())
+            .map_err(DatabaseError::from)
+    }
+
     pub fn push_user(&mut self, user: UserId) -> String {
         let code = generate_token_alphanumeric(ACCOUNT_VERIFICATION_CODE_LENGTH);
         self.account_codes
@@ -34,62 +54,21 @@ impl AccountLimboState {
             res
         });
     }
-}
 
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct VerifyAccount {
-    pub code: String,
-    pub user_id: UserId,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-#[serde(tag = "type")]
-pub enum VerifyAccountError {
-    InvalidCode,
-    CodeTimedOutOrInvalidUser,
-    Internal { ierror: String },
-}
-
-pub fn verify_user(
-    db: &mut DataState,
-    acc_limbo: &mut AccountLimboState,
-    req: VerifyAccount,
-) -> Result<(), VerifyAccountError> {
-    use crate::schema::users::dsl;
-
-    let (code, _) = acc_limbo
-        .account_codes
-        .get(&req.user_id)
-        .ok_or(VerifyAccountError::CodeTimedOutOrInvalidUser)?;
-    (code == &req.code)
-        .then_some(())
-        .ok_or(VerifyAccountError::InvalidCode)?;
-    acc_limbo.account_codes.remove(&req.user_id);
-
-    diesel::update(dsl::users.filter(dsl::id.eq(req.user_id.0)))
-        .set(dsl::is_verified.eq(true))
-        .execute(&mut db.db)
-        .map_err(|e| VerifyAccountError::Internal {
-            ierror: e.to_string(),
-        })?;
-
-    Ok(())
-}
-
-pub fn waive_user_verification(db: &mut DataState, acc_limbo: &mut AccountLimboState) {
-    acc_limbo
-        .account_codes
-        .clone()
-        .iter()
-        .for_each(|(user_id, (code, _))| {
-            verify_user(
-                db,
-                acc_limbo,
-                VerifyAccount {
-                    code: code.clone(),
-                    user_id: *user_id,
-                },
-            )
-            .unwrap();
-        });
+    pub fn waive_user_verification(&mut self, db: &mut DataState) {
+        self.account_codes
+            .clone()
+            .iter()
+            .for_each(|(user_id, (code, _))| {
+                verify_user(
+                    db,
+                    self,
+                    VerifyAccount {
+                        code: code.clone(),
+                        user_id: *user_id,
+                    },
+                )
+                .unwrap();
+            });
+    }
 }
