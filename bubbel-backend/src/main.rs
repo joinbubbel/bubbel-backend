@@ -156,7 +156,7 @@ async fn api_verify_user(
     let mut db = state.db.lock().unwrap();
     let mut acc_limbo = state.acc_limbo.lock().unwrap();
 
-    let res = match verify_user(&mut db, &mut acc_limbo, req.req) {
+    let res = match verify_account(&mut db, &mut acc_limbo, req.req) {
         Ok(_) => ResVerifyAccount { error: None },
         Err(e) => ResVerifyAccount { error: Some(e) },
     };

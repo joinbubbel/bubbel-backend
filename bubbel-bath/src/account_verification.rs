@@ -60,7 +60,7 @@ impl AccountLimboState {
             .clone()
             .iter()
             .for_each(|(user_id, (code, _))| {
-                verify_user(
+                verify_account(
                     db,
                     self,
                     VerifyAccount {

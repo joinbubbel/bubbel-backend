@@ -14,7 +14,7 @@ pub enum VerifyAccountError {
     Internal { ierror: String },
 }
 
-pub fn verify_user(
+pub fn verify_account(
     db: &mut DataState,
     acc_limbo: &mut AccountLimboState,
     req: VerifyAccount,

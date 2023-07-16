@@ -32,7 +32,7 @@ pub fn test_resend_verify() {
     );
 
     assert_eq!(
-        verify_user(
+        verify_account(
             &mut db,
             &mut acc_limbo,
             VerifyAccount {
@@ -46,7 +46,7 @@ pub fn test_resend_verify() {
     let (new_code, _) = acc_limbo.get_code_and_time(&acc).unwrap().clone();
 
     assert_eq!(
-        verify_user(
+        verify_account(
             &mut db,
             &mut acc_limbo,
             VerifyAccount {

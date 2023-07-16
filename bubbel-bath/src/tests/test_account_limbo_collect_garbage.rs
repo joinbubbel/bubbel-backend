@@ -30,7 +30,7 @@ pub fn test_account_collect_garbage() {
     .unwrap();
     let _ = acc_limbo.push_user(acc2);
 
-    verify_user(
+    verify_account(
         &mut db,
         &mut acc_limbo,
         VerifyAccount {
