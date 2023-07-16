@@ -68,6 +68,7 @@ async fn main() {
         .route("/api/auth_user", post(api_auth_user))
         .route("/api/deauth_user", post(api_deauth_user))
         .route("/api/verify_account", post(api_verify_user))
+        .route("/api/send_verify", post(api_send_verify))
         .route("/api/set_user_profile", post(api_set_user_profile))
         .route("/api/delete_user", post(api_delete_user))
         .layer(cors)
@@ -95,34 +96,8 @@ async fn api_create_user(
     debug.push_incoming(&req);
 
     let mut db = state.db.lock().unwrap();
-    let mut acc_limbo = state.acc_limbo.lock().unwrap();
-    let email = req.req.email.clone();
     let res = match create_user(&mut db, req.req) {
-        Ok(user_id) => {
-            let code = acc_limbo.push_user(user_id);
-            if email::send_verify_account_email(
-                &state.account_verification_email,
-                &state.account_verification_email_password,
-                &email,
-                &code,
-                &user_id.0.to_string(),
-            )
-            .is_err()
-            {
-                let rem = User::remove(&mut db, user_id).map_err(|e| CreateUserError::Internal {
-                    ierror: e.to_string(),
-                });
-                if let Err(e) = rem {
-                    ResCreateUser { error: Some(e) }
-                } else {
-                    ResCreateUser {
-                        error: Some(CreateUserError::SendVerification),
-                    }
-                }
-            } else {
-                ResCreateUser { error: None }
-            }
-        }
+        Ok(_) => ResCreateUser { error: None },
         Err(e) => ResCreateUser { error: Some(e) },
     };
     debug.push_outgoing(&res);
@@ -185,6 +160,51 @@ async fn api_verify_user(
         Ok(_) => ResVerifyAccount { error: None },
         Err(e) => ResVerifyAccount { error: Some(e) },
     };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_send_verify(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InSendVerify>,
+) -> Json<ResSendVerify> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let mut acc_limbo = state.acc_limbo.lock().unwrap();
+
+    let mut run = || {
+        let user = User::get(&mut db, req.req.user_id).map_err(|e| SendVerifyError::Internal {
+            ierror: e.to_string(),
+        })?;
+        send_verify(&mut acc_limbo, req.req.clone())?;
+
+        let (code, _) = acc_limbo.get_code_and_time(&req.req.user_id).unwrap();
+
+        if email::send_verify_account_email(
+            &state.account_verification_email,
+            &state.account_verification_email_password,
+            &user.email,
+            code,
+            &req.req.user_id.0.to_string(),
+        )
+        .is_err()
+        {
+            User::remove(&mut db, req.req.user_id).map_err(|e| SendVerifyError::Internal {
+                ierror: e.to_string(),
+            })
+        } else {
+            Ok(())
+        }
+    };
+
+    let res = match run() {
+        Ok(_) => ResSendVerify { error: None },
+        Err(e) => ResSendVerify { error: Some(e) },
+    };
+
     debug.push_outgoing(&res);
 
     Json(res)

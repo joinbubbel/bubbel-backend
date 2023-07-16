@@ -19,8 +19,8 @@ pub fn verify_user(
     acc_limbo: &mut AccountLimboState,
     req: VerifyAccount,
 ) -> Result<(), VerifyAccountError> {
-    let code = acc_limbo
-        .get_code(&req.user_id)
+    let (code, _) = acc_limbo
+        .get_code_and_time(&req.user_id)
         .ok_or(VerifyAccountError::CodeTimedOutOrInvalidUser)?;
     (code == &req.code)
         .then_some(())

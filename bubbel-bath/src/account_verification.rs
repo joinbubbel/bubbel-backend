@@ -13,8 +13,8 @@ const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(10000);
 const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 8;
 
 impl AccountLimboState {
-    pub fn get_code(&self, user: &UserId) -> Option<&String> {
-        self.account_codes.get(user).map(|(code, _)| code)
+    pub fn get_code_and_time(&self, user: &UserId) -> Option<&(String, SystemTime)> {
+        self.account_codes.get(user)
     }
 
     pub fn unchecked_verify_user(

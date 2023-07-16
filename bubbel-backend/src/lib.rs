@@ -69,6 +69,17 @@ pub struct ResVerifyAccount {
 }
 
 #[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InSendVerify {
+    #[serde(flatten)]
+    pub req: SendVerify,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct ResSendVerify {
+    pub error: Option<SendVerifyError>,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InSetUserProfile {
     #[serde(flatten)]
     pub req: SetUserProfile,
