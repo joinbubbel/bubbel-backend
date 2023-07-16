@@ -39,6 +39,11 @@ pub struct CreateUser {
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
+pub struct CreateUserOut {
+    pub user_id: UserId,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum CreateUserError {
     /// Email is not valid by backend standards.
@@ -56,7 +61,7 @@ pub enum CreateUserError {
     },
 }
 
-pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<UserId, CreateUserError> {
+pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<CreateUserOut, CreateUserError> {
     use crate::schema::users::dsl;
 
     validate_username(&req.username)
@@ -107,5 +112,5 @@ pub fn create_user(db: &mut DataState, req: CreateUser) -> Result<UserId, Create
         ierror: e.to_string(),
     })?;
 
-    Ok(id)
+    Ok(CreateUserOut { user_id: id })
 }

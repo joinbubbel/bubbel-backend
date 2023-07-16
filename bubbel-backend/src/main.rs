@@ -97,8 +97,14 @@ async fn api_create_user(
 
     let mut db = state.db.lock().unwrap();
     let res = match create_user(&mut db, req.req) {
-        Ok(_) => ResCreateUser { error: None },
-        Err(e) => ResCreateUser { error: Some(e) },
+        Ok(res) => ResCreateUser {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResCreateUser {
+            error: Some(e),
+            res: None,
+        },
     };
     debug.push_outgoing(&res);
 

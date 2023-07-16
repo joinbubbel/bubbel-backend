@@ -31,6 +31,7 @@ pub struct InCreateUser {
 #[derive(Serialize, Deserialize, JsonSchema)]
 pub struct ResCreateUser {
     pub error: Option<CreateUserError>,
+    pub res: Option<CreateUserOut>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema)]

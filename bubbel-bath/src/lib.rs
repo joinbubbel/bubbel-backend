@@ -20,7 +20,7 @@ mod tests;
 pub use account_verification::AccountLimboState;
 pub use auth::{generate_token_alphanumeric, AuthState, UserId, UserToken};
 pub use auth_user::{auth_user, deauth_user, AuthUser, AuthUserError, AuthUserOut, DeauthUser};
-pub use create_user::{create_user, CreateUser, CreateUserError};
+pub use create_user::{create_user, CreateUser, CreateUserError, CreateUserOut};
 pub use data::{DataState, DatabaseError, User, UserProfile};
 pub use delete_user::{delete_user, DeleteUser, DeleteUserError};
 pub use send_verify::{send_verify, send_verify_with_resend_time, SendVerify, SendVerifyError};
