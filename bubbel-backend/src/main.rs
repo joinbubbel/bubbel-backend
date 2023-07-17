@@ -23,6 +23,7 @@ const DEBUG_PASSWORD_ENV: &str = "BUBBEL_DEBUG_INSPECTOR_PASSWORD";
 const ACCOUNT_VERIFICATION_FROM_EMAIL: &str = "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL";
 const ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD: &str =
     "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD";
+const WAIVE_ALL_ACCOUNT_VERIFICATION: &str = "BUBBEL_ENABLE_WAIVE_ALL_ACCOUNT_VERIFICATION";
 
 pub struct AppState {
     db: Mutex<DataState>,
@@ -32,6 +33,7 @@ pub struct AppState {
 
     account_verification_email: String,
     account_verification_email_password: String,
+    enabled_waive_all_account_verification: bool,
 }
 
 #[tokio::main]
@@ -49,6 +51,9 @@ async fn main() {
         .find(|(k, _)| k == ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD)
         .unwrap();
 
+    let enabled_waive_all_account_verification =
+        std::env::vars().any(|(k, _)| k == WAIVE_ALL_ACCOUNT_VERIFICATION);
+
     let state = Arc::new(AppState {
         db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
@@ -56,6 +61,7 @@ async fn main() {
         acc_limbo: Mutex::new(AccountLimboState::default()),
         account_verification_email,
         account_verification_email_password,
+        enabled_waive_all_account_verification,
     });
     let garbage_state = Arc::clone(&state);
 
@@ -63,6 +69,10 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(root))
+        .route(
+            "/api/waive_all_account_verification",
+            get(get_waive_all_account_verification),
+        )
         .route("/api/debug", post(api_debug))
         .route("/api/create_user", post(api_create_user))
         .route("/api/auth_user", post(api_auth_user))
@@ -86,6 +96,14 @@ async fn main() {
 
 async fn root() -> &'static str {
     "Hello, World"
+}
+
+async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
+    if state.enabled_waive_all_account_verification {
+        let mut db = state.db.lock().unwrap();
+        let mut acc_limbo = state.acc_limbo.lock().unwrap();
+        acc_limbo.waive_user_verification(&mut db);
+    }
 }
 
 async fn api_create_user(
