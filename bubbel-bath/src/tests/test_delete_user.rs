@@ -17,7 +17,8 @@ pub fn test_delete_user() {
             password: "abcdef123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     acc_limbo.push_user(acc1);
 
     let acc2 = create_user(
@@ -28,7 +29,8 @@ pub fn test_delete_user() {
             password: "abcdef123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     acc_limbo.push_user(acc2);
 
     acc_limbo.waive_user_verification(&mut db);

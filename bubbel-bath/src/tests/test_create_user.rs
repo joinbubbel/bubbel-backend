@@ -46,7 +46,7 @@ pub fn test_create_multiple_users() {
                 password: "gfdjksafdljksa".to_owned(),
             },
         ),
-        Ok(UserId(1))
+        Ok(CreateUserOut { user_id: UserId(1) })
     );
     assert_eq!(
         create_user(
@@ -57,7 +57,7 @@ pub fn test_create_multiple_users() {
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Ok(UserId(2))
+        Ok(CreateUserOut { user_id: UserId(2) })
     );
     assert_eq!(
         create_user(

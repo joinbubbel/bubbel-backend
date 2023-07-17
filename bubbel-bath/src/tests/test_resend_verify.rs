@@ -14,7 +14,8 @@ pub fn test_resend_verify() {
             password: "password123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     let old_code = acc_limbo.push_user(acc);
 
     assert_eq!(

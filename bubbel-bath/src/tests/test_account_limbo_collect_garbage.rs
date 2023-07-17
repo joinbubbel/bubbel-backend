@@ -16,7 +16,8 @@ pub fn test_account_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     let acc1_code = acc_limbo.push_user(acc1);
 
     let acc2 = create_user(
@@ -27,7 +28,8 @@ pub fn test_account_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     let _ = acc_limbo.push_user(acc2);
 
     verify_account(

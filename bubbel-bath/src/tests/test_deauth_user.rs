@@ -15,7 +15,8 @@ pub fn test_basic_deauth_user() {
             password: "password123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     acc_limbo.push_user(acc);
 
     acc_limbo.waive_user_verification(&mut db);

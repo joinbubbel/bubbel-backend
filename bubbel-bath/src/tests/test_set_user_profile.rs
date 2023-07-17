@@ -17,7 +17,8 @@ pub fn test_set_user_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     acc_limbo.push_user(acc1);
 
     let acc2 = create_user(
@@ -28,7 +29,8 @@ pub fn test_set_user_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
-    .unwrap();
+    .unwrap()
+    .user_id;
     acc_limbo.push_user(acc2);
 
     acc_limbo.waive_user_verification(&mut db);
@@ -87,7 +89,7 @@ pub fn test_set_user_profile() {
 
     set_user_profile(
         &mut db,
-        &mut auth,
+        &auth,
         SetUserProfile {
             token: acc1.clone(),
             name: None,
