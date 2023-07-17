@@ -100,6 +100,7 @@ async fn root() -> &'static str {
 
 async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
     if state.enabled_waive_all_account_verification {
+        eprintln!("All account verification wavied.");
         let mut db = state.db.lock().unwrap();
         let mut acc_limbo = state.acc_limbo.lock().unwrap();
         acc_limbo.waive_user_verification(&mut db);
