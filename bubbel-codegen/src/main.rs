@@ -122,6 +122,13 @@ fn main() {
     );
 
     add!(
+        "bubbelApiSendVerify",
+        "/api/send_verify",
+        InSendVerify,
+        ResSendVerify
+    );
+
+    add!(
         "bubbelApiSetUserProfile",
         "/api/set_user_profile",
         InSetUserProfile,
