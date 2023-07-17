@@ -3,6 +3,7 @@ use json::{object, JsonValue};
 use project_root::get_project_root;
 use schemars::schema_for;
 
+mod kotlin;
 mod swift;
 mod typescript;
 
@@ -150,8 +151,8 @@ fn main() {
     let mut swift_out = project_root.clone();
     swift_out.push("sdks/BubbelBackend.swift");
 
-    // let mut kotlin_out = project_root.clone();
-    // kotlin_out.push("sdks/BubbelBackend.kt");
+    let mut kotlin_out = project_root.clone();
+    kotlin_out.push("sdks/BubbelBackend.kt");
 
     let targets = [
         (
@@ -165,6 +166,12 @@ fn main() {
             swift::get_args as GetArgs,
             swift::post_process as PostProcess,
             swift::get_fetch as GetFetch,
+        ),
+        (
+            kotlin_out,
+            kotlin::get_args as GetArgs,
+            kotlin::post_process as PostProcess,
+            kotlin::get_fetch as GetFetch,
         ),
     ];
 
