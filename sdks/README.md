@@ -33,6 +33,7 @@ password: String
 
 ```
 error: MaybeNull<CreateUserError>
+user_id: MaybeNull<Integer>
 ```
 
 ### `CreateUserError`
@@ -44,7 +45,6 @@ type: |
     "InvalidPassword"
     "InvalidPasswordCrypto"
     "EmailOrPasswordTaken"
-    "SendVerification"
     "Internal"
 ierror: MaybeNull<String>
 ```
@@ -119,6 +119,30 @@ ierror: MaybeNull<String>
 
 1. `ierror` will have a value if `type` is `"Internal"`.
 
+### `InSendVerify`
+
+```
+user_id: Integer
+```
+
+### `ResSendVerify`
+
+```
+error: MaybeNull<VerifyAccountError>
+```
+
+### `SendVerifyError`
+
+```
+type: |
+    "SendVerification"
+    "ResendTooSoon"
+    "Internal"
+ierror: MaybeNull<String>
+```
+
+1. `ierror` will have a value if `type` is `"Internal"`.
+
 ### `InSetUserProfile`
 
 ```
@@ -173,6 +197,7 @@ ierror: MaybeNull<String>
 ### `bubbelApiCreateUser` / `POST /api/create_user`
 
 Create a new user account.
+This will not send a verification code.
 Uses `InCreateUser`, returning `ResCreateUser`.
 
 ### `bubbelApiAuthUser` / `POST /api/auth_user`
@@ -188,6 +213,10 @@ Uses `InDeauthUser`, returning nothing.
 ### `bubbelApiVerifyAccount` / `POST /api/verify_account`
 
 Verify a user's account using a user ID and code.
+
+### `bubbelApiSendVerify` / `POST /api/send_verify`
+
+Send a verification code to the user to verify their account.
 
 ### `bubbelApiSetUserProfile` / `POST /api/set_user_profile`
 
