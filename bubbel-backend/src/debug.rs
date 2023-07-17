@@ -84,6 +84,7 @@ pub async fn api_debug(
 ) -> Json<ResDebug> {
     let debug = state.debug.read().unwrap();
 
+    eprintln!("{} {} {}", req.password, debug.enabled, debug.password);
     if req.password == debug.password && debug.enabled {
         Json(ResDebug {
             error: None,
