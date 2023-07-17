@@ -1,31 +1,77 @@
-// -- Types --
+const bubbelBathDev = 'https://bubbel-bath.onrender.com';export interface BubbelCodegenOut {
+    t0?:  InCreateUser;
+    t1?:  ResCreateUser;
+    t10?: InDeleteUser;
+    t11?: ResDeleteUser;
+    t2?:  InAuthUser;
+    t3?:  ResAuthUser;
+    t4?:  InDeauthUser;
+    t5?:  ResDeauthUser;
+    t6?:  InVerifyAccount;
+    t7?:  ResVerifyAccount;
+    t8?:  InSetUserProfile;
+    t9?:  ResSetUserProfile;
+    [property: string]: any;
+}
 
 export interface InCreateUser {
-    email: string;
+    email:    string;
     password: string;
     username: string;
     [property: string]: any;
 }
 
 export interface ResCreateUser {
-    error?: null | CreateUserError;
+    error?:   null | CreateUserError;
+    user_id?: number;
     [property: string]: any;
 }
 
+/**
+ * Email is not valid by backend standards.
+ *
+ * Username is not valid by backend standards.
+ *
+ * Password is not valid by backend standards.
+ *
+ * Password failed to be encrypted.
+ *
+ * Email or Username already taken.
+ */
 export interface CreateUserError {
-    type: CreateUserErrorType;
+    type:    PurpleType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum CreateUserErrorType {
+export enum PurpleType {
     EmailOrUsernametaken = "EmailOrUsernametaken",
     Internal = "Internal",
     InvalidEmail = "InvalidEmail",
     InvalidPassword = "InvalidPassword",
     InvalidPasswordCryto = "InvalidPasswordCryto",
     InvalidUsername = "InvalidUsername",
-    SendVerification = "SendVerification",
+}
+
+export interface InDeleteUser {
+    token: string;
+    [property: string]: any;
+}
+
+export interface ResDeleteUser {
+    error?: null | DeleteUserError;
+    [property: string]: any;
+}
+
+export interface DeleteUserError {
+    type:    FluffyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum FluffyType {
+    Internal = "Internal",
+    NoAuth = "NoAuth",
 }
 
 export interface InAuthUser {
@@ -35,20 +81,20 @@ export interface InAuthUser {
 }
 
 export interface ResAuthUser {
-    email?: string;
-    error?: null | AuthUserError;
-    token?: string;
+    email?:    string;
+    error?:    null | AuthUserError;
+    token?:    string;
     username?: string;
     [property: string]: any;
 }
 
 export interface AuthUserError {
-    type: AuthUserErrorType;
+    type:    TentacledType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum AuthUserErrorType {
+export enum TentacledType {
     Internal = "Internal",
     InvalidCredentials = "InvalidCredentials",
     InvalidPasswordCryto = "InvalidPasswordCryto",
@@ -67,7 +113,7 @@ export interface ResDeauthUser {
 }
 
 export interface InVerifyAccount {
-    code: string;
+    code:    string;
     user_id: number;
     [property: string]: any;
 }
@@ -78,24 +124,24 @@ export interface ResVerifyAccount {
 }
 
 export interface VerifyAccountError {
-    type: VerifyAccountErrorType;
+    type:    StickyType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum VerifyAccountErrorType {
+export enum StickyType {
     CodeTimedOutOrInvalidUser = "CodeTimedOutOrInvalidUser",
     Internal = "Internal",
     InvalidCode = "InvalidCode",
 }
 
 export interface InSetUserProfile {
-    banner?: null | string;
-    description?: null | string;
+    banner?:       null | string;
+    description?:  null | string;
     display_name?: null | string;
-    name?: null | string;
-    pfp?: null | string;
-    token: string;
+    name?:         null | string;
+    pfp?:          null | string;
+    token:         string;
     [property: string]: any;
 }
 
@@ -105,125 +151,80 @@ export interface ResSetUserProfile {
 }
 
 export interface SetUserProfileError {
-    type: SetUserProfileErrorType;
+    type:    FluffyType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum SetUserProfileErrorType {
-    Internal = "Internal",
-    NoAuth = "NoAuth",
-}
+export async function bubbelApiCreateUser(req: InCreateUser): Promise<ResCreateUser> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/create_user', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-export interface InDeleteUser {
-    token: string;
-    [property: string]: any;
-}
-
-export interface ResDeleteUser {
-    error?: null | DeleteUserError;
-    [property: string]: any;
-}
-
-export interface DeleteUserError {
-    type: DeleteUserErrorType;
-    ierror?: string;
-    [property: string]: any;
-}
-
-export enum DeleteUserErrorType {
-    Internal = "Internal",
-    NoAuth = "NoAuth",
-}
-
-// -- API Bridge --
-
-const bubbelBathDev = "https://bubbel-bath.onrender.com";
-
-export async function bubbelApiCreateUser(
-    req: InCreateUser,
-): Promise<ResCreateUser> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/create_user", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
-
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
 export async function bubbelApiAuthUser(req: InAuthUser): Promise<ResAuthUser> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/auth_user", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
+            let fetchRes = await fetch(bubbelBathDev + '/api/auth_user', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiDeauthUser(req: InDeauthUser): Promise<ResDeauthUser> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/deauth_user', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-export async function bubbelApiDeauthUser(
-    req: InDeauthUser,
-): Promise<ResDeauthUser> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/deauth_user", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiVerifyAccount(req: InVerifyAccount): Promise<ResVerifyAccount> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/verify_account', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiSetUserProfile(req: InSetUserProfile): Promise<ResSetUserProfile> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/set_user_profile', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-export async function bubbelApiVerifyAccount(
-    req: InDeauthUser,
-): Promise<ResDeauthUser> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/verify_account", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiDeleteUser(req: InDeleteUser): Promise<ResDeleteUser> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/delete_user', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
 
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
-
-export async function bubbelApiSetUserProfile(
-    req: InSetUserProfile,
-): Promise<ResSetUserProfile> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/set_user_profile", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
-
-export async function bubbelApiDeleteUser(
-    req: InDeleteUser,
-): Promise<ResDeleteUser> {
-    let fetchRes = await fetch(bubbelBathDev + "/api/delete_user", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify(req),
-    });
-    let resText = await fetchRes.text();
-    return JSON.parse(resText);
-}
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
