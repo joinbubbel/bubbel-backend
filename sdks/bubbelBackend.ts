@@ -178,6 +178,7 @@ export enum IndigoType {
     Internal = "Internal",
     ResendTooSoon = "ResendTooSoon",
     SendVerification = "SendVerification",
+    UserNotFound = "UserNotFound",
 }
 
 export async function bubbelApiCreateUser(req: InCreateUser): Promise<ResCreateUser> {

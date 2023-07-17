@@ -136,6 +136,7 @@ error: MaybeNull<VerifyAccountError>
 ```
 type: |
     "SendVerification"
+    "UserNotFound"
     "ResendTooSoon"
     "Internal"
 ierror: MaybeNull<String>

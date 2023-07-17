@@ -206,7 +206,8 @@ data class SendVerifyError (
 enum class IndigoType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("ResendTooSoon") ResendTooSoon("ResendTooSoon"),
-    @SerialName("SendVerification") SendVerification("SendVerification");
+    @SerialName("SendVerification") SendVerification("SendVerification"),
+    @SerialName("UserNotFound") UserNotFound("UserNotFound");
 }
 
 val BUBBEL_BATH_DEV = "https://bubbel-bath.onrender.com"

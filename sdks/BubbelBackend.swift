@@ -996,6 +996,7 @@ enum IndigoType: String, Codable {
     case resendTooSoon = "ResendTooSoon"
     case sendVerification = "SendVerification"
     case typeInternal = "Internal"
+    case userNotFound = "UserNotFound"
 }
 
 // MARK: - Helper functions for creating encoders and decoders

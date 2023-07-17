@@ -182,9 +182,11 @@ async fn api_send_verify(
     let mut acc_limbo = state.acc_limbo.lock().unwrap();
 
     let mut run = || {
-        let user = User::get(&mut db, req.req.user_id).map_err(|e| SendVerifyError::Internal {
-            ierror: e.to_string(),
-        })?;
+        let user = User::get(&mut db, req.req.user_id)
+            .map_err(|e| SendVerifyError::Internal {
+                ierror: e.to_string(),
+            })?
+            .ok_or(SendVerifyError::UserNotFound)?;
         send_verify(&mut acc_limbo, req.req.clone())?;
 
         let (code, _) = acc_limbo.get_code_and_time(&req.req.user_id).unwrap();

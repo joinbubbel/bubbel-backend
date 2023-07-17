@@ -9,6 +9,7 @@ pub struct SendVerify {
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum SendVerifyError {
+    UserNotFound,
     ResendTooSoon,
     SendVerification,
     Internal { ierror: String },

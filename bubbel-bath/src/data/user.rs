@@ -11,7 +11,7 @@ pub struct User {
 }
 
 impl User {
-    pub fn get(db: &mut DataState, id: UserId) -> Result<Self, DatabaseError> {
+    pub fn get(db: &mut DataState, id: UserId) -> Result<Option<Self>, DatabaseError> {
         use crate::schema::users::dsl;
 
         dsl::users
@@ -23,10 +23,7 @@ impl User {
             ))
             .filter(dsl::id.eq(id.0))
             .load::<User>(&mut db.db)
-            .map(|v| {
-                assert!(v.len() == 1);
-                v.first().cloned().unwrap()
-            })
+            .map(|v| v.first().cloned())
             .map_err(DatabaseError::from)
     }
 
