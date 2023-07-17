@@ -10,16 +10,18 @@ import Foundation
 struct BubbelCodegenOut: Codable {
     let t0: InCreateUser?
     let t1: ResCreateUser?
-    let t10: InDeleteUser?
-    let t11: ResDeleteUser?
+    let t10: InSetUserProfile?
+    let t11: ResSetUserProfile?
+    let t12: InDeleteUser?
+    let t13: ResDeleteUser?
     let t2: InAuthUser?
     let t3: ResAuthUser?
     let t4: InDeauthUser?
     let t5: ResDeauthUser?
     let t6: InVerifyAccount?
     let t7: ResVerifyAccount?
-    let t8: InSetUserProfile?
-    let t9: ResSetUserProfile?
+    let t8: InSendVerify?
+    let t9: ResSendVerify?
 }
 
 // MARK: BubbelCodegenOut convenience initializers and mutators
@@ -43,22 +45,26 @@ extension BubbelCodegenOut {
     func with(
         t0: InCreateUser?? = nil,
         t1: ResCreateUser?? = nil,
-        t10: InDeleteUser?? = nil,
-        t11: ResDeleteUser?? = nil,
+        t10: InSetUserProfile?? = nil,
+        t11: ResSetUserProfile?? = nil,
+        t12: InDeleteUser?? = nil,
+        t13: ResDeleteUser?? = nil,
         t2: InAuthUser?? = nil,
         t3: ResAuthUser?? = nil,
         t4: InDeauthUser?? = nil,
         t5: ResDeauthUser?? = nil,
         t6: InVerifyAccount?? = nil,
         t7: ResVerifyAccount?? = nil,
-        t8: InSetUserProfile?? = nil,
-        t9: ResSetUserProfile?? = nil
+        t8: InSendVerify?? = nil,
+        t9: ResSendVerify?? = nil
     ) -> BubbelCodegenOut {
         return BubbelCodegenOut(
             t0: t0 ?? self.t0,
             t1: t1 ?? self.t1,
             t10: t10 ?? self.t10,
             t11: t11 ?? self.t11,
+            t12: t12 ?? self.t12,
+            t13: t13 ?? self.t13,
             t2: t2 ?? self.t2,
             t3: t3 ?? self.t3,
             t4: t4 ?? self.t4,
@@ -232,6 +238,152 @@ enum PurpleType: String, Codable {
     case typeInternal = "Internal"
 }
 
+// MARK: - InSetUserProfile
+struct InSetUserProfile: Codable {
+    let banner, description, displayName, name: String?
+    let pfp: String?
+    let token: String
+
+    enum CodingKeys: String, CodingKey {
+        case banner, description
+        case displayName = "display_name"
+        case name, pfp, token
+    }
+}
+
+// MARK: InSetUserProfile convenience initializers and mutators
+
+extension InSetUserProfile {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(InSetUserProfile.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        banner: String?? = nil,
+        description: String?? = nil,
+        displayName: String?? = nil,
+        name: String?? = nil,
+        pfp: String?? = nil,
+        token: String? = nil
+    ) -> InSetUserProfile {
+        return InSetUserProfile(
+            banner: banner ?? self.banner,
+            description: description ?? self.description,
+            displayName: displayName ?? self.displayName,
+            name: name ?? self.name,
+            pfp: pfp ?? self.pfp,
+            token: token ?? self.token
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - ResSetUserProfile
+struct ResSetUserProfile: Codable {
+    let error: SetUserProfileError?
+}
+
+// MARK: ResSetUserProfile convenience initializers and mutators
+
+extension ResSetUserProfile {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(ResSetUserProfile.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        error: SetUserProfileError?? = nil
+    ) -> ResSetUserProfile {
+        return ResSetUserProfile(
+            error: error ?? self.error
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - SetUserProfileError
+struct SetUserProfileError: Codable {
+    let type: FluffyType
+    let ierror: String?
+}
+
+// MARK: SetUserProfileError convenience initializers and mutators
+
+extension SetUserProfileError {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(SetUserProfileError.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        type: FluffyType? = nil,
+        ierror: String?? = nil
+    ) -> SetUserProfileError {
+        return SetUserProfileError(
+            type: type ?? self.type,
+            ierror: ierror ?? self.ierror
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+enum FluffyType: String, Codable {
+    case noAuth = "NoAuth"
+    case typeInternal = "Internal"
+}
+
 // MARK: - InDeleteUser
 struct InDeleteUser: Codable {
     let token: String
@@ -353,11 +505,6 @@ extension DeleteUserError {
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
-}
-
-enum FluffyType: String, Codable {
-    case noAuth = "NoAuth"
-    case typeInternal = "Internal"
 }
 
 // MARK: - InAuthUser
@@ -718,24 +865,20 @@ enum StickyType: String, Codable {
     case typeInternal = "Internal"
 }
 
-// MARK: - InSetUserProfile
-struct InSetUserProfile: Codable {
-    let banner, description, displayName, name: String?
-    let pfp: String?
-    let token: String
+// MARK: - InSendVerify
+struct InSendVerify: Codable {
+    let userID: Int
 
     enum CodingKeys: String, CodingKey {
-        case banner, description
-        case displayName = "display_name"
-        case name, pfp, token
+        case userID = "user_id"
     }
 }
 
-// MARK: InSetUserProfile convenience initializers and mutators
+// MARK: InSendVerify convenience initializers and mutators
 
-extension InSetUserProfile {
+extension InSendVerify {
     init(data: Data) throws {
-        self = try newJSONDecoder().decode(InSetUserProfile.self, from: data)
+        self = try newJSONDecoder().decode(InSendVerify.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -750,20 +893,10 @@ extension InSetUserProfile {
     }
 
     func with(
-        banner: String?? = nil,
-        description: String?? = nil,
-        displayName: String?? = nil,
-        name: String?? = nil,
-        pfp: String?? = nil,
-        token: String? = nil
-    ) -> InSetUserProfile {
-        return InSetUserProfile(
-            banner: banner ?? self.banner,
-            description: description ?? self.description,
-            displayName: displayName ?? self.displayName,
-            name: name ?? self.name,
-            pfp: pfp ?? self.pfp,
-            token: token ?? self.token
+        userID: Int? = nil
+    ) -> InSendVerify {
+        return InSendVerify(
+            userID: userID ?? self.userID
         )
     }
 
@@ -776,16 +909,16 @@ extension InSetUserProfile {
     }
 }
 
-// MARK: - ResSetUserProfile
-struct ResSetUserProfile: Codable {
-    let error: SetUserProfileError?
+// MARK: - ResSendVerify
+struct ResSendVerify: Codable {
+    let error: SendVerifyError?
 }
 
-// MARK: ResSetUserProfile convenience initializers and mutators
+// MARK: ResSendVerify convenience initializers and mutators
 
-extension ResSetUserProfile {
+extension ResSendVerify {
     init(data: Data) throws {
-        self = try newJSONDecoder().decode(ResSetUserProfile.self, from: data)
+        self = try newJSONDecoder().decode(ResSendVerify.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -800,9 +933,9 @@ extension ResSetUserProfile {
     }
 
     func with(
-        error: SetUserProfileError?? = nil
-    ) -> ResSetUserProfile {
-        return ResSetUserProfile(
+        error: SendVerifyError?? = nil
+    ) -> ResSendVerify {
+        return ResSendVerify(
             error: error ?? self.error
         )
     }
@@ -816,17 +949,17 @@ extension ResSetUserProfile {
     }
 }
 
-// MARK: - SetUserProfileError
-struct SetUserProfileError: Codable {
-    let type: FluffyType
+// MARK: - SendVerifyError
+struct SendVerifyError: Codable {
+    let type: IndigoType
     let ierror: String?
 }
 
-// MARK: SetUserProfileError convenience initializers and mutators
+// MARK: SendVerifyError convenience initializers and mutators
 
-extension SetUserProfileError {
+extension SendVerifyError {
     init(data: Data) throws {
-        self = try newJSONDecoder().decode(SetUserProfileError.self, from: data)
+        self = try newJSONDecoder().decode(SendVerifyError.self, from: data)
     }
 
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
@@ -841,10 +974,10 @@ extension SetUserProfileError {
     }
 
     func with(
-        type: FluffyType? = nil,
+        type: IndigoType? = nil,
         ierror: String?? = nil
-    ) -> SetUserProfileError {
-        return SetUserProfileError(
+    ) -> SendVerifyError {
+        return SendVerifyError(
             type: type ?? self.type,
             ierror: ierror ?? self.ierror
         )
@@ -857,6 +990,12 @@ extension SetUserProfileError {
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
+}
+
+enum IndigoType: String, Codable {
+    case resendTooSoon = "ResendTooSoon"
+    case sendVerification = "SendVerification"
+    case typeInternal = "Internal"
 }
 
 // MARK: - Helper functions for creating encoders and decoders
@@ -970,6 +1109,23 @@ func bubbelApiVerifyAccount(req: InVerifyAccount) async throws -> ResVerifyAccou
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let result = try decoder.decode(ResVerifyAccount.self, from: data)
+            return result
+        }
+func bubbelApiSendVerify(req: InSendVerify) async throws -> ResSendVerify {
+            let json = try req.jsonData()
+            
+            let url = URL(string: bubbelBathDev + "/api/send_verify")!
+            var urlRequest = URLRequest(url: url)
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpMethod = "POST"
+            urlRequest.httpBody = json
+            
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            let (dataString) = String(data: data, encoding: .utf8) ?? ""
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let result = try decoder.decode(ResSendVerify.self, from: data)
             return result
         }
 func bubbelApiSetUserProfile(req: InSetUserProfile) async throws -> ResSetUserProfile {

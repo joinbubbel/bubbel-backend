@@ -1,16 +1,18 @@
 const bubbelBathDev = 'https://bubbel-bath.onrender.com';export interface BubbelCodegenOut {
     t0?:  InCreateUser;
     t1?:  ResCreateUser;
-    t10?: InDeleteUser;
-    t11?: ResDeleteUser;
+    t10?: InSetUserProfile;
+    t11?: ResSetUserProfile;
+    t12?: InDeleteUser;
+    t13?: ResDeleteUser;
     t2?:  InAuthUser;
     t3?:  ResAuthUser;
     t4?:  InDeauthUser;
     t5?:  ResDeauthUser;
     t6?:  InVerifyAccount;
     t7?:  ResVerifyAccount;
-    t8?:  InSetUserProfile;
-    t9?:  ResSetUserProfile;
+    t8?:  InSendVerify;
+    t9?:  ResSendVerify;
     [property: string]: any;
 }
 
@@ -53,6 +55,32 @@ export enum PurpleType {
     InvalidUsername = "InvalidUsername",
 }
 
+export interface InSetUserProfile {
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    name?:         null | string;
+    pfp?:          null | string;
+    token:         string;
+    [property: string]: any;
+}
+
+export interface ResSetUserProfile {
+    error?: null | SetUserProfileError;
+    [property: string]: any;
+}
+
+export interface SetUserProfileError {
+    type:    FluffyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum FluffyType {
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+}
+
 export interface InDeleteUser {
     token: string;
     [property: string]: any;
@@ -67,11 +95,6 @@ export interface DeleteUserError {
     type:    FluffyType;
     ierror?: string;
     [property: string]: any;
-}
-
-export enum FluffyType {
-    Internal = "Internal",
-    NoAuth = "NoAuth",
 }
 
 export interface InAuthUser {
@@ -135,25 +158,26 @@ export enum StickyType {
     InvalidCode = "InvalidCode",
 }
 
-export interface InSetUserProfile {
-    banner?:       null | string;
-    description?:  null | string;
-    display_name?: null | string;
-    name?:         null | string;
-    pfp?:          null | string;
-    token:         string;
+export interface InSendVerify {
+    user_id: number;
     [property: string]: any;
 }
 
-export interface ResSetUserProfile {
-    error?: null | SetUserProfileError;
+export interface ResSendVerify {
+    error?: null | SendVerifyError;
     [property: string]: any;
 }
 
-export interface SetUserProfileError {
-    type:    FluffyType;
+export interface SendVerifyError {
+    type:    IndigoType;
     ierror?: string;
     [property: string]: any;
+}
+
+export enum IndigoType {
+    Internal = "Internal",
+    ResendTooSoon = "ResendTooSoon",
+    SendVerification = "SendVerification",
 }
 
 export async function bubbelApiCreateUser(req: InCreateUser): Promise<ResCreateUser> {
@@ -194,6 +218,18 @@ export async function bubbelApiDeauthUser(req: InDeauthUser): Promise<ResDeauthU
         }
 export async function bubbelApiVerifyAccount(req: InVerifyAccount): Promise<ResVerifyAccount> {
             let fetchRes = await fetch(bubbelBathDev + '/api/verify_account', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiSendVerify(req: InSendVerify): Promise<ResSendVerify> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/send_verify', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
