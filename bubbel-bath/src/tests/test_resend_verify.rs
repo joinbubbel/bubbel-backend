@@ -33,28 +33,14 @@ pub fn test_resend_verify() {
     );
 
     assert_eq!(
-        verify_account(
-            &mut db,
-            &mut acc_limbo,
-            VerifyAccount {
-                code: old_code,
-                user_id: acc,
-            },
-        ),
-        Err(VerifyAccountError::InvalidCode)
+        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: old_code },),
+        Err(VerifyAccountError::CodeTimedOutOrAlreadyVerifiedOrInvalidCode)
     );
 
-    let (new_code, _) = acc_limbo.get_code_and_time(&acc).unwrap().clone();
+    let new_code = acc_limbo.get_code(&acc).unwrap().clone();
 
     assert_eq!(
-        verify_account(
-            &mut db,
-            &mut acc_limbo,
-            VerifyAccount {
-                code: new_code,
-                user_id: acc,
-            },
-        ),
+        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: new_code },),
         Ok(())
     );
 }

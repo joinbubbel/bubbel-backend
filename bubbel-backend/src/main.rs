@@ -208,14 +208,13 @@ async fn api_send_verify(
             .ok_or(SendVerifyError::UserNotFound)?;
         send_verify(&mut acc_limbo, req.req.clone())?;
 
-        let (code, _) = acc_limbo.get_code_and_time(&req.req.user_id).unwrap();
+        let code = acc_limbo.get_code(&req.req.user_id).unwrap();
 
         if email::send_verify_account_email(
             &state.account_verification_email,
             &state.account_verification_email_password,
             &user.email,
             code,
-            &req.req.user_id.0.to_string(),
         )
         .is_err()
         {

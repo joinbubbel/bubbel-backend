@@ -161,10 +161,7 @@ data class ResDeauthUser (
 
 @Serializable
 data class InVerifyAccount (
-    val code: String,
-
-    @SerialName("user_id")
-    val userID: Long
+    val code: String
 )
 
 @Serializable
@@ -180,9 +177,8 @@ data class VerifyAccountError (
 
 @Serializable
 enum class StickyType(val value: String) {
-    @SerialName("CodeTimedOutOrInvalidUser") CodeTimedOutOrInvalidUser("CodeTimedOutOrInvalidUser"),
-    @SerialName("Internal") Internal("Internal"),
-    @SerialName("InvalidCode") InvalidCode("InvalidCode");
+    @SerialName("CodeTimedOutOrAlreadyVerifiedOrInvalidCode") CodeTimedOutOrAlreadyVerifiedOrInvalidCode("CodeTimedOutOrAlreadyVerifiedOrInvalidCode"),
+    @SerialName("Internal") Internal("Internal");
 }
 
 @Serializable

@@ -10,7 +10,6 @@ pub fn send_verify_account_email(
     from_password: &str,
     email: &str,
     code: &str,
-    user_id: &str,
 ) -> Result<(), ()> {
     let m = Message::builder()
         .to(Mailbox::new(
@@ -18,9 +17,9 @@ pub fn send_verify_account_email(
             email.parse::<Address>().map_err(|_| ())?,
         ))
         .from(Mailbox::new(None, from.parse::<Address>().unwrap()))
-        .subject("Bubbel Account Verication Code")
+        .subject(format!("Bubbel Account Verication Code {}", code))
         .header(ContentType::TEXT_PLAIN)
-        .body(format!("user_id: {}\ncode: {}\n", user_id, code))
+        .body(format!("{}\n", code))
         .unwrap();
 
     let sender = SmtpTransport::starttls_relay("smtp-mail.outlook.com")

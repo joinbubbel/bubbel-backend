@@ -136,8 +136,7 @@ export interface ResDeauthUser {
 }
 
 export interface InVerifyAccount {
-    code:    string;
-    user_id: number;
+    code: string;
     [property: string]: any;
 }
 
@@ -153,9 +152,8 @@ export interface VerifyAccountError {
 }
 
 export enum StickyType {
-    CodeTimedOutOrInvalidUser = "CodeTimedOutOrInvalidUser",
+    CodeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode",
     Internal = "Internal",
-    InvalidCode = "InvalidCode",
 }
 
 export interface InSendVerify {

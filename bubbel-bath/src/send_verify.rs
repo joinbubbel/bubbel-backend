@@ -29,7 +29,7 @@ pub fn send_verify_with_resend_time(
     req: SendVerify,
     resend_time: Duration,
 ) -> Result<(), SendVerifyError> {
-    if let Some((_, time)) = acc_limbo.get_code_and_time(&req.user_id) {
+    if let Some(time) = acc_limbo.get_time(&req.user_id) {
         let now = SystemTime::now();
         ((time.elapsed().unwrap() - now.elapsed().unwrap()) > resend_time)
             .then_some(())

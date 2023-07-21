@@ -731,12 +731,6 @@ extension ResDeauthUser {
 // MARK: - InVerifyAccount
 struct InVerifyAccount: Codable {
     let code: String
-    let userID: Int
-
-    enum CodingKeys: String, CodingKey {
-        case code
-        case userID = "user_id"
-    }
 }
 
 // MARK: InVerifyAccount convenience initializers and mutators
@@ -758,12 +752,10 @@ extension InVerifyAccount {
     }
 
     func with(
-        code: String? = nil,
-        userID: Int? = nil
+        code: String? = nil
     ) -> InVerifyAccount {
         return InVerifyAccount(
-            code: code ?? self.code,
-            userID: userID ?? self.userID
+            code: code ?? self.code
         )
     }
 
@@ -860,8 +852,7 @@ extension VerifyAccountError {
 }
 
 enum StickyType: String, Codable {
-    case codeTimedOutOrInvalidUser = "CodeTimedOutOrInvalidUser"
-    case invalidCode = "InvalidCode"
+    case codeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode"
     case typeInternal = "Internal"
 }
 

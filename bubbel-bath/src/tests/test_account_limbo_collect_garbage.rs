@@ -37,7 +37,6 @@ pub fn test_account_collect_garbage() {
         &mut acc_limbo,
         VerifyAccount {
             code: acc1_code,
-            user_id: acc1,
         },
     )
     .unwrap();

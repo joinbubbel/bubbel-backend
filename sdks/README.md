@@ -98,7 +98,6 @@ error: Null
 
 ```
 code: String
-user_id: Integer
 ```
 
 ### `ResVerifyAccount`
@@ -111,8 +110,7 @@ error: MaybeNull<VerifyAccountError>
 
 ```
 type: |
-    "CodeTimedOutOrInvalidUser"
-    "InvalidCode"
+    "CodeTimedOutOrAlreadyVerifiedOrInvaidCode"
     "Internal"
 ierror: MaybeNull<String>
 ```
