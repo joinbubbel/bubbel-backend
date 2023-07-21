@@ -110,7 +110,7 @@ error: MaybeNull<VerifyAccountError>
 
 ```
 type: |
-    "CodeTimedOutOrAlreadyVerifiedOrInvaidCode"
+    "CodeTimedOutOrAlreadyVerifiedOrInvalidCode"
     "Internal"
 ierror: MaybeNull<String>
 ```
