@@ -19,7 +19,19 @@ pub fn send_verify_account_email(
         .from(Mailbox::new(None, from.parse::<Address>().unwrap()))
         .subject(format!("Bubbel Account Verication Code {}", code))
         .header(ContentType::TEXT_PLAIN)
-        .body(format!("Hi 👋,\n\nYou requested a verification code to sign up for Bubbel. It's here:\n\n{}\n\nIt will expire in 15 minutes.\n\nTip: you can triple-click the box to copy-paste the whole thing, including the dash in the middle.\n\n- Bubbel", code))
+        .body(format!( r#"
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <p>Hi 👋,</p>
+            <p>You requested a verification code to sign up for Bubbel. It's here:</p>
+            <p style="background-color: #f5f5f5; padding: 10px; font-size: 18px;">{}</p>
+            <p>It will expire in 15 minutes.</p>
+            <p>Tip: you can triple-click the box to copy-paste the whole thing, including the dash in the middle.</p>
+            <p>- Bubbel</p>
+        </body>
+        </html>
+        "#,
+        code))
         .unwrap();
 
     let sender = SmtpTransport::starttls_relay("smtp-mail.outlook.com")
