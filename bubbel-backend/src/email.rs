@@ -23,7 +23,7 @@ pub fn send_verify_account_email(
         .body(format!( r#"
         <html>
         <body style="font-family: Arial, sans-serif;">
-        <img src="{}" alt="Bubbel Logo" style="max-width: 16px;" />
+        <img src="{}" alt="Bubbel Logo" style="max-width: 24px;" />
             <p>Hi 👋,</p>
             <p>You requested a verification code to sign up for Bubbel. It's here:</p>
             <p style="font-size: 18px;">
