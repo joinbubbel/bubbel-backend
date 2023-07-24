@@ -35,7 +35,8 @@ pub fn send_verify_account_email(
         </body>
         </html>
         "#,
-        code))
+        image_url, code
+))
         .unwrap();
 
     let sender = SmtpTransport::starttls_relay("smtp-mail.outlook.com")
