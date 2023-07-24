@@ -22,8 +22,8 @@ pub fn send_verify_account_email(
         .header(ContentType::TEXT_HTML)
         .body(format!( r#"
         <html>
-        <body style="font-family: Arial, sans-serif;">
-        <img src="{}" alt="Bubbel Logo" style="max-width: 24px;" />
+        <body style="padding:0.5rem 1rem">
+        <img src="{}" alt="Bubbel Logo" style="width: 2.5rem" />
             <p>Hi 👋,</p>
             <p>You requested a verification code to sign up for Bubbel. It's here:</p>
             <p style="font-size: 18px;">
