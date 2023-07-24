@@ -11,6 +11,7 @@ pub fn send_verify_account_email(
     email: &str,
     code: &str,
 ) -> Result<(), ()> {
+    let image_url = "https://res.cloudinary.com/dxmrcocqb/image/upload/v1690213642/Group_1210_akkvya.png";
     let m = Message::builder()
         .to(Mailbox::new(
             None,
@@ -19,12 +20,15 @@ pub fn send_verify_account_email(
         .from(Mailbox::new(None, from.parse::<Address>().unwrap()))
         .subject(format!("Bubbel Account Verication Code {}", code))
         .header(ContentType::TEXT_PLAIN)
-        .body(format!( r#"
+        .html(format!( r#"
         <html>
         <body style="font-family: Arial, sans-serif;">
+        <img src="{}" alt="Bubbel Logo" style="display: block; margin: 0 auto; max-width: 200px;" />
             <p>Hi 👋,</p>
             <p>You requested a verification code to sign up for Bubbel. It's here:</p>
-            <p style="background-color: #f5f5f5; padding: 10px; font-size: 18px;">{}</p>
+            <p style="font-size: 18px;">
+            <strong>{}</strong>
+            </p>
             <p>It will expire in 15 minutes.</p>
             <p>Tip: you can triple-click the box to copy-paste the whole thing, including the dash in the middle.</p>
             <p>- Bubbel</p>
