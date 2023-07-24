@@ -22,11 +22,10 @@ pub fn send_verify_account_email(
         .html(format!( r#"
         <html>
         <body style="font-family: Arial, sans-serif;">
-        <img src="{}" alt="Bubbel Logo" style="display: block; margin: 0 auto; max-width: 200px;" />
             <p>Hi 👋,</p>
             <p>You requested a verification code to sign up for Bubbel. It's here:</p>
             <p style="font-size: 18px;">
-            <strong>{}</strong>
+            <h1>{}</h1>
             </p>
             <p>It will expire in 15 minutes.</p>
             <p>Tip: you can triple-click the box to copy-paste the whole thing, including the dash in the middle.</p>
