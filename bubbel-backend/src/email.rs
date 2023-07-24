@@ -18,8 +18,8 @@ pub fn send_verify_account_email(
         ))
         .from(Mailbox::new(None, from.parse::<Address>().unwrap()))
         .subject(format!("Bubbel Account Verication Code {}", code))
-        .header(ContentType::TEXT_PLAIN)
-        .html(format!( r#"
+        .header(ContentType::TEXT_HTML)
+        .body(format!( r#"
         <html>
         <body style="font-family: Arial, sans-serif;">
             <p>Hi 👋,</p>
