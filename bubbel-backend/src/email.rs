@@ -11,7 +11,6 @@ pub fn send_verify_account_email(
     email: &str,
     code: &str,
 ) -> Result<(), ()> {
-    let image_url = "https://res.cloudinary.com/dxmrcocqb/image/upload/v1690213642/Group_1210_akkvya.png";
     let m = Message::builder()
         .to(Mailbox::new(
             None,
@@ -35,7 +34,7 @@ pub fn send_verify_account_email(
         </body>
         </html>
         "#,
-        image_url, code
+     code
 ))
         .unwrap();
 
