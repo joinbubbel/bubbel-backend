@@ -12,7 +12,7 @@ pub struct AccountLimboState {
 }
 
 const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(10000);
-const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 12;
+const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 6;
 
 impl AccountLimboState {
     pub fn get_user_id(&self, code: &str) -> Option<&UserId> {
