@@ -5,6 +5,32 @@
 Hi, welcome to Bubbel's backend!
 This is a guide will introduce you to the architecture and layout of the project.
 
+## Setup
+
+### Installing `npx`
+
+Visit [Node.js](https://nodejs.org/en/download).
+
+### Installing Rust
+
+Visit [rustup.rs](https://rustup.rs).
+
+### Installing Postgres
+
+Install `postgresql` and `libpq` (which may or may not come along side `postgresql`).
+
+### Installing Diesel
+
+```sh
+cargo install diesel_cli --no-default-features --features postgres
+```
+
+### Running Tests and Migrations
+
+```sh
+cargo t
+```
+
 ## Project Layout
 
 Bubbel is designed as a majestic monolith that's split into two crates.
