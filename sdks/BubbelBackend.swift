@@ -440,7 +440,15 @@ extension InGetUserProfile {
 
 // MARK: - ResGetUserProfile
 struct ResGetUserProfile: Codable {
+    let banner, description, displayName: String?
     let error: GetUserProfileError?
+    let name, pfp: String?
+
+    enum CodingKeys: String, CodingKey {
+        case banner, description
+        case displayName = "display_name"
+        case error, name, pfp
+    }
 }
 
 // MARK: ResGetUserProfile convenience initializers and mutators
@@ -462,10 +470,20 @@ extension ResGetUserProfile {
     }
 
     func with(
-        error: GetUserProfileError?? = nil
+        banner: String?? = nil,
+        description: String?? = nil,
+        displayName: String?? = nil,
+        error: GetUserProfileError?? = nil,
+        name: String?? = nil,
+        pfp: String?? = nil
     ) -> ResGetUserProfile {
         return ResGetUserProfile(
-            error: error ?? self.error
+            banner: banner ?? self.banner,
+            description: description ?? self.description,
+            displayName: displayName ?? self.displayName,
+            error: error ?? self.error,
+            name: name ?? self.name,
+            pfp: pfp ?? self.pfp
         )
     }
 

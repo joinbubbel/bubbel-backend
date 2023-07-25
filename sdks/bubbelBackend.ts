@@ -90,7 +90,12 @@ export interface InGetUserProfile {
 }
 
 export interface ResGetUserProfile {
-    error?: null | GetUserProfileError;
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    error?:        null | GetUserProfileError;
+    name?:         null | string;
+    pfp?:          null | string;
     [property: string]: any;
 }
 

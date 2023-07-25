@@ -116,7 +116,15 @@ data class InGetUserProfile (
 
 @Serializable
 data class ResGetUserProfile (
-    val error: GetUserProfileError? = null
+    val banner: String? = null,
+    val description: String? = null,
+
+    @SerialName("display_name")
+    val displayName: String? = null,
+
+    val error: GetUserProfileError? = null,
+    val name: String? = null,
+    val pfp: String? = null
 )
 
 @Serializable

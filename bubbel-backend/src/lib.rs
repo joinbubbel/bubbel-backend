@@ -22,94 +22,49 @@ pub use bubbel_bath::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InCreateUser {
-    #[serde(flatten)]
-    pub req: CreateUser,
+type Empty = ();
+
+macro_rules! req {
+    ($IN: ident, $REQIN: ident) => {
+        #[derive(Serialize, Deserialize, JsonSchema)]
+        pub struct $IN {
+            #[serde(flatten)]
+            pub req: $REQIN,
+        }
+    };
 }
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResCreateUser {
-    pub error: Option<CreateUserError>,
-    #[serde(flatten)]
-    pub res: Option<CreateUserOut>,
+macro_rules! res {
+    ($RES: ident, $RESOUT: ident, $RESERROR: ident) => {
+        #[derive(Serialize, Deserialize, JsonSchema)]
+        pub struct $RES {
+            pub error: Option<$RESERROR>,
+            #[serde(flatten)]
+            pub res: Option<$RESOUT>,
+        }
+    };
 }
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InAuthUser {
-    #[serde(flatten)]
-    pub req: AuthUser,
-}
+req!(InCreateUser, CreateUser);
+res!(ResCreateUser, CreateUserOut, CreateUserError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResAuthUser {
-    pub error: Option<AuthUserError>,
-    #[serde(flatten)]
-    pub res: Option<AuthUserOut>,
-}
+req!(InAuthUser, AuthUser);
+res!(ResAuthUser, AuthUserOut, AuthUserError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InDeauthUser {
-    #[serde(flatten)]
-    pub req: DeauthUser,
-}
+req!(InDeauthUser, DeauthUser);
+res!(ResDeauthUser, Empty, Empty);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResDeauthUser {
-    pub error: Option<()>,
-}
+req!(InVerifyAccount, VerifyAccount);
+res!(ResVerifyAccount, Empty, VerifyAccountError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InVerifyAccount {
-    #[serde(flatten)]
-    pub req: VerifyAccount,
-}
+req!(InSendVerify, SendVerify);
+res!(ResSendVerify, Empty, SendVerifyError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResVerifyAccount {
-    pub error: Option<VerifyAccountError>,
-}
+req!(InSetUserProfile, SetUserProfile);
+res!(ResSetUserProfile, Empty, SetUserProfileError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InSendVerify {
-    #[serde(flatten)]
-    pub req: SendVerify,
-}
+req!(InGetUserProfile, GetUserProfile);
+res!(ResGetUserProfile, GetUserProfileOut, GetUserProfileError);
 
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResSendVerify {
-    pub error: Option<SendVerifyError>,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InSetUserProfile {
-    #[serde(flatten)]
-    pub req: SetUserProfile,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResSetUserProfile {
-    pub error: Option<SetUserProfileError>,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InGetUserProfile {
-    #[serde(flatten)]
-    pub req: GetUserProfile,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResGetUserProfile {
-    pub error: Option<GetUserProfileError>,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct InDeleteUser {
-    #[serde(flatten)]
-    pub req: DeleteUser,
-}
-
-#[derive(Serialize, Deserialize, JsonSchema)]
-pub struct ResDeleteUser {
-    pub error: Option<DeleteUserError>,
-}
+req!(InDeleteUser, DeleteUser);
+res!(ResDeleteUser, Empty, DeleteUserError);
