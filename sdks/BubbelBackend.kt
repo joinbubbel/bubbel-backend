@@ -20,8 +20,10 @@ data class BubbelCodegenOut (
     val t1: ResCreateUser? = null,
     val t10: InSetUserProfile? = null,
     val t11: ResSetUserProfile? = null,
-    val t12: InDeleteUser? = null,
-    val t13: ResDeleteUser? = null,
+    val t12: InGetUserProfile? = null,
+    val t13: ResGetUserProfile? = null,
+    val t14: InDeleteUser? = null,
+    val t15: ResDeleteUser? = null,
     val t2: InAuthUser? = null,
     val t3: ResAuthUser? = null,
     val t4: InDeauthUser? = null,
@@ -105,6 +107,32 @@ enum class FluffyType(val value: String) {
 }
 
 @Serializable
+data class InGetUserProfile (
+    val token: String? = null,
+
+    @SerialName("user_id")
+    val userID: Long
+)
+
+@Serializable
+data class ResGetUserProfile (
+    val error: GetUserProfileError? = null
+)
+
+@Serializable
+data class GetUserProfileError (
+    val type: TentacledType,
+    val ierror: String? = null
+)
+
+@Serializable
+enum class TentacledType(val value: String) {
+    @SerialName("Internal") Internal("Internal"),
+    @SerialName("NoAuth") NoAuth("NoAuth"),
+    @SerialName("UserNotFound") UserNotFound("UserNotFound");
+}
+
+@Serializable
 data class InDeleteUser (
     val token: String
 )
@@ -136,12 +164,12 @@ data class ResAuthUser (
 
 @Serializable
 data class AuthUserError (
-    val type: TentacledType,
+    val type: StickyType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class TentacledType(val value: String) {
+enum class StickyType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("InvalidCredentials") InvalidCredentials("InvalidCredentials"),
     @SerialName("InvalidPasswordCryto") InvalidPasswordCryto("InvalidPasswordCryto"),
@@ -171,12 +199,12 @@ data class ResVerifyAccount (
 
 @Serializable
 data class VerifyAccountError (
-    val type: StickyType,
+    val type: IndigoType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class StickyType(val value: String) {
+enum class IndigoType(val value: String) {
     @SerialName("CodeTimedOutOrAlreadyVerifiedOrInvalidCode") CodeTimedOutOrAlreadyVerifiedOrInvalidCode("CodeTimedOutOrAlreadyVerifiedOrInvalidCode"),
     @SerialName("Internal") Internal("Internal");
 }
@@ -194,12 +222,12 @@ data class ResSendVerify (
 
 @Serializable
 data class SendVerifyError (
-    val type: IndigoType,
+    val type: IndecentType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class IndigoType(val value: String) {
+enum class IndecentType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("ResendTooSoon") ResendTooSoon("ResendTooSoon"),
     @SerialName("SendVerification") SendVerification("SendVerification"),
@@ -337,6 +365,31 @@ suspend fun bubbelApiSetUserProfile(request: InSetUserProfile): ResSetUserProfil
         val encoder = Json { ignoreUnknownKeys = true }
         val json = encoder.encodeToString(request)
         val url = URL("$BUBBEL_BATH_DEV/api/set_user_profile")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiGetUserProfile(request: InGetUserProfile): ResGetUserProfile = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/get_user_profile")
         val urlConnection = url.openConnection() as HttpURLConnection
         urlConnection.requestMethod = "POST"
         urlConnection.setRequestProperty("Content-Type", "application/json")

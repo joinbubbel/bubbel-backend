@@ -3,8 +3,6 @@ use super::*;
 #[test]
 #[serial_test::serial]
 pub fn test_set_user_profile() {
-    use crate::schema::user_profiles::dsl;
-
     let mut db = new_data_state();
     let mut auth = AuthState::default();
     let mut acc_limbo = AccountLimboState::default();
@@ -101,28 +99,51 @@ pub fn test_set_user_profile() {
     )
     .unwrap();
 
-    let mut user_profiles = dsl::user_profiles.load::<UserProfile>(&mut db.db).unwrap();
-    user_profiles.sort_by(|a, b| a.user_id.cmp(&b.user_id));
+    assert_eq!(
+        get_user_profile(
+            &mut db,
+            &auth,
+            GetUserProfile {
+                user_id: UserId(99),
+                token: None
+            }
+        ),
+        Err(GetUserProfileError::UserNotFound)
+    );
 
     assert_eq!(
-        user_profiles,
-        vec![
-            UserProfile {
-                user_id: 1,
-                name: Some("David Zhong".to_owned()),
-                description: None,
-                display_name: None,
-                pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
-                banner: None
-            },
-            UserProfile {
-                user_id: 2,
-                name: None,
-                description: None,
-                display_name: None,
-                pfp: None,
-                banner: None
+        get_user_profile(
+            &mut db,
+            &auth,
+            GetUserProfile {
+                user_id: UserId(1),
+                token: None
             }
-        ]
+        ),
+        Ok(GetUserProfileOut {
+            name: Some("David Zhong".to_owned()),
+            description: None,
+            display_name: None,
+            pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
+            banner: None
+        })
+    );
+
+    assert_eq!(
+        get_user_profile(
+            &mut db,
+            &auth,
+            GetUserProfile {
+                user_id: UserId(2),
+                token: None
+            }
+        ),
+        Ok(GetUserProfileOut {
+            name: None,
+            description: None,
+            display_name: None,
+            pfp: None,
+            banner: None
+        })
     );
 }

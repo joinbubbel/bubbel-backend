@@ -80,6 +80,7 @@ async fn main() {
         .route("/api/verify_account", post(api_verify_user))
         .route("/api/send_verify", post(api_send_verify))
         .route("/api/set_user_profile", post(api_set_user_profile))
+        .route("/api/get_user_profile", post(api_get_user_profile))
         .route("/api/delete_user", post(api_delete_user))
         .layer(cors)
         .with_state(state);
@@ -100,7 +101,6 @@ async fn root() -> &'static str {
 
 async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
     if state.enabled_waive_all_account_verification {
-        eprintln!("All account verification wavied.");
         let mut db = state.db.lock().unwrap();
         let mut acc_limbo = state.acc_limbo.lock().unwrap();
         acc_limbo.waive_user_verification(&mut db);
@@ -249,6 +249,25 @@ async fn api_set_user_profile(
     let res = match set_user_profile(&mut db, &auth, req.req) {
         Ok(_) => ResSetUserProfile { error: None },
         Err(e) => ResSetUserProfile { error: Some(e) },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_get_user_profile(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InGetUserProfile>,
+) -> Json<ResGetUserProfile> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match get_user_profile(&mut db, &auth, req.req) {
+        Ok(_) => ResGetUserProfile { error: None },
+        Err(e) => ResGetUserProfile { error: Some(e) },
     };
     debug.push_outgoing(&res);
 

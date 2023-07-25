@@ -12,8 +12,10 @@ struct BubbelCodegenOut: Codable {
     let t1: ResCreateUser?
     let t10: InSetUserProfile?
     let t11: ResSetUserProfile?
-    let t12: InDeleteUser?
-    let t13: ResDeleteUser?
+    let t12: InGetUserProfile?
+    let t13: ResGetUserProfile?
+    let t14: InDeleteUser?
+    let t15: ResDeleteUser?
     let t2: InAuthUser?
     let t3: ResAuthUser?
     let t4: InDeauthUser?
@@ -47,8 +49,10 @@ extension BubbelCodegenOut {
         t1: ResCreateUser?? = nil,
         t10: InSetUserProfile?? = nil,
         t11: ResSetUserProfile?? = nil,
-        t12: InDeleteUser?? = nil,
-        t13: ResDeleteUser?? = nil,
+        t12: InGetUserProfile?? = nil,
+        t13: ResGetUserProfile?? = nil,
+        t14: InDeleteUser?? = nil,
+        t15: ResDeleteUser?? = nil,
         t2: InAuthUser?? = nil,
         t3: ResAuthUser?? = nil,
         t4: InDeauthUser?? = nil,
@@ -65,6 +69,8 @@ extension BubbelCodegenOut {
             t11: t11 ?? self.t11,
             t12: t12 ?? self.t12,
             t13: t13 ?? self.t13,
+            t14: t14 ?? self.t14,
+            t15: t15 ?? self.t15,
             t2: t2 ?? self.t2,
             t3: t3 ?? self.t3,
             t4: t4 ?? self.t4,
@@ -384,6 +390,143 @@ enum FluffyType: String, Codable {
     case typeInternal = "Internal"
 }
 
+// MARK: - InGetUserProfile
+struct InGetUserProfile: Codable {
+    let token: String?
+    let userID: Int
+
+    enum CodingKeys: String, CodingKey {
+        case token
+        case userID = "user_id"
+    }
+}
+
+// MARK: InGetUserProfile convenience initializers and mutators
+
+extension InGetUserProfile {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(InGetUserProfile.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        token: String?? = nil,
+        userID: Int? = nil
+    ) -> InGetUserProfile {
+        return InGetUserProfile(
+            token: token ?? self.token,
+            userID: userID ?? self.userID
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - ResGetUserProfile
+struct ResGetUserProfile: Codable {
+    let error: GetUserProfileError?
+}
+
+// MARK: ResGetUserProfile convenience initializers and mutators
+
+extension ResGetUserProfile {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(ResGetUserProfile.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        error: GetUserProfileError?? = nil
+    ) -> ResGetUserProfile {
+        return ResGetUserProfile(
+            error: error ?? self.error
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - GetUserProfileError
+struct GetUserProfileError: Codable {
+    let type: TentacledType
+    let ierror: String?
+}
+
+// MARK: GetUserProfileError convenience initializers and mutators
+
+extension GetUserProfileError {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(GetUserProfileError.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        type: TentacledType? = nil,
+        ierror: String?? = nil
+    ) -> GetUserProfileError {
+        return GetUserProfileError(
+            type: type ?? self.type,
+            ierror: ierror ?? self.ierror
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+enum TentacledType: String, Codable {
+    case noAuth = "NoAuth"
+    case typeInternal = "Internal"
+    case userNotFound = "UserNotFound"
+}
+
 // MARK: - InDeleteUser
 struct InDeleteUser: Codable {
     let token: String
@@ -599,7 +742,7 @@ extension ResAuthUser {
 
 // MARK: - AuthUserError
 struct AuthUserError: Codable {
-    let type: TentacledType
+    let type: StickyType
     let ierror: String?
 }
 
@@ -622,7 +765,7 @@ extension AuthUserError {
     }
 
     func with(
-        type: TentacledType? = nil,
+        type: StickyType? = nil,
         ierror: String?? = nil
     ) -> AuthUserError {
         return AuthUserError(
@@ -640,7 +783,7 @@ extension AuthUserError {
     }
 }
 
-enum TentacledType: String, Codable {
+enum StickyType: String, Codable {
     case invalidCredentials = "InvalidCredentials"
     case invalidPasswordCryto = "InvalidPasswordCryto"
     case typeInternal = "Internal"
@@ -810,7 +953,7 @@ extension ResVerifyAccount {
 
 // MARK: - VerifyAccountError
 struct VerifyAccountError: Codable {
-    let type: StickyType
+    let type: IndigoType
     let ierror: String?
 }
 
@@ -833,7 +976,7 @@ extension VerifyAccountError {
     }
 
     func with(
-        type: StickyType? = nil,
+        type: IndigoType? = nil,
         ierror: String?? = nil
     ) -> VerifyAccountError {
         return VerifyAccountError(
@@ -851,7 +994,7 @@ extension VerifyAccountError {
     }
 }
 
-enum StickyType: String, Codable {
+enum IndigoType: String, Codable {
     case codeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode"
     case typeInternal = "Internal"
 }
@@ -942,7 +1085,7 @@ extension ResSendVerify {
 
 // MARK: - SendVerifyError
 struct SendVerifyError: Codable {
-    let type: IndigoType
+    let type: IndecentType
     let ierror: String?
 }
 
@@ -965,7 +1108,7 @@ extension SendVerifyError {
     }
 
     func with(
-        type: IndigoType? = nil,
+        type: IndecentType? = nil,
         ierror: String?? = nil
     ) -> SendVerifyError {
         return SendVerifyError(
@@ -983,7 +1126,7 @@ extension SendVerifyError {
     }
 }
 
-enum IndigoType: String, Codable {
+enum IndecentType: String, Codable {
     case resendTooSoon = "ResendTooSoon"
     case sendVerification = "SendVerification"
     case typeInternal = "Internal"
@@ -1135,6 +1278,23 @@ func bubbelApiSetUserProfile(req: InSetUserProfile) async throws -> ResSetUserPr
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let result = try decoder.decode(ResSetUserProfile.self, from: data)
+            return result
+        }
+func bubbelApiGetUserProfile(req: InGetUserProfile) async throws -> ResGetUserProfile {
+            let json = try req.jsonData()
+            
+            let url = URL(string: bubbelBathDev + "/api/get_user_profile")!
+            var urlRequest = URLRequest(url: url)
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpMethod = "POST"
+            urlRequest.httpBody = json
+            
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            let (dataString) = String(data: data, encoding: .utf8) ?? ""
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let result = try decoder.decode(ResGetUserProfile.self, from: data)
             return result
         }
 func bubbelApiDeleteUser(req: InDeleteUser) async throws -> ResDeleteUser {

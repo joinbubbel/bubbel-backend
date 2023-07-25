@@ -93,6 +93,17 @@ pub struct ResSetUserProfile {
 }
 
 #[derive(Serialize, Deserialize, JsonSchema)]
+pub struct InGetUserProfile {
+    #[serde(flatten)]
+    pub req: GetUserProfile,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct ResGetUserProfile {
+    pub error: Option<GetUserProfileError>,
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct InDeleteUser {
     #[serde(flatten)]
     pub req: DeleteUser,

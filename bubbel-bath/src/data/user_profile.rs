@@ -30,6 +30,27 @@ impl UserProfile {
             .map_err(DatabaseError::from)
     }
 
+    pub fn unchecked_get(
+        db: &mut DataState,
+        id: UserId,
+    ) -> Result<Option<UserProfile>, DatabaseError> {
+        use crate::schema::user_profiles::dsl;
+
+        dsl::user_profiles
+            .select((
+                dsl::user_id,
+                dsl::name,
+                dsl::description,
+                dsl::display_name,
+                dsl::pfp,
+                dsl::banner,
+            ))
+            .filter(dsl::user_id.eq(id.0))
+            .load::<UserProfile>(&mut db.db)
+            .map(|v| v.first().cloned())
+            .map_err(DatabaseError::from)
+    }
+
     pub fn update_partial(&self, db: &mut DataState) -> Result<(), DatabaseError> {
         use crate::schema::user_profiles::dsl;
 

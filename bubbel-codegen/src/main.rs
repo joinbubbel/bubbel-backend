@@ -137,6 +137,13 @@ fn main() {
     );
 
     add!(
+        "bubbelApiGetUserProfile",
+        "/api/get_user_profile",
+        InGetUserProfile,
+        ResGetUserProfile
+    );
+
+    add!(
         "bubbelApiDeleteUser",
         "/api/delete_user",
         InDeleteUser,

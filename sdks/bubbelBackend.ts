@@ -3,8 +3,10 @@ const bubbelBathDev = 'https://bubbel-bath.onrender.com';export interface Bubbel
     t1?:  ResCreateUser;
     t10?: InSetUserProfile;
     t11?: ResSetUserProfile;
-    t12?: InDeleteUser;
-    t13?: ResDeleteUser;
+    t12?: InGetUserProfile;
+    t13?: ResGetUserProfile;
+    t14?: InDeleteUser;
+    t15?: ResDeleteUser;
     t2?:  InAuthUser;
     t3?:  ResAuthUser;
     t4?:  InDeauthUser;
@@ -81,6 +83,29 @@ export enum FluffyType {
     NoAuth = "NoAuth",
 }
 
+export interface InGetUserProfile {
+    token?:  null | string;
+    user_id: number;
+    [property: string]: any;
+}
+
+export interface ResGetUserProfile {
+    error?: null | GetUserProfileError;
+    [property: string]: any;
+}
+
+export interface GetUserProfileError {
+    type:    TentacledType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum TentacledType {
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+    UserNotFound = "UserNotFound",
+}
+
 export interface InDeleteUser {
     token: string;
     [property: string]: any;
@@ -112,12 +137,12 @@ export interface ResAuthUser {
 }
 
 export interface AuthUserError {
-    type:    TentacledType;
+    type:    StickyType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum TentacledType {
+export enum StickyType {
     Internal = "Internal",
     InvalidCredentials = "InvalidCredentials",
     InvalidPasswordCryto = "InvalidPasswordCryto",
@@ -146,12 +171,12 @@ export interface ResVerifyAccount {
 }
 
 export interface VerifyAccountError {
-    type:    StickyType;
+    type:    IndigoType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum StickyType {
+export enum IndigoType {
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode",
     Internal = "Internal",
 }
@@ -167,12 +192,12 @@ export interface ResSendVerify {
 }
 
 export interface SendVerifyError {
-    type:    IndigoType;
+    type:    IndecentType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum IndigoType {
+export enum IndecentType {
     Internal = "Internal",
     ResendTooSoon = "ResendTooSoon",
     SendVerification = "SendVerification",
@@ -241,6 +266,18 @@ export async function bubbelApiSendVerify(req: InSendVerify): Promise<ResSendVer
         }
 export async function bubbelApiSetUserProfile(req: InSetUserProfile): Promise<ResSetUserProfile> {
             let fetchRes = await fetch(bubbelBathDev + '/api/set_user_profile', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetUserProfile(req: InGetUserProfile): Promise<ResGetUserProfile> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_user_profile', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
