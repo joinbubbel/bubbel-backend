@@ -11,7 +11,7 @@ pub struct AccountLimboState {
     account_code_times: HashMap<UserId, SystemTime>,
 }
 
-const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(10000);
+const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(900);
 const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 6;
 
 impl AccountLimboState {
