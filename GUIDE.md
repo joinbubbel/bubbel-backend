@@ -19,6 +19,11 @@ Visit [rustup.rs](https://rustup.rs).
 
 Install `postgresql` and `libpq` (which may or may not come along side `postgresql`).
 
+Now, you will need to create a database that satisfies this URL:
+[postgresql://postgres:abc@localhost:5432/bubbel-test]().
+
+I'm not quite sure how to do this, so you're on your own.
+
 ### Installing Diesel
 
 ```sh
