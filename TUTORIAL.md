@@ -31,7 +31,8 @@ Bubbel's backend is make of multiple crates.
 (Rust packages are called crates.)
 The more detailed explanation can be found [in the guide](/GUIDE.md), but in
 short, `bubbel-bath` holds the logic code and `bubbel-backend` connects
-`bubbel-bath` to the internet and defines the types used by the frontend.
+`bubbel-bath` to the internet.
+It also defines the types used by the frontend.
 `bubbel-codegen` and `bubbel-inspector` are side packages that help us automate
 tedious work.
 
