@@ -308,7 +308,7 @@ However, we will need to generate code and notify frontend developers.
 
 ```sh
 # Make sure that you are in the project root.
-cargo r --bin bubbel-codegen.
+cargo r --bin bubbel-codegen
 ```
 
 You will now see changes in `sdks/`.
