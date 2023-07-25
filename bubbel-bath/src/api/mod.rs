@@ -3,10 +3,10 @@ use super::*;
 mod auth_user;
 mod create_user;
 mod delete_user;
+mod get_user_profile;
 mod send_verify;
 mod set_user_profile;
 mod verify_account;
-mod get_user_profile;
 
 pub use auth_user::{auth_user, deauth_user, AuthUser, AuthUserError, AuthUserOut, DeauthUser};
 pub use create_user::{create_user, CreateUser, CreateUserError, CreateUserOut};

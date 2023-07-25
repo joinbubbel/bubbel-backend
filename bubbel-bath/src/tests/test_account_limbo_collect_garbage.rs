@@ -32,14 +32,7 @@ pub fn test_account_collect_garbage() {
     .user_id;
     let _ = acc_limbo.push_user(acc2);
 
-    verify_account(
-        &mut db,
-        &mut acc_limbo,
-        VerifyAccount {
-            code: acc1_code,
-        },
-    )
-    .unwrap();
+    verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: acc1_code }).unwrap();
 
     acc_limbo.collect_garbage_with_expire(&mut db, std::time::Duration::from_secs(0));
 
