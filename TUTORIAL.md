@@ -77,7 +77,7 @@ pub struct DangerousLogin {
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct DangerousLogin {
+pub struct DangerousLoginOut {
     pub token: String
 }
 
