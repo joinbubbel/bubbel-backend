@@ -133,6 +133,7 @@ Always run before pushing:
 
 ```sh
 cargo fmt
+cargo clippy
 cargo t
 ```
 

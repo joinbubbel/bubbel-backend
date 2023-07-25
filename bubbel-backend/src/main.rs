@@ -165,7 +165,10 @@ async fn api_deauth_user(
     let mut auth = state.auth.write().unwrap();
     deauth_user(&mut auth, req.req);
 
-    let res = ResDeauthUser { error: None };
+    let res = ResDeauthUser {
+        error: None,
+        res: Some(()),
+    };
     debug.push_outgoing(&res);
 
     Json(res)
@@ -182,8 +185,14 @@ async fn api_verify_user(
     let mut acc_limbo = state.acc_limbo.lock().unwrap();
 
     let res = match verify_account(&mut db, &mut acc_limbo, req.req) {
-        Ok(_) => ResVerifyAccount { error: None },
-        Err(e) => ResVerifyAccount { error: Some(e) },
+        Ok(_) => ResVerifyAccount {
+            error: None,
+            res: Some(()),
+        },
+        Err(e) => ResVerifyAccount {
+            error: Some(e),
+            res: Some(()),
+        },
     };
     debug.push_outgoing(&res);
 
@@ -227,8 +236,14 @@ async fn api_send_verify(
     };
 
     let res = match run() {
-        Ok(_) => ResSendVerify { error: None },
-        Err(e) => ResSendVerify { error: Some(e) },
+        Ok(_) => ResSendVerify {
+            error: None,
+            res: Some(()),
+        },
+        Err(e) => ResSendVerify {
+            error: Some(e),
+            res: Some(()),
+        },
     };
 
     debug.push_outgoing(&res);
@@ -247,8 +262,14 @@ async fn api_set_user_profile(
     let auth = state.auth.read().unwrap();
 
     let res = match set_user_profile(&mut db, &auth, req.req) {
-        Ok(_) => ResSetUserProfile { error: None },
-        Err(e) => ResSetUserProfile { error: Some(e) },
+        Ok(_) => ResSetUserProfile {
+            error: None,
+            res: Some(()),
+        },
+        Err(e) => ResSetUserProfile {
+            error: Some(e),
+            res: Some(()),
+        },
     };
     debug.push_outgoing(&res);
 
@@ -266,8 +287,14 @@ async fn api_get_user_profile(
     let auth = state.auth.read().unwrap();
 
     let res = match get_user_profile(&mut db, &auth, req.req) {
-        Ok(_) => ResGetUserProfile { error: None },
-        Err(e) => ResGetUserProfile { error: Some(e) },
+        Ok(res) => ResGetUserProfile {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResGetUserProfile {
+            error: Some(e),
+            res: None,
+        },
     };
     debug.push_outgoing(&res);
 
@@ -285,8 +312,14 @@ async fn api_delete_user(
     let mut auth = state.auth.write().unwrap();
 
     let res = match delete_user(&mut db, &mut auth, req.req) {
-        Ok(_) => ResDeleteUser { error: None },
-        Err(e) => ResDeleteUser { error: Some(e) },
+        Ok(_) => ResDeleteUser {
+            error: None,
+            res: Some(()),
+        },
+        Err(e) => ResDeleteUser {
+            error: Some(e),
+            res: Some(()),
+        },
     };
     debug.push_outgoing(&res);
 
