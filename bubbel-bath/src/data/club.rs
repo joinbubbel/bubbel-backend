@@ -27,6 +27,7 @@ pub struct ClubProfile {
 }
 
 impl ClubProfile {
+    /// Inserts an empty club profile with `owner_id` and `name`.
     pub fn insert_new(
         db: &mut DataState,
         owner_id: &UserId,
@@ -49,6 +50,7 @@ impl ClubProfile {
             .map_err(DatabaseError::from)
     }
 
+    /// Try to get a club profile using `id`.
     pub fn get(db: &mut DataState, id: &ClubId) -> Result<Option<Self>, DatabaseError> {
         use crate::schema::club_profiles::dsl;
 
@@ -67,6 +69,8 @@ impl ClubProfile {
             .map_err(DatabaseError::from)
     }
 
+    /// Remove a club profile using `id`.
+    /// Nothing happens if the club doesn't exist.
     pub fn remove(db: &mut DataState, id: ClubId) -> Result<(), DatabaseError> {
         use crate::schema::club_profiles::dsl;
 
@@ -91,6 +95,8 @@ pub struct ClubProfilePartial {
 }
 
 impl ClubProfilePartial {
+    /// Partially update a club profile.
+    /// fields that are `None` will have no affect on the database.
     pub fn unchecked_partial_update(
         &self,
         db: &mut DataState,

@@ -52,7 +52,8 @@ pub enum CreateUserError {
     InvalidUsername,
     /// Password is not valid by backend standards.
     InvalidPassword,
-    /// Password failed to be encrypted.
+    /// Got an error from a cryptography function.
+    /// This error should never occur.
     InvalidPasswordCryto,
     /// Email or Username already taken.
     EmailOrUsernametaken,

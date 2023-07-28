@@ -14,6 +14,7 @@ pub struct User {
 }
 
 impl User {
+    /// Try to get a user using `id`.
     pub fn get(db: &mut DataState, id: UserId) -> Result<Option<Self>, DatabaseError> {
         use crate::schema::users::dsl;
 
@@ -30,6 +31,8 @@ impl User {
             .map_err(DatabaseError::from)
     }
 
+    /// Remove a user using `id`.
+    /// Nothing happens if the user doesn't exist.
     pub fn remove(db: &mut DataState, id: UserId) -> Result<(), DatabaseError> {
         use crate::schema::users::dsl;
 

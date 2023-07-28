@@ -36,7 +36,7 @@ pub fn get_user_profile(
     {
         Err(GetUserProfileError::UserNotFound)?;
     }
-    let profile = UserProfile::unchecked_get(db, req.user_id)
+    let profile = UserProfile::get(db, req.user_id)
         .map_err(|e| GetUserProfileError::Internal {
             ierror: e.to_string(),
         })?

@@ -19,6 +19,8 @@ pub struct AuthUserOut {
 #[serde(tag = "type")]
 pub enum AuthUserError {
     InvalidCredentials,
+    /// Got an error from a cryptography function.
+    /// This error should never occur.
     InvalidPasswordCryto,
     UserNotFound,
     UserNotVerified,

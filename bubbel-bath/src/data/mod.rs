@@ -9,6 +9,7 @@ pub use club::{ClubId, ClubProfile, ClubProfilePartial};
 pub use user::{User, UserId};
 pub use user_profile::{UserProfile, UserProfilePartial};
 
+/// Holds the state required to connect to the database.
 pub struct DataState {
     pub db: PgConnection,
     pub user_salt: String,
@@ -24,6 +25,8 @@ impl DataState {
     }
 }
 
+/// All of these errors are directly from [`diesel`](https://docs.rs/diesel/latest/diesel/result/enum.Error.html).
+/// Errors that should not be possible are handled with [`DatabaseError::Internal`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DatabaseError {
     NotFound,

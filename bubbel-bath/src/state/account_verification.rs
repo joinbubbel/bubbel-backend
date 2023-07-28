@@ -5,13 +5,17 @@ use std::{
     time::{Duration, SystemTime},
 };
 
+/// Stores users that have been created but not verified.
 #[derive(Debug, Default)]
 pub struct AccountLimboState {
     account_codes: BiHashMap<String, UserId>,
     account_code_times: HashMap<UserId, SystemTime>,
 }
 
+/// How long until a verification code is allowed to be swept.
+/// This does not necessarily mean that the verification code will expire after this duration.
 const ACCOUNT_VERIFICATION_EXPIRE: Duration = Duration::from_secs(900);
+/// The length of a verification code.
 const ACCOUNT_VERIFICATION_CODE_LENGTH: usize = 6;
 
 impl AccountLimboState {
@@ -27,6 +31,7 @@ impl AccountLimboState {
         self.account_code_times.get(user_id)
     }
 
+    /// Verify a user without any checks.
     pub fn unchecked_verify_user(
         &mut self,
         db: &mut DataState,
@@ -45,6 +50,9 @@ impl AccountLimboState {
             .map_err(DatabaseError::from)
     }
 
+    /// Add a user that must be verified.
+    /// This method **must** be called after calling [`create_user`].
+    /// This also means that account verification codes can be overwritten.
     pub fn push_user(&mut self, user: UserId) -> String {
         let code = generate_token_alphanumeric(ACCOUNT_VERIFICATION_CODE_LENGTH);
         self.account_codes.insert(code.clone(), user);
@@ -52,10 +60,12 @@ impl AccountLimboState {
         code
     }
 
+    /// Discard expired accounts verification codes as well as those accounts using the default expiration duration.
     pub fn collect_garbage(&mut self, db: &mut DataState) {
         self.collect_garbage_with_expire(db, ACCOUNT_VERIFICATION_EXPIRE);
     }
 
+    /// Discard expired accounts verification codes as well as those accounts.
     pub fn collect_garbage_with_expire(&mut self, db: &mut DataState, expire: Duration) {
         let now = SystemTime::now();
         self.account_codes = self
@@ -73,6 +83,8 @@ impl AccountLimboState {
             .collect::<BiHashMap<_, _>>();
     }
 
+    /// Waive all users that are apart of [`AccountLimboState`].
+    /// Mainly for the purposes of testing.
     pub fn waive_user_verification(&mut self, db: &mut DataState) {
         self.account_codes.clone().iter().for_each(|(code, _)| {
             verify_account(db, self, VerifyAccount { code: code.clone() }).unwrap();

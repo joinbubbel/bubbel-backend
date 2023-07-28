@@ -8,6 +8,7 @@ pub struct VerifyAccount {
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
 pub enum VerifyAccountError {
+    /// My favorite error message.
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode,
     Internal { ierror: String },
 }

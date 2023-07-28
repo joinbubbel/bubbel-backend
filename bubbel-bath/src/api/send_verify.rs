@@ -11,6 +11,7 @@ pub struct SendVerify {
 pub enum SendVerifyError {
     UserNotFound,
     ResendTooSoon,
+    /// Failed to send the verification message (usually an email error).
     SendVerification,
     Internal { ierror: String },
 }

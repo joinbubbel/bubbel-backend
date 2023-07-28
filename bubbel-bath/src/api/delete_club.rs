@@ -10,6 +10,7 @@ pub struct DeleteClub {
 #[serde(tag = "type")]
 pub enum DeleteClubError {
     NoAuth,
+    /// The user is not the owner and therefore is not authorized.
     NoAuthOwner,
     ClubNotFound,
     Internal { ierror: String },

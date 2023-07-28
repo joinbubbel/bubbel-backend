@@ -15,6 +15,7 @@ pub struct SetClubProfileOut {}
 #[serde(tag = "type")]
 pub enum SetClubProfileError {
     NoAuth,
+    /// The user is not the owner and therefore is not authorized.
     NoAuthOwner,
     ClubNotFound,
     Internal { ierror: String },
