@@ -7,7 +7,7 @@ mod user_profile;
 
 pub use club::{ClubId, ClubProfile, ClubProfilePartial};
 pub use user::{User, UserId};
-pub use user_profile::UserProfile;
+pub use user_profile::{UserProfile, UserProfilePartial};
 
 pub struct DataState {
     pub db: PgConnection,

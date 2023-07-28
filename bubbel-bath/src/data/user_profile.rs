@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Queryable, Selectable, Insertable, AsChangeset, Debug, Clone, PartialEq, Eq)]
+#[derive(Queryable, Selectable, Insertable, Debug, Clone, PartialEq, Eq)]
 #[diesel(table_name = crate::schema::user_profiles)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UserProfile {
@@ -50,13 +50,30 @@ impl UserProfile {
             .map(|v| v.first().cloned())
             .map_err(DatabaseError::from)
     }
+}
 
-    pub fn update_partial(&self, db: &mut DataState) -> Result<(), DatabaseError> {
+#[derive(AsChangeset, Serialize, Deserialize, JsonSchema, Debug, Default, Clone, PartialEq, Eq)]
+#[diesel(table_name = crate::schema::user_profiles)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct UserProfilePartial {
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub display_name: Option<String>,
+    pub pfp: Option<String>,
+    pub banner: Option<String>,
+}
+
+impl UserProfilePartial {
+    pub fn unchecked_update_partial(
+        &self,
+        db: &mut DataState,
+        user_id: &UserId,
+    ) -> Result<(), DatabaseError> {
         use crate::schema::user_profiles::dsl;
 
         diesel::update(dsl::user_profiles)
             .set(self)
-            .filter(dsl::user_id.eq(self.user_id))
+            .filter(dsl::user_id.eq(user_id.0))
             .execute(&mut db.db)
             .map(|_| ())
             .map_err(DatabaseError::from)

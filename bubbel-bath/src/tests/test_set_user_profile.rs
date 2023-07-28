@@ -61,11 +61,10 @@ pub fn test_set_user_profile() {
             &auth,
             SetUserProfile {
                 token: UserToken("donuts".to_owned()),
-                name: Some("Jeff".to_owned()),
-                description: None,
-                display_name: None,
-                pfp: None,
-                banner: None,
+                profile: UserProfilePartial {
+                    name: Some("Jeff".to_owned()),
+                    ..Default::default()
+                }
             },
         ),
         Err(SetUserProfileError::NoAuth)
@@ -76,11 +75,10 @@ pub fn test_set_user_profile() {
         &auth,
         SetUserProfile {
             token: acc1.clone(),
-            name: Some("David Zhong".to_owned()),
-            description: None,
-            display_name: None,
-            pfp: None,
-            banner: None,
+            profile: UserProfilePartial {
+                name: Some("David Zhong".to_owned()),
+                ..Default::default()
+            },
         },
     )
     .unwrap();
@@ -90,11 +88,10 @@ pub fn test_set_user_profile() {
         &auth,
         SetUserProfile {
             token: acc1.clone(),
-            name: None,
-            description: None,
-            display_name: None,
-            pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
-            banner: None,
+            profile: UserProfilePartial {
+                pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
+                ..Default::default()
+            },
         },
     )
     .unwrap();

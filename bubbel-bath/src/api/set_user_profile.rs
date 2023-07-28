@@ -3,11 +3,8 @@ use super::*;
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct SetUserProfile {
     pub token: UserToken,
-    pub display_name: Option<String>,
-    pub description: Option<String>,
-    pub name: Option<String>,
-    pub pfp: Option<String>,
-    pub banner: Option<String>,
+    #[serde(flatten)]
+    pub profile: UserProfilePartial,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
@@ -26,17 +23,8 @@ pub fn set_user_profile(
         .check_user_with_token(&req.token)
         .ok_or(SetUserProfileError::NoAuth)?;
 
-    let partial_user_profile = UserProfile {
-        user_id: user_id.0,
-        name: req.name,
-        description: req.description,
-        display_name: req.display_name,
-        pfp: req.pfp,
-        banner: req.banner,
-    };
-
-    partial_user_profile
-        .update_partial(db)
+    req.profile
+        .unchecked_update_partial(db, &user_id)
         .map_err(|e| SetUserProfileError::Internal {
             ierror: e.to_string(),
         })?;
