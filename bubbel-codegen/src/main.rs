@@ -150,6 +150,34 @@ fn main() {
         ResDeleteUser
     );
 
+    add!(
+        "bubbelApiCreateClub",
+        "/api/create_club",
+        InCreateClub,
+        ResCreateClub
+    );
+
+    add!(
+        "bubbelApiGetClubProfile",
+        "/api/get_club_profile",
+        InGetClubProfile,
+        ResGetClubProfile
+    );
+
+    add!(
+        "bubbelApiSetClubProfile",
+        "/api/set_club_profile",
+        InSetClubProfile,
+        ResSetClubProfile
+    );
+
+    add!(
+        "bubbelApiDeleteClub",
+        "/api/delete_club",
+        InDeleteClub,
+        ResDeleteClub
+    );
+
     let project_root = get_project_root().unwrap();
 
     let mut ts_out = project_root.clone();

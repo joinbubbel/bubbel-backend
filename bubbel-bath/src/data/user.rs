@@ -1,5 +1,8 @@
 use super::*;
 
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, Hash, PartialEq, Eq)]
+pub struct UserId(pub i32);
+
 #[derive(Queryable, Selectable, Insertable, Debug, Clone)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]

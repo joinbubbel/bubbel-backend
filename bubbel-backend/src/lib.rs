@@ -68,3 +68,15 @@ res!(ResGetUserProfile, GetUserProfileOut, GetUserProfileError);
 
 req!(InDeleteUser, DeleteUser);
 res!(ResDeleteUser, Empty, DeleteUserError);
+
+req!(InCreateClub, CreateClub);
+res!(ResCreateClub, CreateClubOut, CreateClubError);
+
+req!(InGetClubProfile, GetClubProfile);
+res!(ResGetClubProfile, GetClubProfileOut, GetClubProfileError);
+
+req!(InSetClubProfile, SetClubProfile);
+res!(ResSetClubProfile, SetClubProfileOut, SetClubProfileError);
+
+req!(InDeleteClub, DeleteClub);
+res!(ResDeleteClub, Empty, DeleteClubError);

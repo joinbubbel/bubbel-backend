@@ -7,7 +7,15 @@ const bubbelBathDev = 'https://bubbel-bath.onrender.com';export interface Bubbel
     t13?: ResGetUserProfile;
     t14?: InDeleteUser;
     t15?: ResDeleteUser;
+    t16?: InCreateClub;
+    t17?: ResCreateClub;
+    t18?: InGetClubProfile;
+    t19?: ResGetClubProfile;
     t2?:  InAuthUser;
+    t20?: InSetClubProfile;
+    t21?: ResSetClubProfile;
+    t22?: InDeleteClub;
+    t23?: ResDeleteClub;
     t3?:  ResAuthUser;
     t4?:  InDeauthUser;
     t5?:  ResDeauthUser;
@@ -127,9 +135,103 @@ export interface DeleteUserError {
     [property: string]: any;
 }
 
+export interface InCreateClub {
+    name:  string;
+    token: string;
+    [property: string]: any;
+}
+
+export interface ResCreateClub {
+    club_id?: number;
+    error?:   null | CreateClubError;
+    [property: string]: any;
+}
+
+export interface CreateClubError {
+    type:    FluffyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export interface InGetClubProfile {
+    club_id: number;
+    token?:  null | string;
+    [property: string]: any;
+}
+
+export interface ResGetClubProfile {
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    error?:        null | GetClubProfileError;
+    name?:         string;
+    owner?:        number;
+    pfp?:          null | string;
+    [property: string]: any;
+}
+
+export interface GetClubProfileError {
+    type:    StickyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum StickyType {
+    ClubNotFound = "ClubNotFound",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+}
+
 export interface InAuthUser {
     password: string;
     username: string;
+    [property: string]: any;
+}
+
+export interface InSetClubProfile {
+    banner?:       null | string;
+    club_id:       number;
+    description?:  null | string;
+    display_name?: null | string;
+    name?:         null | string;
+    owner?:        number | null;
+    pfp?:          null | string;
+    token:         string;
+    [property: string]: any;
+}
+
+export interface ResSetClubProfile {
+    error?: null | SetClubProfileError;
+    [property: string]: any;
+}
+
+export interface SetClubProfileError {
+    type:    IndigoType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum IndigoType {
+    ClubNotFound = "ClubNotFound",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+    NoAuthOwner = "NoAuthOwner",
+}
+
+export interface InDeleteClub {
+    club_id: number;
+    token:   string;
+    [property: string]: any;
+}
+
+export interface ResDeleteClub {
+    error?: null | DeleteClubError;
+    [property: string]: any;
+}
+
+export interface DeleteClubError {
+    type:    IndigoType;
+    ierror?: string;
     [property: string]: any;
 }
 
@@ -142,12 +244,12 @@ export interface ResAuthUser {
 }
 
 export interface AuthUserError {
-    type:    StickyType;
+    type:    IndecentType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum StickyType {
+export enum IndecentType {
     Internal = "Internal",
     InvalidCredentials = "InvalidCredentials",
     InvalidPasswordCryto = "InvalidPasswordCryto",
@@ -176,12 +278,12 @@ export interface ResVerifyAccount {
 }
 
 export interface VerifyAccountError {
-    type:    IndigoType;
+    type:    HilariousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum IndigoType {
+export enum HilariousType {
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode",
     Internal = "Internal",
 }
@@ -197,12 +299,12 @@ export interface ResSendVerify {
 }
 
 export interface SendVerifyError {
-    type:    IndecentType;
+    type:    AmbitiousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum IndecentType {
+export enum AmbitiousType {
     Internal = "Internal",
     ResendTooSoon = "ResendTooSoon",
     SendVerification = "SendVerification",
@@ -295,6 +397,54 @@ export async function bubbelApiGetUserProfile(req: InGetUserProfile): Promise<Re
         }
 export async function bubbelApiDeleteUser(req: InDeleteUser): Promise<ResDeleteUser> {
             let fetchRes = await fetch(bubbelBathDev + '/api/delete_user', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiCreateClub(req: InCreateClub): Promise<ResCreateClub> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/create_club', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetClubProfile(req: InGetClubProfile): Promise<ResGetClubProfile> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_club_profile', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiSetClubProfile(req: InSetClubProfile): Promise<ResSetClubProfile> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/set_club_profile', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiDeleteClub(req: InDeleteClub): Promise<ResDeleteClub> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/delete_club', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

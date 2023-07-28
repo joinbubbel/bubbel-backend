@@ -82,6 +82,10 @@ async fn main() {
         .route("/api/set_user_profile", post(api_set_user_profile))
         .route("/api/get_user_profile", post(api_get_user_profile))
         .route("/api/delete_user", post(api_delete_user))
+        .route("/api/create_club", post(api_create_club))
+        .route("/api/get_club_profile", post(api_get_club_profile))
+        .route("/api/set_club_profile", post(api_set_club_profile))
+        .route("/api/delete_club", post(api_delete_club))
         .layer(cors)
         .with_state(state);
 
@@ -317,6 +321,106 @@ async fn api_delete_user(
             res: Some(()),
         },
         Err(e) => ResDeleteUser {
+            error: Some(e),
+            res: Some(()),
+        },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_create_club(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InCreateClub>,
+) -> Json<ResCreateClub> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match create_club(&mut db, &auth, req.req) {
+        Ok(res) => ResCreateClub {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResCreateClub {
+            error: Some(e),
+            res: None,
+        },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_get_club_profile(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InGetClubProfile>,
+) -> Json<ResGetClubProfile> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match get_club_profile(&mut db, &auth, req.req) {
+        Ok(res) => ResGetClubProfile {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResGetClubProfile {
+            error: Some(e),
+            res: None,
+        },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_set_club_profile(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InSetClubProfile>,
+) -> Json<ResSetClubProfile> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match set_club_profile(&mut db, &auth, req.req) {
+        Ok(res) => ResSetClubProfile {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResSetClubProfile {
+            error: Some(e),
+            res: None,
+        },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_delete_club(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InDeleteClub>,
+) -> Json<ResDeleteClub> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.lock().unwrap();
+    let auth = state.auth.read().unwrap();
+
+    let res = match delete_club(&mut db, &auth, req.req) {
+        Ok(_) => ResDeleteClub {
+            error: None,
+            res: Some(()),
+        },
+        Err(e) => ResDeleteClub {
             error: Some(e),
             res: Some(()),
         },

@@ -11,7 +11,6 @@ mod state;
 #[cfg(test)]
 mod tests;
 
-pub use data::{DataState, DatabaseError, User, UserProfile};
-
 pub use api::*;
+pub use data::*;
 pub use state::*;
