@@ -1,11 +1,11 @@
 use super::*;
 use std::string::ToString;
 
-mod club;
+mod club_profile;
 mod user;
 mod user_profile;
 
-pub use club::{ClubId, ClubProfile, ClubProfilePartial};
+pub use club_profile::{ClubId, ClubProfile, ClubProfilePartial};
 pub use user::{User, UserId};
 pub use user_profile::{UserProfile, UserProfilePartial};
 
