@@ -52,9 +52,7 @@ data class InCreateUser (
 @Serializable
 data class ResCreateUser (
     val error: CreateUserError? = null,
-
-    @SerialName("user_id")
-    val userID: Long? = null
+    val res: CreateUserOut? = null
 )
 
 /**
@@ -85,6 +83,12 @@ enum class PurpleType(val value: String) {
 }
 
 @Serializable
+data class CreateUserOut (
+    @SerialName("user_id")
+    val userID: Long
+)
+
+@Serializable
 data class InSetUserProfile (
     val banner: String? = null,
     val description: String? = null,
@@ -99,7 +103,8 @@ data class InSetUserProfile (
 
 @Serializable
 data class ResSetUserProfile (
-    val error: SetUserProfileError? = null
+    val error: SetUserProfileError? = null,
+    val res: JsonElement? = null
 )
 
 @Serializable
@@ -124,15 +129,8 @@ data class InGetUserProfile (
 
 @Serializable
 data class ResGetUserProfile (
-    val banner: String? = null,
-    val description: String? = null,
-
-    @SerialName("display_name")
-    val displayName: String? = null,
-
     val error: GetUserProfileError? = null,
-    val name: String? = null,
-    val pfp: String? = null
+    val res: GetUserProfileOut? = null
 )
 
 @Serializable
@@ -149,13 +147,26 @@ enum class TentacledType(val value: String) {
 }
 
 @Serializable
+data class GetUserProfileOut (
+    val banner: String? = null,
+    val description: String? = null,
+
+    @SerialName("display_name")
+    val displayName: String? = null,
+
+    val name: String? = null,
+    val pfp: String? = null
+)
+
+@Serializable
 data class InDeleteUser (
     val token: String
 )
 
 @Serializable
 data class ResDeleteUser (
-    val error: DeleteUserError? = null
+    val error: DeleteUserError? = null,
+    val res: JsonElement? = null
 )
 
 @Serializable
@@ -172,16 +183,20 @@ data class InCreateClub (
 
 @Serializable
 data class ResCreateClub (
-    @SerialName("club_id")
-    val clubID: Long? = null,
-
-    val error: CreateClubError? = null
+    val error: CreateClubError? = null,
+    val res: CreateClubOut? = null
 )
 
 @Serializable
 data class CreateClubError (
     val type: FluffyType,
     val ierror: String? = null
+)
+
+@Serializable
+data class CreateClubOut (
+    @SerialName("club_id")
+    val clubID: Long
 )
 
 @Serializable
@@ -194,16 +209,8 @@ data class InGetClubProfile (
 
 @Serializable
 data class ResGetClubProfile (
-    val banner: String? = null,
-    val description: String? = null,
-
-    @SerialName("display_name")
-    val displayName: String? = null,
-
     val error: GetClubProfileError? = null,
-    val name: String? = null,
-    val owner: Long? = null,
-    val pfp: String? = null
+    val res: GetClubProfileOut? = null
 )
 
 @Serializable
@@ -218,6 +225,19 @@ enum class StickyType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("NoAuth") NoAuth("NoAuth");
 }
+
+@Serializable
+data class GetClubProfileOut (
+    val banner: String? = null,
+    val description: String? = null,
+
+    @SerialName("display_name")
+    val displayName: String? = null,
+
+    val name: String,
+    val owner: Long,
+    val pfp: String? = null
+)
 
 @Serializable
 data class InAuthUser (
@@ -245,7 +265,8 @@ data class InSetClubProfile (
 
 @Serializable
 data class ResSetClubProfile (
-    val error: SetClubProfileError? = null
+    val error: SetClubProfileError? = null,
+    val res: JsonObject? = null
 )
 
 /**
@@ -275,7 +296,8 @@ data class InDeleteClub (
 
 @Serializable
 data class ResDeleteClub (
-    val error: DeleteClubError? = null
+    val error: DeleteClubError? = null,
+    val res: JsonElement? = null
 )
 
 /**
@@ -289,10 +311,8 @@ data class DeleteClubError (
 
 @Serializable
 data class ResAuthUser (
-    val email: String? = null,
     val error: AuthUserError? = null,
-    val token: String? = null,
-    val username: String? = null
+    val res: AuthUserOut? = null
 )
 
 /**
@@ -314,13 +334,21 @@ enum class IndecentType(val value: String) {
 }
 
 @Serializable
+data class AuthUserOut (
+    val email: String,
+    val token: String,
+    val username: String
+)
+
+@Serializable
 data class InDeauthUser (
     val token: String
 )
 
 @Serializable
 data class ResDeauthUser (
-    val error: JsonElement? = null
+    val error: JsonElement? = null,
+    val res: JsonElement? = null
 )
 
 @Serializable
@@ -330,7 +358,8 @@ data class InVerifyAccount (
 
 @Serializable
 data class ResVerifyAccount (
-    val error: VerifyAccountError? = null
+    val error: VerifyAccountError? = null,
+    val res: JsonElement? = null
 )
 
 /**
@@ -356,7 +385,8 @@ data class InSendVerify (
 
 @Serializable
 data class ResSendVerify (
-    val error: SendVerifyError? = null
+    val error: SendVerifyError? = null,
+    val res: JsonElement? = null
 )
 
 /**

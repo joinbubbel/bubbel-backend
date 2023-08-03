@@ -39,7 +39,6 @@ macro_rules! res {
         #[derive(Serialize, Deserialize, JsonSchema)]
         pub struct $RES {
             pub error: Option<$RESERROR>,
-            #[serde(flatten)]
             pub res: Option<$RESOUT>,
         }
     };

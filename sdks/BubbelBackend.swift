@@ -162,12 +162,7 @@ extension InCreateUser {
 // MARK: - ResCreateUser
 struct ResCreateUser: Codable {
     let error: CreateUserError?
-    let userID: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case error
-        case userID = "user_id"
-    }
+    let res: CreateUserOut?
 }
 
 // MARK: ResCreateUser convenience initializers and mutators
@@ -190,11 +185,11 @@ extension ResCreateUser {
 
     func with(
         error: CreateUserError?? = nil,
-        userID: Int?? = nil
+        res: CreateUserOut?? = nil
     ) -> ResCreateUser {
         return ResCreateUser(
             error: error ?? self.error,
-            userID: userID ?? self.userID
+            res: res ?? self.res
         )
     }
 
@@ -268,6 +263,50 @@ enum PurpleType: String, Codable {
     case typeInternal = "Internal"
 }
 
+// MARK: - CreateUserOut
+struct CreateUserOut: Codable {
+    let userID: Int
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+    }
+}
+
+// MARK: CreateUserOut convenience initializers and mutators
+
+extension CreateUserOut {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(CreateUserOut.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        userID: Int? = nil
+    ) -> CreateUserOut {
+        return CreateUserOut(
+            userID: userID ?? self.userID
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
 // MARK: - InSetUserProfile
 struct InSetUserProfile: Codable {
     let banner, description, displayName, name: String?
@@ -329,6 +368,7 @@ extension InSetUserProfile {
 // MARK: - ResSetUserProfile
 struct ResSetUserProfile: Codable {
     let error: SetUserProfileError?
+    let res: JSONNull?
 }
 
 // MARK: ResSetUserProfile convenience initializers and mutators
@@ -350,10 +390,12 @@ extension ResSetUserProfile {
     }
 
     func with(
-        error: SetUserProfileError?? = nil
+        error: SetUserProfileError?? = nil,
+        res: JSONNull?? = nil
     ) -> ResSetUserProfile {
         return ResSetUserProfile(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -464,15 +506,8 @@ extension InGetUserProfile {
 
 // MARK: - ResGetUserProfile
 struct ResGetUserProfile: Codable {
-    let banner, description, displayName: String?
     let error: GetUserProfileError?
-    let name, pfp: String?
-
-    enum CodingKeys: String, CodingKey {
-        case banner, description
-        case displayName = "display_name"
-        case error, name, pfp
-    }
+    let res: GetUserProfileOut?
 }
 
 // MARK: ResGetUserProfile convenience initializers and mutators
@@ -494,20 +529,12 @@ extension ResGetUserProfile {
     }
 
     func with(
-        banner: String?? = nil,
-        description: String?? = nil,
-        displayName: String?? = nil,
         error: GetUserProfileError?? = nil,
-        name: String?? = nil,
-        pfp: String?? = nil
+        res: GetUserProfileOut?? = nil
     ) -> ResGetUserProfile {
         return ResGetUserProfile(
-            banner: banner ?? self.banner,
-            description: description ?? self.description,
-            displayName: displayName ?? self.displayName,
             error: error ?? self.error,
-            name: name ?? self.name,
-            pfp: pfp ?? self.pfp
+            res: res ?? self.res
         )
     }
 
@@ -569,6 +596,61 @@ enum TentacledType: String, Codable {
     case userNotFound = "UserNotFound"
 }
 
+// MARK: - GetUserProfileOut
+struct GetUserProfileOut: Codable {
+    let banner, description, displayName, name: String?
+    let pfp: String?
+
+    enum CodingKeys: String, CodingKey {
+        case banner, description
+        case displayName = "display_name"
+        case name, pfp
+    }
+}
+
+// MARK: GetUserProfileOut convenience initializers and mutators
+
+extension GetUserProfileOut {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(GetUserProfileOut.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        banner: String?? = nil,
+        description: String?? = nil,
+        displayName: String?? = nil,
+        name: String?? = nil,
+        pfp: String?? = nil
+    ) -> GetUserProfileOut {
+        return GetUserProfileOut(
+            banner: banner ?? self.banner,
+            description: description ?? self.description,
+            displayName: displayName ?? self.displayName,
+            name: name ?? self.name,
+            pfp: pfp ?? self.pfp
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
 // MARK: - InDeleteUser
 struct InDeleteUser: Codable {
     let token: String
@@ -612,6 +694,7 @@ extension InDeleteUser {
 // MARK: - ResDeleteUser
 struct ResDeleteUser: Codable {
     let error: DeleteUserError?
+    let res: JSONNull?
 }
 
 // MARK: ResDeleteUser convenience initializers and mutators
@@ -633,10 +716,12 @@ extension ResDeleteUser {
     }
 
     func with(
-        error: DeleteUserError?? = nil
+        error: DeleteUserError?? = nil,
+        res: JSONNull?? = nil
     ) -> ResDeleteUser {
         return ResDeleteUser(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -736,13 +821,8 @@ extension InCreateClub {
 
 // MARK: - ResCreateClub
 struct ResCreateClub: Codable {
-    let clubID: Int?
     let error: CreateClubError?
-
-    enum CodingKeys: String, CodingKey {
-        case clubID = "club_id"
-        case error
-    }
+    let res: CreateClubOut?
 }
 
 // MARK: ResCreateClub convenience initializers and mutators
@@ -764,12 +844,12 @@ extension ResCreateClub {
     }
 
     func with(
-        clubID: Int?? = nil,
-        error: CreateClubError?? = nil
+        error: CreateClubError?? = nil,
+        res: CreateClubOut?? = nil
     ) -> ResCreateClub {
         return ResCreateClub(
-            clubID: clubID ?? self.clubID,
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -813,6 +893,50 @@ extension CreateClubError {
         return CreateClubError(
             type: type ?? self.type,
             ierror: ierror ?? self.ierror
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - CreateClubOut
+struct CreateClubOut: Codable {
+    let clubID: Int
+
+    enum CodingKeys: String, CodingKey {
+        case clubID = "club_id"
+    }
+}
+
+// MARK: CreateClubOut convenience initializers and mutators
+
+extension CreateClubOut {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(CreateClubOut.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        clubID: Int? = nil
+    ) -> CreateClubOut {
+        return CreateClubOut(
+            clubID: clubID ?? self.clubID
         )
     }
 
@@ -875,17 +999,8 @@ extension InGetClubProfile {
 
 // MARK: - ResGetClubProfile
 struct ResGetClubProfile: Codable {
-    let banner, description, displayName: String?
     let error: GetClubProfileError?
-    let name: String?
-    let owner: Int?
-    let pfp: String?
-
-    enum CodingKeys: String, CodingKey {
-        case banner, description
-        case displayName = "display_name"
-        case error, name, owner, pfp
-    }
+    let res: GetClubProfileOut?
 }
 
 // MARK: ResGetClubProfile convenience initializers and mutators
@@ -907,22 +1022,12 @@ extension ResGetClubProfile {
     }
 
     func with(
-        banner: String?? = nil,
-        description: String?? = nil,
-        displayName: String?? = nil,
         error: GetClubProfileError?? = nil,
-        name: String?? = nil,
-        owner: Int?? = nil,
-        pfp: String?? = nil
+        res: GetClubProfileOut?? = nil
     ) -> ResGetClubProfile {
         return ResGetClubProfile(
-            banner: banner ?? self.banner,
-            description: description ?? self.description,
-            displayName: displayName ?? self.displayName,
             error: error ?? self.error,
-            name: name ?? self.name,
-            owner: owner ?? self.owner,
-            pfp: pfp ?? self.pfp
+            res: res ?? self.res
         )
     }
 
@@ -982,6 +1087,65 @@ enum StickyType: String, Codable {
     case clubNotFound = "ClubNotFound"
     case noAuth = "NoAuth"
     case typeInternal = "Internal"
+}
+
+// MARK: - GetClubProfileOut
+struct GetClubProfileOut: Codable {
+    let banner, description, displayName: String?
+    let name: String
+    let owner: Int
+    let pfp: String?
+
+    enum CodingKeys: String, CodingKey {
+        case banner, description
+        case displayName = "display_name"
+        case name, owner, pfp
+    }
+}
+
+// MARK: GetClubProfileOut convenience initializers and mutators
+
+extension GetClubProfileOut {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(GetClubProfileOut.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        banner: String?? = nil,
+        description: String?? = nil,
+        displayName: String?? = nil,
+        name: String? = nil,
+        owner: Int? = nil,
+        pfp: String?? = nil
+    ) -> GetClubProfileOut {
+        return GetClubProfileOut(
+            banner: banner ?? self.banner,
+            description: description ?? self.description,
+            displayName: displayName ?? self.displayName,
+            name: name ?? self.name,
+            owner: owner ?? self.owner,
+            pfp: pfp ?? self.pfp
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
 }
 
 // MARK: - InAuthUser
@@ -1096,6 +1260,7 @@ extension InSetClubProfile {
 // MARK: - ResSetClubProfile
 struct ResSetClubProfile: Codable {
     let error: SetClubProfileError?
+    let res: [String: JSONAny]?
 }
 
 // MARK: ResSetClubProfile convenience initializers and mutators
@@ -1117,10 +1282,12 @@ extension ResSetClubProfile {
     }
 
     func with(
-        error: SetClubProfileError?? = nil
+        error: SetClubProfileError?? = nil,
+        res: [String: JSONAny]?? = nil
     ) -> ResSetClubProfile {
         return ResSetClubProfile(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -1235,6 +1402,7 @@ extension InDeleteClub {
 // MARK: - ResDeleteClub
 struct ResDeleteClub: Codable {
     let error: DeleteClubError?
+    let res: JSONNull?
 }
 
 // MARK: ResDeleteClub convenience initializers and mutators
@@ -1256,10 +1424,12 @@ extension ResDeleteClub {
     }
 
     func with(
-        error: DeleteClubError?? = nil
+        error: DeleteClubError?? = nil,
+        res: JSONNull?? = nil
     ) -> ResDeleteClub {
         return ResDeleteClub(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -1318,9 +1488,8 @@ extension DeleteClubError {
 
 // MARK: - ResAuthUser
 struct ResAuthUser: Codable {
-    let email: String?
     let error: AuthUserError?
-    let token, username: String?
+    let res: AuthUserOut?
 }
 
 // MARK: ResAuthUser convenience initializers and mutators
@@ -1342,16 +1511,12 @@ extension ResAuthUser {
     }
 
     func with(
-        email: String?? = nil,
         error: AuthUserError?? = nil,
-        token: String?? = nil,
-        username: String?? = nil
+        res: AuthUserOut?? = nil
     ) -> ResAuthUser {
         return ResAuthUser(
-            email: email ?? self.email,
             error: error ?? self.error,
-            token: token ?? self.token,
-            username: username ?? self.username
+            res: res ?? self.res
         )
     }
 
@@ -1416,6 +1581,50 @@ enum IndecentType: String, Codable {
     case userNotVerified = "UserNotVerified"
 }
 
+// MARK: - AuthUserOut
+struct AuthUserOut: Codable {
+    let email, token, username: String
+}
+
+// MARK: AuthUserOut convenience initializers and mutators
+
+extension AuthUserOut {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(AuthUserOut.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        email: String? = nil,
+        token: String? = nil,
+        username: String? = nil
+    ) -> AuthUserOut {
+        return AuthUserOut(
+            email: email ?? self.email,
+            token: token ?? self.token,
+            username: username ?? self.username
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
 // MARK: - InDeauthUser
 struct InDeauthUser: Codable {
     let token: String
@@ -1458,7 +1667,7 @@ extension InDeauthUser {
 
 // MARK: - ResDeauthUser
 struct ResDeauthUser: Codable {
-    let error: JSONNull?
+    let error, res: JSONNull?
 }
 
 // MARK: ResDeauthUser convenience initializers and mutators
@@ -1480,10 +1689,12 @@ extension ResDeauthUser {
     }
 
     func with(
-        error: JSONNull?? = nil
+        error: JSONNull?? = nil,
+        res: JSONNull?? = nil
     ) -> ResDeauthUser {
         return ResDeauthUser(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -1539,6 +1750,7 @@ extension InVerifyAccount {
 // MARK: - ResVerifyAccount
 struct ResVerifyAccount: Codable {
     let error: VerifyAccountError?
+    let res: JSONNull?
 }
 
 // MARK: ResVerifyAccount convenience initializers and mutators
@@ -1560,10 +1772,12 @@ extension ResVerifyAccount {
     }
 
     func with(
-        error: VerifyAccountError?? = nil
+        error: VerifyAccountError?? = nil,
+        res: JSONNull?? = nil
     ) -> ResVerifyAccount {
         return ResVerifyAccount(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -1672,6 +1886,7 @@ extension InSendVerify {
 // MARK: - ResSendVerify
 struct ResSendVerify: Codable {
     let error: SendVerifyError?
+    let res: JSONNull?
 }
 
 // MARK: ResSendVerify convenience initializers and mutators
@@ -1693,10 +1908,12 @@ extension ResSendVerify {
     }
 
     func with(
-        error: SendVerifyError?? = nil
+        error: SendVerifyError?? = nil,
+        res: JSONNull?? = nil
     ) -> ResSendVerify {
         return ResSendVerify(
-            error: error ?? self.error
+            error: error ?? self.error,
+            res: res ?? self.res
         )
     }
 
@@ -1802,6 +2019,221 @@ class JSONNull: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encodeNil()
+    }
+}
+
+class JSONCodingKey: CodingKey {
+    let key: String
+
+    required init?(intValue: Int) {
+        return nil
+    }
+
+    required init?(stringValue: String) {
+        key = stringValue
+    }
+
+    var intValue: Int? {
+        return nil
+    }
+
+    var stringValue: String {
+        return key
+    }
+}
+
+class JSONAny: Codable {
+
+    let value: Any
+
+    static func decodingError(forCodingPath codingPath: [CodingKey]) -> DecodingError {
+        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode JSONAny")
+        return DecodingError.typeMismatch(JSONAny.self, context)
+    }
+
+    static func encodingError(forValue value: Any, codingPath: [CodingKey]) -> EncodingError {
+        let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Cannot encode JSONAny")
+        return EncodingError.invalidValue(value, context)
+    }
+
+    static func decode(from container: SingleValueDecodingContainer) throws -> Any {
+        if let value = try? container.decode(Bool.self) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self) {
+            return value
+        }
+        if let value = try? container.decode(Double.self) {
+            return value
+        }
+        if let value = try? container.decode(String.self) {
+            return value
+        }
+        if container.decodeNil() {
+            return JSONNull()
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+
+    static func decode(from container: inout UnkeyedDecodingContainer) throws -> Any {
+        if let value = try? container.decode(Bool.self) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self) {
+            return value
+        }
+        if let value = try? container.decode(Double.self) {
+            return value
+        }
+        if let value = try? container.decode(String.self) {
+            return value
+        }
+        if let value = try? container.decodeNil() {
+            if value {
+                return JSONNull()
+            }
+        }
+        if var container = try? container.nestedUnkeyedContainer() {
+            return try decodeArray(from: &container)
+        }
+        if var container = try? container.nestedContainer(keyedBy: JSONCodingKey.self) {
+            return try decodeDictionary(from: &container)
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+
+    static func decode(from container: inout KeyedDecodingContainer<JSONCodingKey>, forKey key: JSONCodingKey) throws -> Any {
+        if let value = try? container.decode(Bool.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Double.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(String.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decodeNil(forKey: key) {
+            if value {
+                return JSONNull()
+            }
+        }
+        if var container = try? container.nestedUnkeyedContainer(forKey: key) {
+            return try decodeArray(from: &container)
+        }
+        if var container = try? container.nestedContainer(keyedBy: JSONCodingKey.self, forKey: key) {
+            return try decodeDictionary(from: &container)
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+
+    static func decodeArray(from container: inout UnkeyedDecodingContainer) throws -> [Any] {
+        var arr: [Any] = []
+        while !container.isAtEnd {
+            let value = try decode(from: &container)
+            arr.append(value)
+        }
+        return arr
+    }
+
+    static func decodeDictionary(from container: inout KeyedDecodingContainer<JSONCodingKey>) throws -> [String: Any] {
+        var dict = [String: Any]()
+        for key in container.allKeys {
+            let value = try decode(from: &container, forKey: key)
+            dict[key.stringValue] = value
+        }
+        return dict
+    }
+
+    static func encode(to container: inout UnkeyedEncodingContainer, array: [Any]) throws {
+        for value in array {
+            if let value = value as? Bool {
+                try container.encode(value)
+            } else if let value = value as? Int64 {
+                try container.encode(value)
+            } else if let value = value as? Double {
+                try container.encode(value)
+            } else if let value = value as? String {
+                try container.encode(value)
+            } else if value is JSONNull {
+                try container.encodeNil()
+            } else if let value = value as? [Any] {
+                var container = container.nestedUnkeyedContainer()
+                try encode(to: &container, array: value)
+            } else if let value = value as? [String: Any] {
+                var container = container.nestedContainer(keyedBy: JSONCodingKey.self)
+                try encode(to: &container, dictionary: value)
+            } else {
+                throw encodingError(forValue: value, codingPath: container.codingPath)
+            }
+        }
+    }
+
+    static func encode(to container: inout KeyedEncodingContainer<JSONCodingKey>, dictionary: [String: Any]) throws {
+        for (key, value) in dictionary {
+            let key = JSONCodingKey(stringValue: key)!
+            if let value = value as? Bool {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? Int64 {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? Double {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? String {
+                try container.encode(value, forKey: key)
+            } else if value is JSONNull {
+                try container.encodeNil(forKey: key)
+            } else if let value = value as? [Any] {
+                var container = container.nestedUnkeyedContainer(forKey: key)
+                try encode(to: &container, array: value)
+            } else if let value = value as? [String: Any] {
+                var container = container.nestedContainer(keyedBy: JSONCodingKey.self, forKey: key)
+                try encode(to: &container, dictionary: value)
+            } else {
+                throw encodingError(forValue: value, codingPath: container.codingPath)
+            }
+        }
+    }
+
+    static func encode(to container: inout SingleValueEncodingContainer, value: Any) throws {
+        if let value = value as? Bool {
+            try container.encode(value)
+        } else if let value = value as? Int64 {
+            try container.encode(value)
+        } else if let value = value as? Double {
+            try container.encode(value)
+        } else if let value = value as? String {
+            try container.encode(value)
+        } else if value is JSONNull {
+            try container.encodeNil()
+        } else {
+            throw encodingError(forValue: value, codingPath: container.codingPath)
+        }
+    }
+
+    public required init(from decoder: Decoder) throws {
+        if var arrayContainer = try? decoder.unkeyedContainer() {
+            self.value = try JSONAny.decodeArray(from: &arrayContainer)
+        } else if var container = try? decoder.container(keyedBy: JSONCodingKey.self) {
+            self.value = try JSONAny.decodeDictionary(from: &container)
+        } else {
+            let container = try decoder.singleValueContainer()
+            self.value = try JSONAny.decode(from: container)
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        if let arr = self.value as? [Any] {
+            var container = encoder.unkeyedContainer()
+            try JSONAny.encode(to: &container, array: arr)
+        } else if let dict = self.value as? [String: Any] {
+            var container = encoder.container(keyedBy: JSONCodingKey.self)
+            try JSONAny.encode(to: &container, dictionary: dict)
+        } else {
+            var container = encoder.singleValueContainer()
+            try JSONAny.encode(to: &container, value: self.value)
+        }
     }
 }
 

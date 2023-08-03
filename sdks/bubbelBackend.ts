@@ -34,8 +34,8 @@ export interface InCreateUser {
 }
 
 export interface ResCreateUser {
-    error?:   null | CreateUserError;
-    user_id?: number;
+    error?: null | CreateUserError;
+    res?:   null | CreateUserOut;
     [property: string]: any;
 }
 
@@ -65,6 +65,11 @@ export enum PurpleType {
     InvalidUsername = "InvalidUsername",
 }
 
+export interface CreateUserOut {
+    user_id: number;
+    [property: string]: any;
+}
+
 export interface InSetUserProfile {
     banner?:       null | string;
     description?:  null | string;
@@ -77,6 +82,7 @@ export interface InSetUserProfile {
 
 export interface ResSetUserProfile {
     error?: null | SetUserProfileError;
+    res?:   null;
     [property: string]: any;
 }
 
@@ -98,12 +104,8 @@ export interface InGetUserProfile {
 }
 
 export interface ResGetUserProfile {
-    banner?:       null | string;
-    description?:  null | string;
-    display_name?: null | string;
-    error?:        null | GetUserProfileError;
-    name?:         null | string;
-    pfp?:          null | string;
+    error?: null | GetUserProfileError;
+    res?:   null | GetUserProfileOut;
     [property: string]: any;
 }
 
@@ -119,6 +121,15 @@ export enum TentacledType {
     UserNotFound = "UserNotFound",
 }
 
+export interface GetUserProfileOut {
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    name?:         null | string;
+    pfp?:          null | string;
+    [property: string]: any;
+}
+
 export interface InDeleteUser {
     token: string;
     [property: string]: any;
@@ -126,6 +137,7 @@ export interface InDeleteUser {
 
 export interface ResDeleteUser {
     error?: null | DeleteUserError;
+    res?:   null;
     [property: string]: any;
 }
 
@@ -142,14 +154,19 @@ export interface InCreateClub {
 }
 
 export interface ResCreateClub {
-    club_id?: number;
-    error?:   null | CreateClubError;
+    error?: null | CreateClubError;
+    res?:   null | CreateClubOut;
     [property: string]: any;
 }
 
 export interface CreateClubError {
     type:    FluffyType;
     ierror?: string;
+    [property: string]: any;
+}
+
+export interface CreateClubOut {
+    club_id: number;
     [property: string]: any;
 }
 
@@ -160,13 +177,8 @@ export interface InGetClubProfile {
 }
 
 export interface ResGetClubProfile {
-    banner?:       null | string;
-    description?:  null | string;
-    display_name?: null | string;
-    error?:        null | GetClubProfileError;
-    name?:         string;
-    owner?:        number;
-    pfp?:          null | string;
+    error?: null | GetClubProfileError;
+    res?:   null | GetClubProfileOut;
     [property: string]: any;
 }
 
@@ -180,6 +192,16 @@ export enum StickyType {
     ClubNotFound = "ClubNotFound",
     Internal = "Internal",
     NoAuth = "NoAuth",
+}
+
+export interface GetClubProfileOut {
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    name:          string;
+    owner:         number;
+    pfp?:          null | string;
+    [property: string]: any;
 }
 
 export interface InAuthUser {
@@ -202,6 +224,7 @@ export interface InSetClubProfile {
 
 export interface ResSetClubProfile {
     error?: null | SetClubProfileError;
+    res?:   { [key: string]: any } | null;
     [property: string]: any;
 }
 
@@ -229,6 +252,7 @@ export interface InDeleteClub {
 
 export interface ResDeleteClub {
     error?: null | DeleteClubError;
+    res?:   null;
     [property: string]: any;
 }
 
@@ -242,10 +266,8 @@ export interface DeleteClubError {
 }
 
 export interface ResAuthUser {
-    email?:    string;
-    error?:    null | AuthUserError;
-    token?:    string;
-    username?: string;
+    error?: null | AuthUserError;
+    res?:   null | AuthUserOut;
     [property: string]: any;
 }
 
@@ -266,6 +288,13 @@ export enum IndecentType {
     UserNotVerified = "UserNotVerified",
 }
 
+export interface AuthUserOut {
+    email:    string;
+    token:    string;
+    username: string;
+    [property: string]: any;
+}
+
 export interface InDeauthUser {
     token: string;
     [property: string]: any;
@@ -273,6 +302,7 @@ export interface InDeauthUser {
 
 export interface ResDeauthUser {
     error?: null;
+    res?:   null;
     [property: string]: any;
 }
 
@@ -283,6 +313,7 @@ export interface InVerifyAccount {
 
 export interface ResVerifyAccount {
     error?: null | VerifyAccountError;
+    res?:   null;
     [property: string]: any;
 }
 
@@ -307,6 +338,7 @@ export interface InSendVerify {
 
 export interface ResSendVerify {
     error?: null | SendVerifyError;
+    res?:   null;
     [property: string]: any;
 }
 
