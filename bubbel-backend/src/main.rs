@@ -9,7 +9,7 @@ use std::{
     net::SocketAddr,
     sync::{Arc, Mutex, RwLock},
 };
-use tower_http::{cors::CorsLayer, services::ServeFile};
+use tower_http::{cors::CorsLayer, services::ServeDir};
 
 mod collect_garbage;
 mod debug;
@@ -109,10 +109,7 @@ async fn main() {
         .with_state(state);
 
     if let Some(rust_docs_path) = rust_docs_path {
-        app = app.nest_service(
-            "/docs",
-            ServeFile::new_with_mime(rust_docs_path, &"text/html".parse::<mime::Mime>().unwrap()),
-        );
+        app = app.nest_service("/docs", ServeDir::new(rust_docs_path));
     }
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));

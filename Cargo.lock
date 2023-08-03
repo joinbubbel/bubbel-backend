@@ -200,7 +200,6 @@ dependencies = [
  "axum-server",
  "bubbel-bath",
  "lettre",
- "mime",
  "schemars",
  "serde",
  "serde_json",
