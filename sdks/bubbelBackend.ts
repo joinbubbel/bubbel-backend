@@ -1,4 +1,4 @@
-const bubbelBathDev = 'https://bubbel-bath.onrender.com';export interface BubbelCodegenOut {
+const bubbelBathDev = 'http://api.joinbubbel.com';export interface BubbelCodegenOut {
     t0?:  InCreateUser;
     t1?:  ResCreateUser;
     t10?: InSetUserProfile;
@@ -46,7 +46,7 @@ export interface ResCreateUser {
  *
  * Password is not valid by backend standards.
  *
- * Password failed to be encrypted.
+ * Got an error from a cryptography function. This error should never occur.
  *
  * Email or Username already taken.
  */
@@ -205,6 +205,9 @@ export interface ResSetClubProfile {
     [property: string]: any;
 }
 
+/**
+ * The user is not the owner and therefore is not authorized.
+ */
 export interface SetClubProfileError {
     type:    IndigoType;
     ierror?: string;
@@ -229,6 +232,9 @@ export interface ResDeleteClub {
     [property: string]: any;
 }
 
+/**
+ * The user is not the owner and therefore is not authorized.
+ */
 export interface DeleteClubError {
     type:    IndigoType;
     ierror?: string;
@@ -243,6 +249,9 @@ export interface ResAuthUser {
     [property: string]: any;
 }
 
+/**
+ * Got an error from a cryptography function. This error should never occur.
+ */
 export interface AuthUserError {
     type:    IndecentType;
     ierror?: string;
@@ -277,6 +286,9 @@ export interface ResVerifyAccount {
     [property: string]: any;
 }
 
+/**
+ * My favorite error message.
+ */
 export interface VerifyAccountError {
     type:    HilariousType;
     ierror?: string;
@@ -298,6 +310,9 @@ export interface ResSendVerify {
     [property: string]: any;
 }
 
+/**
+ * Failed to send the verification message (usually an email error).
+ */
 export interface SendVerifyError {
     type:    AmbitiousType;
     ierror?: string;

@@ -6,7 +6,7 @@ pub fn get_args() -> Vec<&'static str> {
 
 pub fn post_process(s: String) -> String {
     format!(
-        "import kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.withContext\nimport java.net.HttpURLConnection\nimport java.net.URL\n{}\nval BUBBEL_BATH_DEV = \"https://bubbel-bath.onrender.com\"\n",
+        "import kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.withContext\nimport java.net.HttpURLConnection\nimport java.net.URL\n{}\nval BUBBEL_BATH_DEV = \"http://api.joinbubbel.com\"\n",
         s.replace("package a", "")
     )
 }

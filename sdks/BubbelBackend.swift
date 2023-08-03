@@ -1,4 +1,4 @@
-let bubbelBathDev = "https://bubbel-bath.onrender.com"
+let bubbelBathDev = "http://api.joinbubbel.com"
 // This file was generated from JSON Schema using quicktype, do not modify it directly.
 // To parse the JSON, add this file to your project and do:
 //
@@ -213,7 +213,7 @@ extension ResCreateUser {
 ///
 /// Password is not valid by backend standards.
 ///
-/// Password failed to be encrypted.
+/// Got an error from a cryptography function. This error should never occur.
 ///
 /// Email or Username already taken.
 // MARK: - CreateUserError
@@ -1133,6 +1133,7 @@ extension ResSetClubProfile {
     }
 }
 
+/// The user is not the owner and therefore is not authorized.
 // MARK: - SetClubProfileError
 struct SetClubProfileError: Codable {
     let type: IndigoType
@@ -1271,6 +1272,7 @@ extension ResDeleteClub {
     }
 }
 
+/// The user is not the owner and therefore is not authorized.
 // MARK: - DeleteClubError
 struct DeleteClubError: Codable {
     let type: IndigoType
@@ -1362,6 +1364,7 @@ extension ResAuthUser {
     }
 }
 
+/// Got an error from a cryptography function. This error should never occur.
 // MARK: - AuthUserError
 struct AuthUserError: Codable {
     let type: IndecentType
@@ -1573,6 +1576,7 @@ extension ResVerifyAccount {
     }
 }
 
+/// My favorite error message.
 // MARK: - VerifyAccountError
 struct VerifyAccountError: Codable {
     let type: HilariousType
@@ -1705,6 +1709,7 @@ extension ResSendVerify {
     }
 }
 
+/// Failed to send the verification message (usually an email error).
 // MARK: - SendVerifyError
 struct SendVerifyError: Codable {
     let type: AmbitiousType

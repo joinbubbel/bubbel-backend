@@ -64,7 +64,7 @@ data class ResCreateUser (
  *
  * Password is not valid by backend standards.
  *
- * Password failed to be encrypted.
+ * Got an error from a cryptography function. This error should never occur.
  *
  * Email or Username already taken.
  */
@@ -248,6 +248,9 @@ data class ResSetClubProfile (
     val error: SetClubProfileError? = null
 )
 
+/**
+ * The user is not the owner and therefore is not authorized.
+ */
 @Serializable
 data class SetClubProfileError (
     val type: IndigoType,
@@ -275,6 +278,9 @@ data class ResDeleteClub (
     val error: DeleteClubError? = null
 )
 
+/**
+ * The user is not the owner and therefore is not authorized.
+ */
 @Serializable
 data class DeleteClubError (
     val type: IndigoType,
@@ -289,6 +295,9 @@ data class ResAuthUser (
     val username: String? = null
 )
 
+/**
+ * Got an error from a cryptography function. This error should never occur.
+ */
 @Serializable
 data class AuthUserError (
     val type: IndecentType,
@@ -324,6 +333,9 @@ data class ResVerifyAccount (
     val error: VerifyAccountError? = null
 )
 
+/**
+ * My favorite error message.
+ */
 @Serializable
 data class VerifyAccountError (
     val type: HilariousType,
@@ -347,6 +359,9 @@ data class ResSendVerify (
     val error: SendVerifyError? = null
 )
 
+/**
+ * Failed to send the verification message (usually an email error).
+ */
 @Serializable
 data class SendVerifyError (
     val type: AmbitiousType,
@@ -361,7 +376,7 @@ enum class AmbitiousType(val value: String) {
     @SerialName("UserNotFound") UserNotFound("UserNotFound");
 }
 
-val BUBBEL_BATH_DEV = "https://bubbel-bath.onrender.com"
+val BUBBEL_BATH_DEV = "http://api.joinbubbel.com"
 
 suspend fun bubbelApiCreateUser(request: InCreateUser): ResCreateUser = withContext(Dispatchers.IO) {
         val encoder = Json { ignoreUnknownKeys = true }
