@@ -6,7 +6,7 @@ pub fn get_args() -> Vec<&'static str> {
 
 pub fn post_process(s: String) -> String {
     format!(
-        "let bubbelBathDev = \"http://api.joinbubbel.com\"\n{}",
+        "let bubbelBathDev = \"https://api.joinbubbel.com\"\n{}",
         s.replace("package a", "")
     )
 }
