@@ -1,6 +1,14 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    club_members (id) {
+        id -> Int4,
+        user_id -> Int4,
+        club_id -> Int4,
+    }
+}
+
+diesel::table! {
     club_profiles (id) {
         id -> Int4,
         owner -> Int4,
@@ -34,6 +42,7 @@ diesel::table! {
 }
 
 diesel::allow_tables_to_appear_in_same_query!(
+    club_members,
     club_profiles,
     user_profiles,
     users,
