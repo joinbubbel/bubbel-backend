@@ -9,7 +9,7 @@ use std::{
     net::SocketAddr,
     sync::{Arc, Mutex, RwLock},
 };
-use tower_http::cors::CorsLayer;
+use tower_http::{cors::CorsLayer, services::ServeFile};
 
 mod collect_garbage;
 mod debug;
@@ -27,6 +27,7 @@ const ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD: &str =
 const WAIVE_ALL_ACCOUNT_VERIFICATION: &str = "BUBBEL_ENABLE_WAIVE_ALL_ACCOUNT_VERIFICATION";
 const TLS_CERTIFICATE_PATH_ENV: &str = "BUBBEL_TLS_CERT_PATH";
 const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_KEY_PATH";
+const RUST_DOCS_PATH_ENV: &str = "BUBBEL_DOCS_PATH";
 
 pub struct AppState {
     db: Mutex<DataState>,
@@ -64,6 +65,10 @@ async fn main() {
         .find(|(k, _)| k == TLS_KEY_PATH_ENV)
         .unwrap();
 
+    let rust_docs_path = std::env::vars()
+        .find(|(k, _)| k == RUST_DOCS_PATH_ENV)
+        .map(|(_, p)| p);
+
     let state = Arc::new(AppState {
         db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
@@ -81,7 +86,7 @@ async fn main() {
         .await
         .unwrap();
 
-    let app = Router::new()
+    let mut app = Router::new()
         .route("/", get(root))
         .route(
             "/api/waive_all_account_verification",
@@ -102,6 +107,10 @@ async fn main() {
         .route("/api/delete_club", post(api_delete_club))
         .layer(cors)
         .with_state(state);
+
+    if let Some(rust_docs_path) = rust_docs_path {
+        app = app.nest_service("/docs", ServeFile::new(rust_docs_path));
+    }
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
