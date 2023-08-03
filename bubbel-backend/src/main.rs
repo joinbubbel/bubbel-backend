@@ -3,6 +3,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use axum_server::tls_rustls::RustlsConfig;
 use bubbel_backend::*;
 use std::{
     net::SocketAddr,
@@ -24,6 +25,8 @@ const ACCOUNT_VERIFICATION_FROM_EMAIL: &str = "BUBBEL_ACCOUNT_VERIFICATION_FROM_
 const ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD: &str =
     "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD";
 const WAIVE_ALL_ACCOUNT_VERIFICATION: &str = "BUBBEL_ENABLE_WAIVE_ALL_ACCOUNT_VERIFICATION";
+const TLS_CERTIFICATE_PATH_ENV: &str = "BUBBEL_TLS_CERT";
+const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_CERT";
 
 pub struct AppState {
     db: Mutex<DataState>,
@@ -54,6 +57,13 @@ async fn main() {
     let enabled_waive_all_account_verification =
         std::env::vars().any(|(k, _)| k == WAIVE_ALL_ACCOUNT_VERIFICATION);
 
+    let (_, tls_cert_path) = std::env::vars()
+        .find(|(k, _)| k == TLS_CERTIFICATE_PATH_ENV)
+        .unwrap();
+    let (_, tls_key_path) = std::env::vars()
+        .find(|(k, _)| k == TLS_KEY_PATH_ENV)
+        .unwrap();
+
     let state = Arc::new(AppState {
         db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
@@ -66,6 +76,10 @@ async fn main() {
     let garbage_state = Arc::clone(&state);
 
     let cors = CorsLayer::very_permissive();
+
+    let tls_config = RustlsConfig::from_pem_file(tls_cert_path, tls_key_path)
+        .await
+        .unwrap();
 
     let app = Router::new()
         .route("/", get(root))
@@ -92,7 +106,7 @@ async fn main() {
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
     tokio::join!(
-        axum::Server::bind(&addr).serve(app.into_make_service()),
+        axum_server::bind_rustls(addr, tls_config).serve(app.into_make_service()),
         collect_garbage::collect_garbage(garbage_state)
     )
     .0
