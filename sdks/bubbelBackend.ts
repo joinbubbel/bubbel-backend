@@ -1,4 +1,4 @@
-const bubbelBathDev = 'http://api.joinbubbel.com';export interface BubbelCodegenOut {
+const bubbelBathDev = 'https://api.joinbubbel.com';export interface BubbelCodegenOut {
     t0?:  InCreateUser;
     t1?:  ResCreateUser;
     t10?: InSetUserProfile;
