@@ -406,7 +406,7 @@ enum class AmbitiousType(val value: String) {
     @SerialName("UserNotFound") UserNotFound("UserNotFound");
 }
 
-val BUBBEL_BATH_DEV = "http://api.joinbubbel.com"
+val BUBBEL_BATH_DEV = "https://api.joinbubbel.com"
 
 suspend fun bubbelApiCreateUser(request: InCreateUser): ResCreateUser = withContext(Dispatchers.IO) {
         val encoder = Json { ignoreUnknownKeys = true }
