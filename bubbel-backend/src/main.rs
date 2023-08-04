@@ -105,6 +105,10 @@ async fn main() {
         .route("/api/get_club_profile", post(api_get_club_profile))
         .route("/api/set_club_profile", post(api_set_club_profile))
         .route("/api/delete_club", post(api_delete_club))
+        .route(
+            "/api/get_user_profile_with_username",
+            post(api_get_user_profile_with_username),
+        )
         .layer(cors.clone())
         .with_state(Arc::clone(&state));
 
@@ -127,6 +131,10 @@ async fn main() {
         .route("/api/get_club_profile", post(api_get_club_profile))
         .route("/api/set_club_profile", post(api_set_club_profile))
         .route("/api/delete_club", post(api_delete_club))
+        .route(
+            "/api/get_user_profile_with_username",
+            post(api_get_user_profile_with_username),
+        )
         .layer(cors)
         .with_state(Arc::clone(&state));
 
@@ -471,6 +479,31 @@ async fn api_delete_club(
         Err(e) => ResDeleteClub {
             error: Some(e),
             res: Some(()),
+        },
+    };
+    debug.push_outgoing(&res);
+
+    Json(res)
+}
+
+async fn api_get_user_profile_with_username(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<InGetUserProfileWithUsername>,
+) -> Json<ResGetUserProfileWithUsername> {
+    let mut debug = state.debug.write().unwrap();
+    debug.push_incoming(&req);
+
+    let mut db = state.db.spawn();
+    let auth = state.auth.read().unwrap();
+
+    let res = match get_user_profile_with_username(&mut db, &auth, req.req) {
+        Ok(res) => ResGetUserProfileWithUsername {
+            error: None,
+            res: Some(res),
+        },
+        Err(e) => ResGetUserProfileWithUsername {
+            error: Some(e),
+            res: None,
         },
     };
     debug.push_outgoing(&res);

@@ -33,6 +33,8 @@ data class BubbelCodegenOut (
     val t21: ResSetClubProfile? = null,
     val t22: InDeleteClub? = null,
     val t23: ResDeleteClub? = null,
+    val t24: InGetUserProfileWithUsername? = null,
+    val t25: ResGetUserProfileWithUsername? = null,
     val t3: ResAuthUser? = null,
     val t4: InDeauthUser? = null,
     val t5: ResDeauthUser? = null,
@@ -283,7 +285,8 @@ enum class IndigoType(val value: String) {
     @SerialName("ClubNotFound") ClubNotFound("ClubNotFound"),
     @SerialName("Internal") Internal("Internal"),
     @SerialName("NoAuth") NoAuth("NoAuth"),
-    @SerialName("NoAuthOwner") NoAuthOwner("NoAuthOwner");
+    @SerialName("NoAuthOwner") NoAuthOwner("NoAuthOwner"),
+    @SerialName("SettingOwnerNotSupportedYet") SettingOwnerNotSupportedYet("SettingOwnerNotSupportedYet");
 }
 
 @Serializable
@@ -305,8 +308,46 @@ data class ResDeleteClub (
  */
 @Serializable
 data class DeleteClubError (
-    val type: IndigoType,
+    val type: IndecentType,
     val ierror: String? = null
+)
+
+@Serializable
+enum class IndecentType(val value: String) {
+    @SerialName("ClubNotFound") ClubNotFound("ClubNotFound"),
+    @SerialName("Internal") Internal("Internal"),
+    @SerialName("NoAuth") NoAuth("NoAuth"),
+    @SerialName("NoAuthOwner") NoAuthOwner("NoAuthOwner");
+}
+
+@Serializable
+data class InGetUserProfileWithUsername (
+    val token: String? = null,
+    val username: String
+)
+
+@Serializable
+data class ResGetUserProfileWithUsername (
+    val error: GetUserProfileWithUsernameError? = null,
+    val res: GetUserProfileWithUsernameOut? = null
+)
+
+@Serializable
+data class GetUserProfileWithUsernameError (
+    val type: TentacledType,
+    val ierror: String? = null
+)
+
+@Serializable
+data class GetUserProfileWithUsernameOut (
+    val banner: String? = null,
+    val description: String? = null,
+
+    @SerialName("display_name")
+    val displayName: String? = null,
+
+    val name: String? = null,
+    val pfp: String? = null
 )
 
 @Serializable
@@ -320,12 +361,12 @@ data class ResAuthUser (
  */
 @Serializable
 data class AuthUserError (
-    val type: IndecentType,
+    val type: HilariousType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class IndecentType(val value: String) {
+enum class HilariousType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("InvalidCredentials") InvalidCredentials("InvalidCredentials"),
     @SerialName("InvalidPasswordCryto") InvalidPasswordCryto("InvalidPasswordCryto"),
@@ -367,12 +408,12 @@ data class ResVerifyAccount (
  */
 @Serializable
 data class VerifyAccountError (
-    val type: HilariousType,
+    val type: AmbitiousType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class HilariousType(val value: String) {
+enum class AmbitiousType(val value: String) {
     @SerialName("CodeTimedOutOrAlreadyVerifiedOrInvalidCode") CodeTimedOutOrAlreadyVerifiedOrInvalidCode("CodeTimedOutOrAlreadyVerifiedOrInvalidCode"),
     @SerialName("Internal") Internal("Internal");
 }
@@ -394,12 +435,12 @@ data class ResSendVerify (
  */
 @Serializable
 data class SendVerifyError (
-    val type: AmbitiousType,
+    val type: CunningType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class AmbitiousType(val value: String) {
+enum class CunningType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("ResendTooSoon") ResendTooSoon("ResendTooSoon"),
     @SerialName("SendVerification") SendVerification("SendVerification"),
@@ -687,6 +728,31 @@ suspend fun bubbelApiDeleteClub(request: InDeleteClub): ResDeleteClub = withCont
         val encoder = Json { ignoreUnknownKeys = true }
         val json = encoder.encodeToString(request)
         val url = URL("$BUBBEL_BATH_DEV/api/delete_club")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiGetUserProfileWithUsername(request: InGetUserProfileWithUsername): ResGetUserProfileWithUsername = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/get_user_profile_with_username")
         val urlConnection = url.openConnection() as HttpURLConnection
         urlConnection.requestMethod = "POST"
         urlConnection.setRequestProperty("Content-Type", "application/json")

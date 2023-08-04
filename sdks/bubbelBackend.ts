@@ -16,6 +16,8 @@ const bubbelBathDev = 'https://api.joinbubbel.com';export interface BubbelCodege
     t21?: ResSetClubProfile;
     t22?: InDeleteClub;
     t23?: ResDeleteClub;
+    t24?: InGetUserProfileWithUsername;
+    t25?: ResGetUserProfileWithUsername;
     t3?:  ResAuthUser;
     t4?:  InDeauthUser;
     t5?:  ResDeauthUser;
@@ -242,6 +244,7 @@ export enum IndigoType {
     Internal = "Internal",
     NoAuth = "NoAuth",
     NoAuthOwner = "NoAuthOwner",
+    SettingOwnerNotSupportedYet = "SettingOwnerNotSupportedYet",
 }
 
 export interface InDeleteClub {
@@ -260,8 +263,42 @@ export interface ResDeleteClub {
  * The user is not the owner and therefore is not authorized.
  */
 export interface DeleteClubError {
-    type:    IndigoType;
+    type:    IndecentType;
     ierror?: string;
+    [property: string]: any;
+}
+
+export enum IndecentType {
+    ClubNotFound = "ClubNotFound",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+    NoAuthOwner = "NoAuthOwner",
+}
+
+export interface InGetUserProfileWithUsername {
+    token?:   null | string;
+    username: string;
+    [property: string]: any;
+}
+
+export interface ResGetUserProfileWithUsername {
+    error?: null | GetUserProfileWithUsernameError;
+    res?:   null | GetUserProfileWithUsernameOut;
+    [property: string]: any;
+}
+
+export interface GetUserProfileWithUsernameError {
+    type:    TentacledType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export interface GetUserProfileWithUsernameOut {
+    banner?:       null | string;
+    description?:  null | string;
+    display_name?: null | string;
+    name?:         null | string;
+    pfp?:          null | string;
     [property: string]: any;
 }
 
@@ -275,12 +312,12 @@ export interface ResAuthUser {
  * Got an error from a cryptography function. This error should never occur.
  */
 export interface AuthUserError {
-    type:    IndecentType;
+    type:    HilariousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum IndecentType {
+export enum HilariousType {
     Internal = "Internal",
     InvalidCredentials = "InvalidCredentials",
     InvalidPasswordCryto = "InvalidPasswordCryto",
@@ -321,12 +358,12 @@ export interface ResVerifyAccount {
  * My favorite error message.
  */
 export interface VerifyAccountError {
-    type:    HilariousType;
+    type:    AmbitiousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum HilariousType {
+export enum AmbitiousType {
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode",
     Internal = "Internal",
 }
@@ -346,12 +383,12 @@ export interface ResSendVerify {
  * Failed to send the verification message (usually an email error).
  */
 export interface SendVerifyError {
-    type:    AmbitiousType;
+    type:    CunningType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum AmbitiousType {
+export enum CunningType {
     Internal = "Internal",
     ResendTooSoon = "ResendTooSoon",
     SendVerification = "SendVerification",
@@ -492,6 +529,18 @@ export async function bubbelApiSetClubProfile(req: InSetClubProfile): Promise<Re
         }
 export async function bubbelApiDeleteClub(req: InDeleteClub): Promise<ResDeleteClub> {
             let fetchRes = await fetch(bubbelBathDev + '/api/delete_club', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetUserProfileWithUsername(req: InGetUserProfileWithUsername): Promise<ResGetUserProfileWithUsername> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_user_profile_with_username', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

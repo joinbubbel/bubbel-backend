@@ -178,6 +178,13 @@ fn main() {
         ResDeleteClub
     );
 
+    add!(
+        "bubbelApiGetUserProfileWithUsername",
+        "/api/get_user_profile_with_username",
+        InGetUserProfileWithUsername,
+        ResGetUserProfileWithUsername
+    );
+
     let project_root = get_project_root().unwrap();
 
     let mut ts_out = project_root.clone();

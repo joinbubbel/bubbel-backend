@@ -31,6 +31,21 @@ impl User {
             .map_err(DatabaseError::from)
     }
 
+    /// Try to get a user using `username`.
+    pub fn get_user_id_with_username(
+        db: &mut DataStateInstance,
+        username: &str,
+    ) -> Result<Option<UserId>, DatabaseError> {
+        use crate::schema::users::dsl;
+
+        dsl::users
+            .select(dsl::id)
+            .filter(dsl::username.eq(username))
+            .load::<i32>(&mut db.db)
+            .map(|u| u.first().map(|&u| UserId(u)))
+            .map_err(DatabaseError::from)
+    }
+
     /// Remove a user using `id`.
     /// Nothing happens if the user doesn't exist.
     pub fn remove(db: &mut DataStateInstance, id: UserId) -> Result<(), DatabaseError> {
