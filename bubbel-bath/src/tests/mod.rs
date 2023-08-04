@@ -6,6 +6,7 @@ mod test_create_club_profile;
 mod test_create_user;
 mod test_deauth_user;
 mod test_delete_user;
+mod test_friends;
 mod test_resend_verify;
 mod test_set_user_profile;
 
