@@ -38,6 +38,7 @@ impl ClubMembers {
             .map_err(DatabaseError::from)
     }
 
+    /// Get all users associated with a club.
     pub fn get_club_memberships(
         db: &mut DataState,
         club_id: &ClubId,
@@ -49,6 +50,21 @@ impl ClubMembers {
             .filter(dsl::club_id.eq(club_id.0))
             .load::<i32>(&mut db.db)
             .map(|ids| ids.into_iter().map(UserId).collect())
+            .map_err(DatabaseError::from)
+    }
+
+    /// Get all clubs associated with a user.
+    pub fn get_user_clubs(
+        db: &mut DataState,
+        user_id: &UserId,
+    ) -> Result<Vec<ClubId>, DatabaseError> {
+        use crate::schema::club_members::dsl;
+
+        dsl::club_members
+            .select(dsl::club_id)
+            .filter(dsl::user_id.eq(user_id.0))
+            .load::<i32>(&mut db.db)
+            .map(|ids| ids.into_iter().map(ClubId).collect())
             .map_err(DatabaseError::from)
     }
 
