@@ -2,7 +2,7 @@ use super::*;
 
 #[test]
 #[serial_test::serial]
-pub fn test_clubs() {
+pub fn test_join_clubs() {
     let mut db = new_data_state();
     let mut auth = AuthState::default();
     let mut acc_limbo = AccountLimboState::default();
@@ -65,86 +65,6 @@ pub fn test_clubs() {
     )
     .unwrap()
     .club_id;
-
-    assert_eq!(
-        delete_club(
-            &mut db,
-            &auth,
-            DeleteClub {
-                token: acc2_token.clone(),
-                club_id,
-            },
-        ),
-        Err(DeleteClubError::NoAuthOwner)
-    );
-
-    delete_club(
-        &mut db,
-        &auth,
-        DeleteClub {
-            token: acc1_token.clone(),
-            club_id,
-        },
-    )
-    .unwrap();
-
-    assert_eq!(
-        delete_club(
-            &mut db,
-            &auth,
-            DeleteClub {
-                token: acc1_token.clone(),
-                club_id,
-            },
-        ),
-        Err(DeleteClubError::ClubNotFound)
-    );
-
-    let club_id = create_club(
-        &mut db,
-        &auth,
-        CreateClub {
-            token: acc1_token.clone(),
-            name: "Acc1 Club 2.0".to_owned(),
-        },
-    )
-    .unwrap()
-    .club_id;
-
-    set_club_profile(
-        &mut db,
-        &auth,
-        SetClubProfile {
-            token: acc1_token.clone(),
-            club_id,
-            profile: ClubProfilePartial {
-                name: Some("Cool Club".to_owned()),
-                ..Default::default()
-            },
-        },
-    )
-    .unwrap();
-
-    assert_eq!(
-        get_club_profile(
-            &mut db,
-            &auth,
-            GetClubProfile {
-                token: None,
-                club_id,
-            },
-        )
-        .unwrap()
-        .profile,
-        ClubProfile {
-            owner: acc1.0,
-            name: "Cool Club".to_owned(),
-            description: None,
-            display_name: None,
-            pfp: None,
-            banner: None
-        }
-    );
 
     assert_eq!(
         unjoin_club(

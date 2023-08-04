@@ -5,10 +5,7 @@ pub fn get_args() -> Vec<&'static str> {
 }
 
 pub fn post_process(s: String) -> String {
-    format!(
-        "const bubbelBathDev = 'https://api.joinbubbel.com';{}",
-        s
-    )
+    format!("const bubbelBathDev = 'https://api.joinbubbel.com';{}", s)
 }
 
 pub fn get_fetch(e: &Endpoint) -> String {
