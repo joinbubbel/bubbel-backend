@@ -132,11 +132,59 @@ pub fn test_friends() {
     )
     .unwrap();
 
-    let acc1_conns =
-        get_friend_connections(&mut db, &auth, GetFriendConnection { token: acc1_token })
-            .unwrap()
-            .friend_connections;
+    let acc1_conns = get_friend_connections(
+        &mut db,
+        &auth,
+        GetFriendConnection {
+            token: acc1_token.clone(),
+        },
+    )
+    .unwrap()
+    .friend_connections;
     assert_eq!(acc1_conns.get(&acc3), Some(&FriendStatus::Full));
+    assert_eq!(acc1_conns.get(&acc2), Some(&FriendStatus::RecievedPending));
+
+    let acc2_conns = get_friend_connections(
+        &mut db,
+        &auth,
+        GetFriendConnection {
+            token: acc2_token.clone(),
+        },
+    )
+    .unwrap()
+    .friend_connections;
+    assert_eq!(acc2_conns.get(&acc1), Some(&FriendStatus::SentPending));
+
+    let acc3_conns = get_friend_connections(
+        &mut db,
+        &auth,
+        GetFriendConnection {
+            token: acc3_token.clone(),
+        },
+    )
+    .unwrap()
+    .friend_connections;
+    assert_eq!(acc3_conns.get(&acc1), Some(&FriendStatus::Full));
+
+    remove_friend(
+        &mut db,
+        &auth,
+        RemoveFriend {
+            token: acc1_token.clone(),
+            removal_id: acc3,
+        },
+    )
+    .unwrap();
+
+    let acc1_conns = get_friend_connections(
+        &mut db,
+        &auth,
+        GetFriendConnection {
+            token: acc1_token.clone(),
+        },
+    )
+    .unwrap()
+    .friend_connections;
     assert_eq!(acc1_conns.get(&acc2), Some(&FriendStatus::RecievedPending));
 
     let acc2_conns =
@@ -149,5 +197,5 @@ pub fn test_friends() {
         get_friend_connections(&mut db, &auth, GetFriendConnection { token: acc3_token })
             .unwrap()
             .friend_connections;
-    assert_eq!(acc3_conns.get(&acc1), Some(&FriendStatus::Full));
+    assert!(acc3_conns.is_empty());
 }

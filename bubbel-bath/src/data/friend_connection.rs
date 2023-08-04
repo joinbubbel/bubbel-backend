@@ -105,14 +105,15 @@ impl FriendConnection {
                 .or_insert(FriendStatus::SentPending);
 
             for recver in recvers.iter() {
-                ret.entry(UserId(recver.send_user_id))
-                    .or_insert(FriendStatus::RecievedPending);
-
                 if sender.send_user_id == recver.recv_user_id {
                     ret.insert(UserId(sender.recv_user_id), FriendStatus::Full);
-                } else {
                 }
             }
+        }
+
+        for recver in recvers.iter() {
+            ret.entry(UserId(recver.send_user_id))
+                .or_insert(FriendStatus::RecievedPending);
         }
 
         Ok(ret)

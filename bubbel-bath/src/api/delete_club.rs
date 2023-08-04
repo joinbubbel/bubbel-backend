@@ -13,7 +13,9 @@ pub enum DeleteClubError {
     /// The user is not the owner and therefore is not authorized.
     NoAuthOwner,
     ClubNotFound,
-    Internal { ierror: String },
+    Internal {
+        ierror: String,
+    },
 }
 
 pub fn delete_club(

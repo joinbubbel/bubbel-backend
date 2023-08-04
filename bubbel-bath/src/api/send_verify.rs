@@ -13,7 +13,9 @@ pub enum SendVerifyError {
     ResendTooSoon,
     /// Failed to send the verification message (usually an email error).
     SendVerification,
-    Internal { ierror: String },
+    Internal {
+        ierror: String,
+    },
 }
 
 const VERIFICATION_RESEND_MIN_TIME: Duration = Duration::from_secs(10);

@@ -24,7 +24,9 @@ pub enum AuthUserError {
     InvalidPasswordCryto,
     UserNotFound,
     UserNotVerified,
-    Internal { ierror: String },
+    Internal {
+        ierror: String,
+    },
 }
 
 pub fn auth_user(

@@ -10,7 +10,9 @@ pub struct VerifyAccount {
 pub enum VerifyAccountError {
     /// My favorite error message.
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode,
-    Internal { ierror: String },
+    Internal {
+        ierror: String,
+    },
 }
 
 pub fn verify_account(
