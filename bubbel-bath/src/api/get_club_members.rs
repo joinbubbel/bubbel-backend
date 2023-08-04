@@ -2,12 +2,12 @@ use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct GetClubMembers {
-    club_id: ClubId,
+    pub club_id: ClubId,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct GetClubMembersOut {
-    users: Vec<UserId>,
+    pub users: Vec<UserId>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]

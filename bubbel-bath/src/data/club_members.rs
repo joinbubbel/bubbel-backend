@@ -21,6 +21,7 @@ pub struct ClubMembers {
 
 impl ClubMembers {
     /// Inserts an club membership with `user_id` and `club_id`.
+    /// 1. Doesn't check if `user_id` is already in the club.
     pub fn insert_new(
         db: &mut DataState,
         user_id: &UserId,
@@ -66,6 +67,23 @@ impl ClubMembers {
             .load::<i32>(&mut db.db)
             .map(|ids| ids.into_iter().map(ClubId).collect())
             .map_err(DatabaseError::from)
+    }
+
+    pub fn is_user_in_club(
+        db: &mut DataState,
+        user_id: &UserId,
+        club_id: &ClubId,
+    ) -> Result<bool, DatabaseError> {
+        use crate::schema::club_members::dsl;
+
+        Ok(dsl::club_members
+            .select(dsl::club_id)
+            .filter(dsl::user_id.eq(user_id.0))
+            .filter(dsl::club_id.eq(club_id.0))
+            .load::<i32>(&mut db.db)
+            .map_err(DatabaseError::from)?
+            .len()
+            == 1)
     }
 
     /// Remove a club connection.

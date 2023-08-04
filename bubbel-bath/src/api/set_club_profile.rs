@@ -21,6 +21,8 @@ pub enum SetClubProfileError {
     Internal {
         ierror: String,
     },
+
+    SettingOwnerNotSupportedYet,
 }
 
 pub fn set_club_profile(
@@ -39,6 +41,29 @@ pub fn set_club_profile(
     };
     if user_id != UserId(profile.owner) {
         Err(SetClubProfileError::NoAuthOwner)?
+    }
+
+    if let Some(_new_owner) = req.profile.owner {
+        Err(SetClubProfileError::SettingOwnerNotSupportedYet)?;
+        // This code does not function properly.
+        // if new_owner != user_id.0 {
+        //     match join_club(
+        //         db,
+        //         auth,
+        //         JoinClub {
+        //             token: req.token,
+        //             club_id: req.club_id,
+        //         },
+        //     ) {
+        //         Ok(_) | Err(JoinClubError::AlreadyJoined) => (),
+        //         Err(JoinClubError::NoAuth) => Err(SetClubProfileError::Internal {
+        //             ierror: "Reached impossible token case.".to_owned(),
+        //         })?,
+        //         Err(JoinClubError::Internal { ierror }) => {
+        //             Err(SetClubProfileError::Internal { ierror })?
+        //         }
+        //     };
+        // }
     }
 
     req.profile

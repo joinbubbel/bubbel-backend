@@ -2,8 +2,8 @@ use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct JoinClub {
-    token: UserToken,
-    club_id: ClubId,
+    pub token: UserToken,
+    pub club_id: ClubId,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
@@ -13,6 +13,7 @@ pub struct JoinClubOut {}
 #[serde(tag = "type")]
 pub enum JoinClubError {
     NoAuth,
+    AlreadyJoined,
     Internal { ierror: String },
 }
 
@@ -24,8 +25,18 @@ pub fn join_club(
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(JoinClubError::NoAuth)?
     };
+
+    if ClubMembers::is_user_in_club(db, &user_id, &req.club_id).map_err(|e| {
+        JoinClubError::Internal {
+            ierror: e.to_string(),
+        }
+    })? {
+        Err(JoinClubError::AlreadyJoined)?
+    }
+
     ClubMembers::insert_new(db, &user_id, &req.club_id).map_err(|e| JoinClubError::Internal {
         ierror: e.to_string(),
     })?;
+
     Ok(JoinClubOut {})
 }
