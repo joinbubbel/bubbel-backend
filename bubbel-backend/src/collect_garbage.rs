@@ -27,7 +27,7 @@ async fn collect_acc_limbo_garbage(app: &Arc<AppState>) {
     loop {
         tokio::time::sleep(ACC_LIMBO_COLLECT_GARBAGE_INTERVAL).await;
         {
-            let mut db = app.db.lock().unwrap();
+            let mut db = app.db.spawn();
             let mut acc_limbo = app.acc_limbo.lock().unwrap();
             acc_limbo.collect_garbage(&mut db);
         }

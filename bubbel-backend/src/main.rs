@@ -30,7 +30,7 @@ const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_KEY_PATH";
 const RUST_DOCS_PATH_ENV: &str = "BUBBEL_DOCS_PATH";
 
 pub struct AppState {
-    db: Mutex<DataStateInstance>,
+    db: DataState,
     auth: RwLock<AuthState>,
     debug: RwLock<DebugState>,
     acc_limbo: Mutex<AccountLimboState>,
@@ -70,7 +70,7 @@ async fn main() {
         .map(|(_, p)| p);
 
     let state = Arc::new(AppState {
-        db: Mutex::new(DataStateInstance::new(&db_url, &user_salt).unwrap()),
+        db: DataState::new(&db_url, &user_salt),
         auth: RwLock::new(AuthState::default()),
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
         acc_limbo: Mutex::new(AccountLimboState::default()),
@@ -153,7 +153,7 @@ async fn root() -> &'static str {
 
 async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
     if state.enabled_waive_all_account_verification {
-        let mut db = state.db.lock().unwrap();
+        let mut db = state.db.spawn();
         let mut acc_limbo = state.acc_limbo.lock().unwrap();
         acc_limbo.waive_user_verification(&mut db);
     }
@@ -166,7 +166,7 @@ async fn api_create_user(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let res = match create_user(&mut db, req.req) {
         Ok(res) => ResCreateUser {
             error: None,
@@ -189,7 +189,7 @@ async fn api_auth_user(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let mut auth = state.auth.write().unwrap();
 
     let res = match auth_user(&mut db, &mut auth, req.req) {
@@ -233,7 +233,7 @@ async fn api_verify_user(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let mut acc_limbo = state.acc_limbo.lock().unwrap();
 
     let res = match verify_account(&mut db, &mut acc_limbo, req.req) {
@@ -258,7 +258,7 @@ async fn api_send_verify(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let mut acc_limbo = state.acc_limbo.lock().unwrap();
 
     let mut run = || {
@@ -310,7 +310,7 @@ async fn api_set_user_profile(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match set_user_profile(&mut db, &auth, req.req) {
@@ -335,7 +335,7 @@ async fn api_get_user_profile(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match get_user_profile(&mut db, &auth, req.req) {
@@ -360,7 +360,7 @@ async fn api_delete_user(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let mut auth = state.auth.write().unwrap();
 
     let res = match delete_user(&mut db, &mut auth, req.req) {
@@ -385,7 +385,7 @@ async fn api_create_club(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match create_club(&mut db, &auth, req.req) {
@@ -410,7 +410,7 @@ async fn api_get_club_profile(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match get_club_profile(&mut db, &auth, req.req) {
@@ -435,7 +435,7 @@ async fn api_set_club_profile(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match set_club_profile(&mut db, &auth, req.req) {
@@ -460,7 +460,7 @@ async fn api_delete_club(
     let mut debug = state.debug.write().unwrap();
     debug.push_incoming(&req);
 
-    let mut db = state.db.lock().unwrap();
+    let mut db = state.db.spawn();
     let auth = state.auth.read().unwrap();
 
     let res = match delete_club(&mut db, &auth, req.req) {

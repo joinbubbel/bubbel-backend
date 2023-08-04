@@ -5,7 +5,8 @@ use super::*;
 pub fn test_account_collect_garbage() {
     use crate::schema::users::dsl;
 
-    let mut db = new_data_state();
+    let dbs = new_data_state();
+    let mut db = dbs.spawn();
     let mut acc_limbo = AccountLimboState::default();
 
     let acc1 = create_user(

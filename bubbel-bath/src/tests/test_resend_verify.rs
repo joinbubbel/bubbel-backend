@@ -3,7 +3,8 @@ use super::*;
 #[test]
 #[serial_test::serial]
 pub fn test_resend_verify() {
-    let mut db = new_data_state();
+    let dbs = new_data_state();
+    let mut db = dbs.spawn();
     let mut acc_limbo = AccountLimboState::default();
 
     let acc = create_user(

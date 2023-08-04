@@ -3,7 +3,8 @@ use super::*;
 #[test]
 #[serial_test::serial]
 pub fn test_join_clubs() {
-    let mut db = new_data_state();
+    let dbs = new_data_state();
+    let mut db = dbs.spawn();
     let mut auth = AuthState::default();
     let mut acc_limbo = AccountLimboState::default();
 

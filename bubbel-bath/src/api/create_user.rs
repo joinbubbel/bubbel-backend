@@ -62,7 +62,10 @@ pub enum CreateUserError {
     },
 }
 
-pub fn create_user(db: &mut DataStateInstance, req: CreateUser) -> Result<CreateUserOut, CreateUserError> {
+pub fn create_user(
+    db: &mut DataStateInstance,
+    req: CreateUser,
+) -> Result<CreateUserOut, CreateUserError> {
     use crate::schema::users::dsl;
 
     validate_username(&req.username)

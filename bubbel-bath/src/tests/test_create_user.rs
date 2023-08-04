@@ -3,7 +3,8 @@ use super::*;
 #[test]
 #[serial_test::serial]
 pub fn test_create_multiple_users() {
-    let mut db = new_data_state();
+    let dbs = new_data_state();
+    let mut db = dbs.spawn();
     assert_eq!(
         create_user(
             &mut db,

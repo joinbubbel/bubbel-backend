@@ -33,7 +33,10 @@ impl UserProfile {
     }
 
     /// Try to get a user profile using `id`.
-    pub fn get(db: &mut DataStateInstance, id: UserId) -> Result<Option<UserProfile>, DatabaseError> {
+    pub fn get(
+        db: &mut DataStateInstance,
+        id: UserId,
+    ) -> Result<Option<UserProfile>, DatabaseError> {
         use crate::schema::user_profiles::dsl;
 
         dsl::user_profiles

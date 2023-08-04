@@ -11,7 +11,7 @@ mod test_join_clubs;
 mod test_resend_verify;
 mod test_set_user_profile;
 
-pub fn new_data_state() -> DataStateInstance {
+pub fn new_data_state() -> DataState {
     let db_url = "postgresql://postgres:abc@localhost:5432/bubbel-test";
 
     std::process::Command::new("diesel")
@@ -22,5 +22,5 @@ pub fn new_data_state() -> DataStateInstance {
         .output()
         .unwrap();
 
-    DataStateInstance::new(db_url, "abcdefghijklmnop").unwrap()
+    DataState::new(db_url, "abcdefghijklmnop")
 }
