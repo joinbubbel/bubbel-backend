@@ -19,7 +19,7 @@ pub enum GetFriendConnectionError {
 }
 
 pub fn get_friend_connections(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetFriendConnection,
 ) -> Result<GetFriendConnectionOut, GetFriendConnectionError> {

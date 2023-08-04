@@ -30,7 +30,7 @@ const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_KEY_PATH";
 const RUST_DOCS_PATH_ENV: &str = "BUBBEL_DOCS_PATH";
 
 pub struct AppState {
-    db: Mutex<DataState>,
+    db: Mutex<DataStateInstance>,
     auth: RwLock<AuthState>,
     debug: RwLock<DebugState>,
     acc_limbo: Mutex<AccountLimboState>,
@@ -70,7 +70,7 @@ async fn main() {
         .map(|(_, p)| p);
 
     let state = Arc::new(AppState {
-        db: Mutex::new(DataState::new(&db_url, &user_salt).unwrap()),
+        db: Mutex::new(DataStateInstance::new(&db_url, &user_salt).unwrap()),
         auth: RwLock::new(AuthState::default()),
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
         acc_limbo: Mutex::new(AccountLimboState::default()),

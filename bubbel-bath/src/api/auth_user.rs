@@ -30,7 +30,7 @@ pub enum AuthUserError {
 }
 
 pub fn auth_user(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &mut AuthState,
     req: AuthUser,
 ) -> Result<AuthUserOut, AuthUserError> {

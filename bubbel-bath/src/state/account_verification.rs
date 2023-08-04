@@ -34,7 +34,7 @@ impl AccountLimboState {
     /// Verify a user without any checks.
     pub fn unchecked_verify_user(
         &mut self,
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         code: &str,
         user: &UserId,
     ) -> Result<(), DatabaseError> {
@@ -61,12 +61,12 @@ impl AccountLimboState {
     }
 
     /// Discard expired accounts verification codes as well as those accounts using the default expiration duration.
-    pub fn collect_garbage(&mut self, db: &mut DataState) {
+    pub fn collect_garbage(&mut self, db: &mut DataStateInstance) {
         self.collect_garbage_with_expire(db, ACCOUNT_VERIFICATION_EXPIRE);
     }
 
     /// Discard expired accounts verification codes as well as those accounts.
-    pub fn collect_garbage_with_expire(&mut self, db: &mut DataState, expire: Duration) {
+    pub fn collect_garbage_with_expire(&mut self, db: &mut DataStateInstance, expire: Duration) {
         let now = SystemTime::now();
         self.account_codes = self
             .account_codes
@@ -85,7 +85,7 @@ impl AccountLimboState {
 
     /// Waive all users that are apart of [`AccountLimboState`].
     /// Mainly for the purposes of testing.
-    pub fn waive_user_verification(&mut self, db: &mut DataState) {
+    pub fn waive_user_verification(&mut self, db: &mut DataStateInstance) {
         self.account_codes.clone().iter().for_each(|(code, _)| {
             verify_account(db, self, VerifyAccount { code: code.clone() }).unwrap();
         });

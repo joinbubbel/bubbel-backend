@@ -24,7 +24,7 @@ pub enum GetUserProfileError {
 }
 
 pub fn get_user_profile(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     _auth: &AuthState,
     req: GetUserProfile,
 ) -> Result<GetUserProfileOut, GetUserProfileError> {

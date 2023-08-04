@@ -10,7 +10,6 @@
 //! #[derive(Serialize, Deserialize)]
 //! struct ResFooBar {
 //!     error: Option<FooBarError>,
-//!     #[serde(flatten)]
 //!     pub res: Option<FooBarOut>
 //! }
 //! ```

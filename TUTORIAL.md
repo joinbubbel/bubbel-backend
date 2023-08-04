@@ -44,7 +44,7 @@ For example `AuthState` holds the user's sessions and keeps them logged in.
 You can find all of the states in `bubbel-bath/src/state/`.
 
 The other way is by storing data persistently on the database.
-You would do this using `DataState` which holds a connection to the database.
+You would do this using `DataStateInstance` which holds a connection to the database.
 
 ## Tutorial Time!
 
@@ -97,13 +97,13 @@ This convention is maintained for the sake of consistency, and I expect you to d
 same.
 
 Now, we need to decide what states we need access to in order to implement this.
-Looks like we will need `DataState` to check if our user even exists, and
+Looks like we will need `DataStateInstance` to check if our user even exists, and
 `AuthState` to log them in.
 
 > Pro tip, run `cargo doc --open` and search for `State` to see all of the states.
 
 ```rust
-fn dangerous_login(db: &mut DataState, auth: &mut AuthState, req: DangerousLogin) -> Result<DangerousLogin, DangerousLoginError> {
+fn dangerous_login(db: &mut DataStateInstance, auth: &mut AuthState, req: DangerousLogin) -> Result<DangerousLogin, DangerousLoginError> {
 }
 ```
 
@@ -112,7 +112,7 @@ function is written like this.
 Anyway, let's implement the logic.
 
 ```rust
-fn dangerous_login(db: &mut DataState, auth: &mut AuthState, req: DangerousLogin) -> Result<DangerousLogin, DangerousLoginError> {
+fn dangerous_login(db: &mut DataStateInstance, auth: &mut AuthState, req: DangerousLogin) -> Result<DangerousLogin, DangerousLoginError> {
     //  1. Does this user exist and are they verified?
     if let Some(user) = User::get(db, req.user_id)
         //  If we get an error from the database, throw an interal error.

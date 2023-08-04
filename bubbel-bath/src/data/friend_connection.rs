@@ -32,7 +32,7 @@ impl FriendConnection {
     /// 1. Does not check if you are friending yourself.
     /// 2. Does not check if this connection already exists.
     pub fn insert_new(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         send_user_id: &UserId,
         recv_user_id: &UserId,
     ) -> Result<(), DatabaseError> {
@@ -63,7 +63,7 @@ impl FriendConnection {
 
     /// Checks if `send_user_id` has already connected with `recv_user_id`.
     pub fn has_already_added_user(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         send_user_id: &UserId,
         recv_user_id: &UserId,
     ) -> Result<bool, DatabaseError> {
@@ -81,7 +81,7 @@ impl FriendConnection {
 
     /// The all friend connection statuses.
     pub fn get_friend_connections(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         send_user_id: &UserId,
     ) -> Result<HashMap<UserId, FriendStatus>, DatabaseError> {
         use crate::schema::friend_connections::dsl;
@@ -121,7 +121,7 @@ impl FriendConnection {
 
     /// Completely remove a friend connection both ways.
     pub fn remove(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         send_user_id: &UserId,
         recv_user_id: &UserId,
     ) -> Result<(), DatabaseError> {

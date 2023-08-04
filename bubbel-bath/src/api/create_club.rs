@@ -19,7 +19,7 @@ pub enum CreateClubError {
 }
 
 pub fn create_club(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: CreateClub,
 ) -> Result<CreateClubOut, CreateClubError> {

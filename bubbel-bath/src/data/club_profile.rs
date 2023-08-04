@@ -29,7 +29,7 @@ pub struct ClubProfile {
 impl ClubProfile {
     /// Inserts an empty club profile with `owner_id` and `name`.
     pub fn insert_new(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         owner_id: &UserId,
         name: String,
     ) -> Result<ClubId, DatabaseError> {
@@ -51,7 +51,7 @@ impl ClubProfile {
     }
 
     /// Try to get a club profile using `id`.
-    pub fn get(db: &mut DataState, id: &ClubId) -> Result<Option<Self>, DatabaseError> {
+    pub fn get(db: &mut DataStateInstance, id: &ClubId) -> Result<Option<Self>, DatabaseError> {
         use crate::schema::club_profiles::dsl;
 
         dsl::club_profiles
@@ -71,7 +71,7 @@ impl ClubProfile {
 
     /// Remove a club profile using `id`.
     /// Nothing happens if the club doesn't exist.
-    pub fn remove(db: &mut DataState, id: ClubId) -> Result<(), DatabaseError> {
+    pub fn remove(db: &mut DataStateInstance, id: ClubId) -> Result<(), DatabaseError> {
         use crate::schema::club_profiles::dsl;
 
         diesel::delete(dsl::club_profiles)
@@ -99,7 +99,7 @@ impl ClubProfilePartial {
     /// fields that are `None` will have no affect on the database.
     pub fn unchecked_partial_update(
         &self,
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         club_id: &ClubId,
     ) -> Result<(), DatabaseError> {
         use crate::schema::club_profiles::dsl;

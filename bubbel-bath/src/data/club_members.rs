@@ -23,7 +23,7 @@ impl ClubMembers {
     /// Inserts an club membership with `user_id` and `club_id`.
     /// 1. Doesn't check if `user_id` is already in the club.
     pub fn insert_new(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         user_id: &UserId,
         club_id: &ClubId,
     ) -> Result<(), DatabaseError> {
@@ -41,7 +41,7 @@ impl ClubMembers {
 
     /// Get all users associated with a club.
     pub fn get_club_memberships(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         club_id: &ClubId,
     ) -> Result<Vec<UserId>, DatabaseError> {
         use crate::schema::club_members::dsl;
@@ -56,7 +56,7 @@ impl ClubMembers {
 
     /// Get all clubs associated with a user.
     pub fn get_user_clubs(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         user_id: &UserId,
     ) -> Result<Vec<ClubId>, DatabaseError> {
         use crate::schema::club_members::dsl;
@@ -70,7 +70,7 @@ impl ClubMembers {
     }
 
     pub fn is_user_in_club(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         user_id: &UserId,
         club_id: &ClubId,
     ) -> Result<bool, DatabaseError> {
@@ -89,7 +89,7 @@ impl ClubMembers {
     /// Remove a club connection.
     /// Nothing happens if the club doesn't exist.
     pub fn remove(
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         user_id: &UserId,
         club_id: &ClubId,
     ) -> Result<(), DatabaseError> {
@@ -121,7 +121,7 @@ impl ClubProfilePartial {
     /// fields that are `None` will have no affect on the database.
     pub fn unchecked_partial_update(
         &self,
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         club_id: &ClubId,
     ) -> Result<(), DatabaseError> {
         use crate::schema::club_profiles::dsl;

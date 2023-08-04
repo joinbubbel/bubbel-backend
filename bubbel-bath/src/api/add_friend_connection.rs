@@ -19,7 +19,7 @@ pub enum AddFriendConnectionError {
 }
 
 pub fn add_friend_connection(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: AddFriendConnection,
 ) -> Result<AddFriendConnectionOut, AddFriendConnectionError> {

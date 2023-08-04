@@ -17,7 +17,7 @@ pub enum GetClubMembersError {
 }
 
 pub fn get_club_members(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     req: GetClubMembers,
 ) -> Result<GetClubMembersOut, GetClubMembersError> {
     let users = ClubMembers::get_club_memberships(db, &req.club_id).map_err(|e| {

@@ -16,7 +16,7 @@ pub enum VerifyAccountError {
 }
 
 pub fn verify_account(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     acc_limbo: &mut AccountLimboState,
     req: VerifyAccount,
 ) -> Result<(), VerifyAccountError> {

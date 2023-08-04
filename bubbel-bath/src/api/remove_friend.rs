@@ -17,7 +17,7 @@ pub enum RemoveFriendError {
 }
 
 pub fn remove_friend(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: RemoveFriend,
 ) -> Result<RemoveFriendOut, RemoveFriendError> {

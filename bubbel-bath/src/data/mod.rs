@@ -14,15 +14,15 @@ pub use user::*;
 pub use user_profile::*;
 
 /// Holds the state required to connect to the database.
-pub struct DataState {
+pub struct DataStateInstance {
     pub db: PgConnection,
     pub user_salt: String,
 }
 
-impl DataState {
+impl DataStateInstance {
     pub fn new(db_url: &str, user_salt: &str) -> Result<Self, ConnectionError> {
         let db = PgConnection::establish(db_url)?;
-        Ok(DataState {
+        Ok(DataStateInstance {
             db,
             user_salt: user_salt.to_owned(),
         })

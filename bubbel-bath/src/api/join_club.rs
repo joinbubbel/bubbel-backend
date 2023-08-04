@@ -18,7 +18,7 @@ pub enum JoinClubError {
 }
 
 pub fn join_club(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: JoinClub,
 ) -> Result<JoinClubOut, JoinClubError> {

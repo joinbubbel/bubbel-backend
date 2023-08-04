@@ -15,7 +15,7 @@ pub struct UserProfile {
 impl UserProfile {
     /// Inserts an empty user profile with `user_id`.
     /// This function should only be called in [`create_user`].
-    pub fn insert_new(db: &mut DataState, user_id: &UserId) -> Result<(), DatabaseError> {
+    pub fn insert_new(db: &mut DataStateInstance, user_id: &UserId) -> Result<(), DatabaseError> {
         use crate::schema::user_profiles::dsl;
 
         diesel::insert_into(dsl::user_profiles)
@@ -33,7 +33,7 @@ impl UserProfile {
     }
 
     /// Try to get a user profile using `id`.
-    pub fn get(db: &mut DataState, id: UserId) -> Result<Option<UserProfile>, DatabaseError> {
+    pub fn get(db: &mut DataStateInstance, id: UserId) -> Result<Option<UserProfile>, DatabaseError> {
         use crate::schema::user_profiles::dsl;
 
         dsl::user_profiles
@@ -68,7 +68,7 @@ impl UserProfilePartial {
     /// fields that are `None` will have no affect on the database.
     pub fn unchecked_update_partial(
         &self,
-        db: &mut DataState,
+        db: &mut DataStateInstance,
         user_id: &UserId,
     ) -> Result<(), DatabaseError> {
         use crate::schema::user_profiles::dsl;

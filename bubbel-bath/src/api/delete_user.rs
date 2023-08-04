@@ -13,7 +13,7 @@ pub enum DeleteUserError {
 }
 
 pub fn delete_user(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &mut AuthState,
     req: DeleteUser,
 ) -> Result<(), DeleteUserError> {

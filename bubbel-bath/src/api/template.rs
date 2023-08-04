@@ -13,7 +13,7 @@ pub enum FooError {
 }
 
 pub fn foo(
-    //  db: &mut DataState,
+    //  db: &mut DataStateInstance,
     //  auth: &AuthState,
     req: Foo,
 ) -> Result<FooOut, FooError> {

@@ -21,7 +21,7 @@ pub enum GetClubProfileError {
 }
 
 pub fn get_club_profile(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     _auth: &AuthState,
     req: GetClubProfile,
 ) -> Result<GetClubProfileOut, GetClubProfileError> {

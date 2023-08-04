@@ -19,7 +19,7 @@ pub enum UnjoinClubError {
 }
 
 pub fn unjoin_club(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: UnjoinClub,
 ) -> Result<UnjoinClubOut, UnjoinClubError> {

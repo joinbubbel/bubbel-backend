@@ -19,7 +19,7 @@ pub enum DeleteClubError {
 }
 
 pub fn delete_club(
-    db: &mut DataState,
+    db: &mut DataStateInstance,
     auth: &AuthState,
     req: DeleteClub,
 ) -> Result<(), DeleteClubError> {
