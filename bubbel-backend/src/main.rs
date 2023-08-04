@@ -105,17 +105,42 @@ async fn main() {
         .route("/api/get_club_profile", post(api_get_club_profile))
         .route("/api/set_club_profile", post(api_set_club_profile))
         .route("/api/delete_club", post(api_delete_club))
+        .layer(cors.clone())
+        .with_state(Arc::clone(&state));
+
+    let mut tls_app = Router::new()
+        .route("/", get(root))
+        .route(
+            "/api/waive_all_account_verification",
+            get(get_waive_all_account_verification),
+        )
+        .route("/api/debug", post(api_debug))
+        .route("/api/create_user", post(api_create_user))
+        .route("/api/auth_user", post(api_auth_user))
+        .route("/api/deauth_user", post(api_deauth_user))
+        .route("/api/verify_account", post(api_verify_user))
+        .route("/api/send_verify", post(api_send_verify))
+        .route("/api/set_user_profile", post(api_set_user_profile))
+        .route("/api/get_user_profile", post(api_get_user_profile))
+        .route("/api/delete_user", post(api_delete_user))
+        .route("/api/create_club", post(api_create_club))
+        .route("/api/get_club_profile", post(api_get_club_profile))
+        .route("/api/set_club_profile", post(api_set_club_profile))
+        .route("/api/delete_club", post(api_delete_club))
         .layer(cors)
-        .with_state(state);
+        .with_state(Arc::clone(&state));
 
     if let Some(rust_docs_path) = rust_docs_path {
-        app = app.nest_service("/docs", ServeDir::new(rust_docs_path));
+        app = app.nest_service("/docs", ServeDir::new(rust_docs_path.clone()));
+        tls_app = tls_app.nest_service("/docs", ServeDir::new(rust_docs_path));
     }
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let tls_addr = SocketAddr::from(([0, 0, 0, 0], 8443));
 
     tokio::join!(
-        axum_server::bind_rustls(addr, tls_config).serve(app.into_make_service()),
+        axum_server::bind(addr).serve(app.into_make_service()),
+        axum_server::bind_rustls(tls_addr, tls_config).serve(tls_app.into_make_service()),
         collect_garbage::collect_garbage(garbage_state)
     )
     .0
