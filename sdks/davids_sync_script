@@ -1,0 +1,50 @@
+#!/bin/sh
+
+set -e
+
+echo "Hey, if you are not David, please don't run this. Press enter to begin."
+
+read
+
+cargo r --bin bubbel-codegen
+
+git clone https://github.com/davnotdev/bubbel-android /tmp/bubbel-android
+git clone https://github.com/davnotdev/bubbel-ios /tmp/bubbel-ios
+git clone https://github.com/davnotdev/bubbel /tmp/bubbel
+
+DIR=$(dirname $0)
+
+cp $DIR/BubbelBackend.kt /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend.kt
+cp $DIR/BubbelBackend.swift /tmp/bubbel-ios/bubbel/Backend.swift
+cp $DIR/bubbelBackend.ts /tmp/bubbel/lib/bubbelBackend.ts
+
+sed -i '1i import SwiftUI\n' /tmp/bubbel-ios/bubbel/Backend.swift
+
+cat >>/tmp/bubbel-ios/bubbel/Backend.swift << EOL
+
+struct Backend: View {
+    var body: some View {
+        Text("David i added ur backend file happy? Yes, yes I am.")
+    }
+}
+
+struct Backend_Previews: PreviewProvider {
+    static var previews: some View {
+        Backend()
+    }
+}
+
+EOL
+
+cd /tmp/bubbel-android/
+git push
+
+cd /tmp/bubbel-ios/
+git push
+
+cd /tmp/bubbel/
+git push
+
+rm -rf /tmp/bubbel-ios
+rm -rf /tmp/bubbel-android
+
