@@ -35,7 +35,19 @@ data class BubbelCodegenOut (
     val t23: ResDeleteClub? = null,
     val t24: InGetUserProfileWithUsername? = null,
     val t25: ResGetUserProfileWithUsername? = null,
+    val t26: InAddFriendConnection? = null,
+    val t27: ResAddFriendConnection? = null,
+    val t28: InGetFriendConnections? = null,
+    val t29: ResGetFriendConnections? = null,
     val t3: ResAuthUser? = null,
+    val t30: InJoinClub? = null,
+    val t31: ResJoinClub? = null,
+    val t32: InUnjoinClub? = null,
+    val t33: ResUnjoinClub? = null,
+    val t34: InGetClubMembers? = null,
+    val t35: ResGetClubMembers? = null,
+    val t36: InGetUserClubs? = null,
+    val t37: ResGetUserClubs? = null,
     val t4: InDeauthUser? = null,
     val t5: ResDeauthUser? = null,
     val t6: InVerifyAccount? = null,
@@ -351,6 +363,64 @@ data class GetUserProfileWithUsernameOut (
 )
 
 @Serializable
+data class InAddFriendConnection (
+    @SerialName("receiver_id")
+    val receiverID: Long,
+
+    val token: String
+)
+
+@Serializable
+data class ResAddFriendConnection (
+    val error: AddFriendConnectionError? = null,
+    val res: JsonObject? = null
+)
+
+@Serializable
+data class AddFriendConnectionError (
+    val type: HilariousType,
+    val ierror: String? = null
+)
+
+@Serializable
+enum class HilariousType(val value: String) {
+    @SerialName("AlreadyConnected") AlreadyConnected("AlreadyConnected"),
+    @SerialName("CannotAddSelf") CannotAddSelf("CannotAddSelf"),
+    @SerialName("Internal") Internal("Internal"),
+    @SerialName("NoAuth") NoAuth("NoAuth");
+}
+
+@Serializable
+data class InGetFriendConnections (
+    val token: String
+)
+
+@Serializable
+data class ResGetFriendConnections (
+    val error: GetFriendConnectionsError? = null,
+    val res: GetFriendConnectionsOut? = null
+)
+
+@Serializable
+data class GetFriendConnectionsError (
+    val type: FluffyType,
+    val ierror: String? = null
+)
+
+@Serializable
+data class GetFriendConnectionsOut (
+    @SerialName("friend_connections")
+    val friendConnections: Map<String, FriendStatus>
+)
+
+@Serializable
+enum class FriendStatus(val value: String) {
+    @SerialName("Full") Full("Full"),
+    @SerialName("RecievedPending") RecievedPending("RecievedPending"),
+    @SerialName("SentPending") SentPending("SentPending");
+}
+
+@Serializable
 data class ResAuthUser (
     val error: AuthUserError? = null,
     val res: AuthUserOut? = null
@@ -361,12 +431,12 @@ data class ResAuthUser (
  */
 @Serializable
 data class AuthUserError (
-    val type: HilariousType,
+    val type: AmbitiousType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class HilariousType(val value: String) {
+enum class AmbitiousType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("InvalidCredentials") InvalidCredentials("InvalidCredentials"),
     @SerialName("InvalidPasswordCryto") InvalidPasswordCryto("InvalidPasswordCryto"),
@@ -379,6 +449,112 @@ data class AuthUserOut (
     val email: String,
     val token: String,
     val username: String
+)
+
+@Serializable
+data class InJoinClub (
+    @SerialName("club_id")
+    val clubID: Long,
+
+    val token: String
+)
+
+@Serializable
+data class ResJoinClub (
+    val error: JoinClubError? = null,
+    val res: JsonObject? = null
+)
+
+@Serializable
+data class JoinClubError (
+    val type: CunningType,
+    val ierror: String? = null
+)
+
+@Serializable
+enum class CunningType(val value: String) {
+    @SerialName("AlreadyJoined") AlreadyJoined("AlreadyJoined"),
+    @SerialName("Internal") Internal("Internal"),
+    @SerialName("NoAuth") NoAuth("NoAuth");
+}
+
+@Serializable
+data class InUnjoinClub (
+    @SerialName("club_id")
+    val clubID: Long,
+
+    val token: String
+)
+
+@Serializable
+data class ResUnjoinClub (
+    val error: UnjoinClubError? = null,
+    val res: JsonObject? = null
+)
+
+@Serializable
+data class UnjoinClubError (
+    val type: MagentaType,
+    val ierror: String? = null
+)
+
+@Serializable
+enum class MagentaType(val value: String) {
+    @SerialName("CannotUnjoinAsOwner") CannotUnjoinAsOwner("CannotUnjoinAsOwner"),
+    @SerialName("ClubNotFound") ClubNotFound("ClubNotFound"),
+    @SerialName("Internal") Internal("Internal"),
+    @SerialName("NoAuth") NoAuth("NoAuth");
+}
+
+@Serializable
+data class InGetClubMembers (
+    @SerialName("club_id")
+    val clubID: Long
+)
+
+@Serializable
+data class ResGetClubMembers (
+    val error: GetClubMembersError? = null,
+    val res: GetClubMembersOut? = null
+)
+
+@Serializable
+data class GetClubMembersError (
+    val ierror: String,
+    val type: GetClubMembersErrorType
+)
+
+@Serializable
+enum class GetClubMembersErrorType(val value: String) {
+    @SerialName("Internal") Internal("Internal");
+}
+
+@Serializable
+data class GetClubMembersOut (
+    val users: List<Long>
+)
+
+@Serializable
+data class InGetUserClubs (
+    @SerialName("user_id")
+    val userID: Long
+)
+
+@Serializable
+data class ResGetUserClubs (
+    val error: GetUserClubsError? = null,
+    val res: GetUserClubsOut? = null
+)
+
+@Serializable
+data class GetUserClubsError (
+    val ierror: String,
+    val type: GetClubMembersErrorType
+)
+
+@Serializable
+data class GetUserClubsOut (
+    val clubs: List<Long>
 )
 
 @Serializable
@@ -408,12 +584,12 @@ data class ResVerifyAccount (
  */
 @Serializable
 data class VerifyAccountError (
-    val type: AmbitiousType,
+    val type: FriskyType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class AmbitiousType(val value: String) {
+enum class FriskyType(val value: String) {
     @SerialName("CodeTimedOutOrAlreadyVerifiedOrInvalidCode") CodeTimedOutOrAlreadyVerifiedOrInvalidCode("CodeTimedOutOrAlreadyVerifiedOrInvalidCode"),
     @SerialName("Internal") Internal("Internal");
 }
@@ -435,12 +611,12 @@ data class ResSendVerify (
  */
 @Serializable
 data class SendVerifyError (
-    val type: CunningType,
+    val type: MischievousType,
     val ierror: String? = null
 )
 
 @Serializable
-enum class CunningType(val value: String) {
+enum class MischievousType(val value: String) {
     @SerialName("Internal") Internal("Internal"),
     @SerialName("ResendTooSoon") ResendTooSoon("ResendTooSoon"),
     @SerialName("SendVerification") SendVerification("SendVerification"),
@@ -753,6 +929,156 @@ suspend fun bubbelApiGetUserProfileWithUsername(request: InGetUserProfileWithUse
         val encoder = Json { ignoreUnknownKeys = true }
         val json = encoder.encodeToString(request)
         val url = URL("$BUBBEL_BATH_DEV/api/get_user_profile_with_username")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiAddFriendConnection(request: InAddFriendConnection): ResAddFriendConnection = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/add_friend_connection")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiGetFriendConnections(request: InGetFriendConnections): ResGetFriendConnections = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/get_friend_connections")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiJoinClub(request: InJoinClub): ResJoinClub = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/join_club")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiUnjoinClub(request: InUnjoinClub): ResUnjoinClub = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/unjoin_club")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiGetClubMembers(request: InGetClubMembers): ResGetClubMembers = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/get_club_members")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiGetUserClubs(request: InGetUserClubs): ResGetUserClubs = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/get_user_clubs")
         val urlConnection = url.openConnection() as HttpURLConnection
         urlConnection.requestMethod = "POST"
         urlConnection.setRequestProperty("Content-Type", "application/json")

@@ -185,6 +185,48 @@ fn main() {
         ResGetUserProfileWithUsername
     );
 
+    add!(
+        "bubbelApiAddFriendConnection",
+        "/api/add_friend_connection",
+        InAddFriendConnection,
+        ResAddFriendConnection
+    );
+
+    add!(
+        "bubbelApiGetFriendConnections",
+        "/api/get_friend_connections",
+        InGetFriendConnections,
+        ResGetFriendConnections
+    );
+
+    add!(
+        "bubbelApiJoinClub",
+        "/api/join_club",
+        InJoinClub,
+        ResJoinClub
+    );
+
+    add!(
+        "bubbelApiUnjoinClub",
+        "/api/unjoin_club",
+        InUnjoinClub,
+        ResUnjoinClub
+    );
+
+    add!(
+        "bubbelApiGetClubMembers",
+        "/api/get_club_members",
+        InGetClubMembers,
+        ResGetClubMembers
+    );
+
+    add!(
+        "bubbelApiGetUserClubs",
+        "/api/get_user_clubs",
+        InGetUserClubs,
+        ResGetUserClubs
+    );
+
     let project_root = get_project_root().unwrap();
 
     let mut ts_out = project_root.clone();

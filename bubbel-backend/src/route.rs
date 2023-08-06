@@ -204,5 +204,80 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
         InGetUserProfileWithUsername,
         ResGetUserProfileWithUsername
     );
+    route!(
+        router,
+        "/api/add_friend_connection",
+        |state, req| {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().unwrap();
+            add_friend_connection(&mut db, &auth, req.req)
+        },
+        InAddFriendConnection,
+        ResAddFriendConnection
+    );
+    route!(
+        router,
+        "/api/get_friend_connections",
+        |state, req| {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().unwrap();
+            get_friend_connections(&mut db, &auth, req.req)
+        },
+        InGetFriendConnections,
+        ResGetFriendConnections
+    );
+    route!(
+        router,
+        "/api/remove_friend",
+        |state, req| {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().unwrap();
+            remove_friend(&mut db, &auth, req.req)
+        },
+        InRemoveFriend,
+        ResRemoveFriend
+    );
+    route!(
+        router,
+        "/api/join_club",
+        |state, req| {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().unwrap();
+            join_club(&mut db, &auth, req.req)
+        },
+        InJoinClub,
+        ResJoinClub
+    );
+    route!(
+        router,
+        "/api/unjoin_club",
+        |state, req| {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().unwrap();
+            unjoin_club(&mut db, &auth, req.req)
+        },
+        InUnjoinClub,
+        ResUnjoinClub
+    );
+    route!(
+        router,
+        "/api/get_club_members",
+        |state, req| {
+            let mut db = state.db.spawn();
+            get_club_members(&mut db, req.req)
+        },
+        InGetClubMembers,
+        ResGetClubMembers
+    );
+    route!(
+        router,
+        "/api/get_user_clubs",
+        |state, req| {
+            let mut db = state.db.spawn();
+            get_user_clubs(&mut db, req.req)
+        },
+        InGetUserClubs,
+        ResGetUserClubs
+    );
     router
 }

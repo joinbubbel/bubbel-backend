@@ -18,7 +18,19 @@ const bubbelBathDev = 'https://api.joinbubbel.com';export interface BubbelCodege
     t23?: ResDeleteClub;
     t24?: InGetUserProfileWithUsername;
     t25?: ResGetUserProfileWithUsername;
+    t26?: InAddFriendConnection;
+    t27?: ResAddFriendConnection;
+    t28?: InGetFriendConnections;
+    t29?: ResGetFriendConnections;
     t3?:  ResAuthUser;
+    t30?: InJoinClub;
+    t31?: ResJoinClub;
+    t32?: InUnjoinClub;
+    t33?: ResUnjoinClub;
+    t34?: InGetClubMembers;
+    t35?: ResGetClubMembers;
+    t36?: InGetUserClubs;
+    t37?: ResGetUserClubs;
     t4?:  InDeauthUser;
     t5?:  ResDeauthUser;
     t6?:  InVerifyAccount;
@@ -302,6 +314,59 @@ export interface GetUserProfileWithUsernameOut {
     [property: string]: any;
 }
 
+export interface InAddFriendConnection {
+    receiver_id: number;
+    token:       string;
+    [property: string]: any;
+}
+
+export interface ResAddFriendConnection {
+    error?: null | AddFriendConnectionError;
+    res?:   { [key: string]: any } | null;
+    [property: string]: any;
+}
+
+export interface AddFriendConnectionError {
+    type:    HilariousType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum HilariousType {
+    AlreadyConnected = "AlreadyConnected",
+    CannotAddSelf = "CannotAddSelf",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+}
+
+export interface InGetFriendConnections {
+    token: string;
+    [property: string]: any;
+}
+
+export interface ResGetFriendConnections {
+    error?: null | GetFriendConnectionsError;
+    res?:   null | GetFriendConnectionsOut;
+    [property: string]: any;
+}
+
+export interface GetFriendConnectionsError {
+    type:    FluffyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export interface GetFriendConnectionsOut {
+    friend_connections: { [key: string]: FriendStatus };
+    [property: string]: any;
+}
+
+export enum FriendStatus {
+    Full = "Full",
+    RecievedPending = "RecievedPending",
+    SentPending = "SentPending",
+}
+
 export interface ResAuthUser {
     error?: null | AuthUserError;
     res?:   null | AuthUserOut;
@@ -312,12 +377,12 @@ export interface ResAuthUser {
  * Got an error from a cryptography function. This error should never occur.
  */
 export interface AuthUserError {
-    type:    HilariousType;
+    type:    AmbitiousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum HilariousType {
+export enum AmbitiousType {
     Internal = "Internal",
     InvalidCredentials = "InvalidCredentials",
     InvalidPasswordCryto = "InvalidPasswordCryto",
@@ -329,6 +394,103 @@ export interface AuthUserOut {
     email:    string;
     token:    string;
     username: string;
+    [property: string]: any;
+}
+
+export interface InJoinClub {
+    club_id: number;
+    token:   string;
+    [property: string]: any;
+}
+
+export interface ResJoinClub {
+    error?: null | JoinClubError;
+    res?:   { [key: string]: any } | null;
+    [property: string]: any;
+}
+
+export interface JoinClubError {
+    type:    CunningType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum CunningType {
+    AlreadyJoined = "AlreadyJoined",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+}
+
+export interface InUnjoinClub {
+    club_id: number;
+    token:   string;
+    [property: string]: any;
+}
+
+export interface ResUnjoinClub {
+    error?: null | UnjoinClubError;
+    res?:   { [key: string]: any } | null;
+    [property: string]: any;
+}
+
+export interface UnjoinClubError {
+    type:    MagentaType;
+    ierror?: string;
+    [property: string]: any;
+}
+
+export enum MagentaType {
+    CannotUnjoinAsOwner = "CannotUnjoinAsOwner",
+    ClubNotFound = "ClubNotFound",
+    Internal = "Internal",
+    NoAuth = "NoAuth",
+}
+
+export interface InGetClubMembers {
+    club_id: number;
+    [property: string]: any;
+}
+
+export interface ResGetClubMembers {
+    error?: null | GetClubMembersError;
+    res?:   null | GetClubMembersOut;
+    [property: string]: any;
+}
+
+export interface GetClubMembersError {
+    ierror: string;
+    type:   GetClubMembersErrorType;
+    [property: string]: any;
+}
+
+export enum GetClubMembersErrorType {
+    Internal = "Internal",
+}
+
+export interface GetClubMembersOut {
+    users: number[];
+    [property: string]: any;
+}
+
+export interface InGetUserClubs {
+    user_id: number;
+    [property: string]: any;
+}
+
+export interface ResGetUserClubs {
+    error?: null | GetUserClubsError;
+    res?:   null | GetUserClubsOut;
+    [property: string]: any;
+}
+
+export interface GetUserClubsError {
+    ierror: string;
+    type:   GetClubMembersErrorType;
+    [property: string]: any;
+}
+
+export interface GetUserClubsOut {
+    clubs: number[];
     [property: string]: any;
 }
 
@@ -358,12 +520,12 @@ export interface ResVerifyAccount {
  * My favorite error message.
  */
 export interface VerifyAccountError {
-    type:    AmbitiousType;
+    type:    FriskyType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum AmbitiousType {
+export enum FriskyType {
     CodeTimedOutOrAlreadyVerifiedOrInvalidCode = "CodeTimedOutOrAlreadyVerifiedOrInvalidCode",
     Internal = "Internal",
 }
@@ -383,12 +545,12 @@ export interface ResSendVerify {
  * Failed to send the verification message (usually an email error).
  */
 export interface SendVerifyError {
-    type:    CunningType;
+    type:    MischievousType;
     ierror?: string;
     [property: string]: any;
 }
 
-export enum CunningType {
+export enum MischievousType {
     Internal = "Internal",
     ResendTooSoon = "ResendTooSoon",
     SendVerification = "SendVerification",
@@ -541,6 +703,78 @@ export async function bubbelApiDeleteClub(req: InDeleteClub): Promise<ResDeleteC
         }
 export async function bubbelApiGetUserProfileWithUsername(req: InGetUserProfileWithUsername): Promise<ResGetUserProfileWithUsername> {
             let fetchRes = await fetch(bubbelBathDev + '/api/get_user_profile_with_username', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiAddFriendConnection(req: InAddFriendConnection): Promise<ResAddFriendConnection> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/add_friend_connection', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetFriendConnections(req: InGetFriendConnections): Promise<ResGetFriendConnections> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_friend_connections', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiJoinClub(req: InJoinClub): Promise<ResJoinClub> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/join_club', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiUnjoinClub(req: InUnjoinClub): Promise<ResUnjoinClub> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/unjoin_club', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetClubMembers(req: InGetClubMembers): Promise<ResGetClubMembers> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_club_members', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiGetUserClubs(req: InGetUserClubs): Promise<ResGetUserClubs> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/get_user_clubs', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

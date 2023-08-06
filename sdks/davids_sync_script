@@ -37,12 +37,18 @@ struct Backend_Previews: PreviewProvider {
 EOL
 
 cd /tmp/bubbel-android/
+git add .
+git commit -m "Update backend files. (auto)"
 git push
 
 cd /tmp/bubbel-ios/
+git add .
+git commit -m "Update backend files. (auto)"
 git push
 
 cd /tmp/bubbel/
+git add .
+git commit -m "Update backend files. (auto)"
 git push
 
 rm -rf /tmp/bubbel-ios

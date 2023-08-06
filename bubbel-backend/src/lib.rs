@@ -85,3 +85,32 @@ res!(
     GetUserProfileWithUsernameOut,
     GetUserProfileWithUsernameError
 );
+
+req!(InAddFriendConnection, AddFriendConnection);
+res!(
+    ResAddFriendConnection,
+    AddFriendConnectionOut,
+    AddFriendConnectionError
+);
+
+req!(InGetFriendConnections, GetFriendConnections);
+res!(
+    ResGetFriendConnections,
+    GetFriendConnectionsOut,
+    GetFriendConnectionsError
+);
+
+req!(InRemoveFriend, RemoveFriend);
+res!(ResRemoveFriend, RemoveFriendOut, RemoveFriendError);
+
+req!(InJoinClub, JoinClub);
+res!(ResJoinClub, JoinClubOut, JoinClubError);
+
+req!(InUnjoinClub, UnjoinClub);
+res!(ResUnjoinClub, UnjoinClubOut, UnjoinClubError);
+
+req!(InGetClubMembers, GetClubMembers);
+res!(ResGetClubMembers, GetClubMembersOut, GetClubMembersError);
+
+req!(InGetUserClubs, GetUserClubs);
+res!(ResGetUserClubs, GetUserClubsOut, GetUserClubsError);

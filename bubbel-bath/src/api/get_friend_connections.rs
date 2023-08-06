@@ -2,18 +2,18 @@ use super::*;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct GetFriendConnection {
+pub struct GetFriendConnections {
     pub token: UserToken,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct GetFriendConnectionOut {
+pub struct GetFriendConnectionsOut {
     pub friend_connections: HashMap<UserId, FriendStatus>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "type")]
-pub enum GetFriendConnectionError {
+pub enum GetFriendConnectionsError {
     NoAuth,
     Internal { ierror: String },
 }
@@ -21,18 +21,18 @@ pub enum GetFriendConnectionError {
 pub fn get_friend_connections(
     db: &mut DataStateInstance,
     auth: &AuthState,
-    req: GetFriendConnection,
-) -> Result<GetFriendConnectionOut, GetFriendConnectionError> {
+    req: GetFriendConnections,
+) -> Result<GetFriendConnectionsOut, GetFriendConnectionsError> {
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
-        Err(GetFriendConnectionError::NoAuth)?
+        Err(GetFriendConnectionsError::NoAuth)?
     };
 
     let friend_connections =
         FriendConnection::get_friend_connections(db, &user_id).map_err(|e| {
-            GetFriendConnectionError::Internal {
+            GetFriendConnectionsError::Internal {
                 ierror: e.to_string(),
             }
         })?;
 
-    Ok(GetFriendConnectionOut { friend_connections })
+    Ok(GetFriendConnectionsOut { friend_connections })
 }
