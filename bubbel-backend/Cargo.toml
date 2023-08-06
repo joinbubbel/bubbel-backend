@@ -23,5 +23,7 @@ tower-http = { version = "0.4", features = ["cors", "fs"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros"] }
 bubbel-bath = { version = "*", path = "../bubbel-bath/" }
 serde = { version = "1", features = ["derive"] }
+project-root = "0.2"
 schemars = "0.8"
 lettre = "0.10"
+json = "0.12"

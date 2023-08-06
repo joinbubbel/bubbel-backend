@@ -1,7 +1,7 @@
 use super::*;
 
 macro_rules! route {
-    ($ROUTER: expr, $ROUTE: expr, $REQCALL: expr, $REQ: ident, $RES: ident) => {{
+    ($ROUTER: expr, $CODEGENCTX: expr, $CODEGEN_FN_NAME: expr, $ROUTE: expr, $REQCALL: expr, $REQ: ident, $RES: ident) => {{
         async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$REQ>) -> Json<$RES> {
             let mut debug = state.debug.write().unwrap();
             debug.push_incoming(&req);
@@ -21,13 +21,19 @@ macro_rules! route {
 
             Json(res)
         }
+        add_codegen_endpoint!($CODEGENCTX, $CODEGEN_FN_NAME, $ROUTE, $REQ, $RES);
         $ROUTER = $ROUTER.route($ROUTE, post(f));
     }};
 }
 
-pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router<Arc<AppState>> {
+pub fn configure_routes_with_router(
+    mut router: Router<Arc<AppState>>,
+    codegen_ctx: &mut CodegenContext,
+) -> Router<Arc<AppState>> {
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiCreateUser",
         "/api/create_user",
         |state, req| {
             let mut db = state.db.spawn();
@@ -38,6 +44,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiAuthUser",
         "/api/auth_user",
         |state, req| {
             let mut db = state.db.spawn();
@@ -49,6 +57,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiDeauthUser",
         "/api/deauth_user",
         |state, req| {
             let mut auth = state.auth.write().unwrap();
@@ -60,7 +70,9 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
-        "/api/verify_user",
+        codegen_ctx,
+        "bubbelApiVerifyAccount",
+        "/api/verify_account",
         |state, req| {
             let mut db = state.db.spawn();
             let mut acc_limbo = state.acc_limbo.lock().unwrap();
@@ -71,6 +83,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiSendVerify",
         "/api/send_verify",
         |state, req| {
             let mut db = state.db.spawn();
@@ -107,6 +121,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiSetUserProfile",
         "/api/set_user_profile",
         |state, req| {
             let mut db = state.db.spawn();
@@ -118,6 +134,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetUserProfile",
         "/api/get_user_profile",
         |state, req| {
             let mut db = state.db.spawn();
@@ -129,6 +147,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiDeleteUser",
         "/api/delete_user",
         |state, req| {
             let mut db = state.db.spawn();
@@ -140,6 +160,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiCreateClub",
         "/api/create_club",
         |state, req| {
             let mut db = state.db.spawn();
@@ -151,6 +173,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetClubProfile",
         "/api/get_club_profile",
         |state, req| {
             let mut db = state.db.spawn();
@@ -162,6 +186,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiSetClubProfile",
         "/api/set_club_profile",
         |state, req| {
             let mut db = state.db.spawn();
@@ -173,6 +199,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiDeleteClub",
         "/api/delete_club",
         |state, req| {
             let mut db = state.db.spawn();
@@ -184,6 +212,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetUserProfileWithUsername",
         "/api/get_user_profile_with_username",
         |state, req| {
             let mut db = state.db.spawn();
@@ -195,6 +225,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiAddFriendConnection",
         "/api/add_friend_connection",
         |state, req| {
             let mut db = state.db.spawn();
@@ -206,6 +238,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetFriendConnections",
         "/api/get_friend_connections",
         |state, req| {
             let mut db = state.db.spawn();
@@ -217,6 +251,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiRemoveFriend",
         "/api/remove_friend",
         |state, req| {
             let mut db = state.db.spawn();
@@ -228,6 +264,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiJoinClub",
         "/api/join_club",
         |state, req| {
             let mut db = state.db.spawn();
@@ -239,6 +277,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiUnjoinClub",
         "/api/unjoin_club",
         |state, req| {
             let mut db = state.db.spawn();
@@ -250,6 +290,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetClubMembers",
         "/api/get_club_members",
         |state, req| {
             let mut db = state.db.spawn();
@@ -260,6 +302,8 @@ pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router
     );
     route!(
         router,
+        codegen_ctx,
+        "bubbelApiGetUserClubs",
         "/api/get_user_clubs",
         |state, req| {
             let mut db = state.db.spawn();

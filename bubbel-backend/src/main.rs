@@ -11,11 +11,14 @@ use std::{
 };
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
+#[macro_use]
+mod codegen;
 mod collect_garbage;
 mod debug;
 mod email;
 mod route;
 
+use codegen::{schema_for, CodegenContext, Endpoint};
 use debug::{api_debug, DebugState};
 
 const USER_SALT_ENV: &str = "BUBBEL_USER_SALT";
@@ -43,6 +46,14 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    if option_env!("BUBBEL_CODEGEN").is_some() {
+        let mut codegen_ctx = CodegenContext::new();
+        let app = Router::new();
+        let _ = route::configure_routes_with_router(app, &mut codegen_ctx);
+        codegen_ctx.gen_and_write();
+        return;
+    }
+
     let (_, db_url) = std::env::vars().find(|(k, _)| k == DB_URL_ENV).unwrap();
     let (_, user_salt) = std::env::vars().find(|(k, _)| k == USER_SALT_ENV).unwrap();
     let debug_enabled = std::env::vars().any(|(k, _)| k == DEBUG_ENABLED_ENV);
@@ -88,7 +99,8 @@ async fn main() {
         .unwrap();
 
     let app = Router::new();
-    let app = route::configure_routes_with_router(app);
+    let mut codegen_ctx = CodegenContext::new();
+    let app = route::configure_routes_with_router(app, &mut codegen_ctx);
     let mut app = app
         .route("/", get(root))
         .route(

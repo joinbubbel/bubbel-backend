@@ -199,7 +199,9 @@ dependencies = [
  "axum",
  "axum-server",
  "bubbel-bath",
+ "json",
  "lettre",
+ "project-root",
  "schemars",
  "serde",
  "serde_json",
@@ -221,17 +223,6 @@ dependencies = [
  "schemars",
  "serde",
  "serial_test",
-]
-
-[[package]]
-name = "bubbel-codegen"
-version = "0.1.0"
-dependencies = [
- "bubbel-backend",
- "json",
- "project-root",
- "schemars",
- "serde_json",
 ]
 
 [[package]]

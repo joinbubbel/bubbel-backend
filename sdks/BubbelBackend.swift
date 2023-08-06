@@ -32,14 +32,16 @@ struct BubbelCodegenOut: Codable {
     let t28: InGetFriendConnections?
     let t29: ResGetFriendConnections?
     let t3: ResAuthUser?
-    let t30: InJoinClub?
-    let t31: ResJoinClub?
-    let t32: InUnjoinClub?
-    let t33: ResUnjoinClub?
-    let t34: InGetClubMembers?
-    let t35: ResGetClubMembers?
-    let t36: InGetUserClubs?
-    let t37: ResGetUserClubs?
+    let t30: InRemoveFriend?
+    let t31: ResRemoveFriend?
+    let t32: InJoinClub?
+    let t33: ResJoinClub?
+    let t34: InUnjoinClub?
+    let t35: ResUnjoinClub?
+    let t36: InGetClubMembers?
+    let t37: ResGetClubMembers?
+    let t38: InGetUserClubs?
+    let t39: ResGetUserClubs?
     let t4: InDeauthUser?
     let t5: ResDeauthUser?
     let t6: InVerifyAccount?
@@ -91,14 +93,16 @@ extension BubbelCodegenOut {
         t28: InGetFriendConnections?? = nil,
         t29: ResGetFriendConnections?? = nil,
         t3: ResAuthUser?? = nil,
-        t30: InJoinClub?? = nil,
-        t31: ResJoinClub?? = nil,
-        t32: InUnjoinClub?? = nil,
-        t33: ResUnjoinClub?? = nil,
-        t34: InGetClubMembers?? = nil,
-        t35: ResGetClubMembers?? = nil,
-        t36: InGetUserClubs?? = nil,
-        t37: ResGetUserClubs?? = nil,
+        t30: InRemoveFriend?? = nil,
+        t31: ResRemoveFriend?? = nil,
+        t32: InJoinClub?? = nil,
+        t33: ResJoinClub?? = nil,
+        t34: InUnjoinClub?? = nil,
+        t35: ResUnjoinClub?? = nil,
+        t36: InGetClubMembers?? = nil,
+        t37: ResGetClubMembers?? = nil,
+        t38: InGetUserClubs?? = nil,
+        t39: ResGetUserClubs?? = nil,
         t4: InDeauthUser?? = nil,
         t5: ResDeauthUser?? = nil,
         t6: InVerifyAccount?? = nil,
@@ -139,6 +143,8 @@ extension BubbelCodegenOut {
             t35: t35 ?? self.t35,
             t36: t36 ?? self.t36,
             t37: t37 ?? self.t37,
+            t38: t38 ?? self.t38,
+            t39: t39 ?? self.t39,
             t4: t4 ?? self.t4,
             t5: t5 ?? self.t5,
             t6: t6 ?? self.t6,
@@ -2176,6 +2182,140 @@ extension AuthUserOut {
     }
 }
 
+// MARK: - InRemoveFriend
+struct InRemoveFriend: Codable {
+    let removalID: Int
+    let token: String
+
+    enum CodingKeys: String, CodingKey {
+        case removalID = "removal_id"
+        case token
+    }
+}
+
+// MARK: InRemoveFriend convenience initializers and mutators
+
+extension InRemoveFriend {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(InRemoveFriend.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        removalID: Int? = nil,
+        token: String? = nil
+    ) -> InRemoveFriend {
+        return InRemoveFriend(
+            removalID: removalID ?? self.removalID,
+            token: token ?? self.token
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - ResRemoveFriend
+struct ResRemoveFriend: Codable {
+    let error: RemoveFriendError?
+    let res: [String: JSONAny]?
+}
+
+// MARK: ResRemoveFriend convenience initializers and mutators
+
+extension ResRemoveFriend {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(ResRemoveFriend.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        error: RemoveFriendError?? = nil,
+        res: [String: JSONAny]?? = nil
+    ) -> ResRemoveFriend {
+        return ResRemoveFriend(
+            error: error ?? self.error,
+            res: res ?? self.res
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+// MARK: - RemoveFriendError
+struct RemoveFriendError: Codable {
+    let type: FluffyType
+    let ierror: String?
+}
+
+// MARK: RemoveFriendError convenience initializers and mutators
+
+extension RemoveFriendError {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(RemoveFriendError.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        type: FluffyType? = nil,
+        ierror: String?? = nil
+    ) -> RemoveFriendError {
+        return RemoveFriendError(
+            type: type ?? self.type,
+            ierror: ierror ?? self.ierror
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
 // MARK: - InJoinClub
 struct InJoinClub: Codable {
     let clubID: Int
@@ -3666,6 +3806,23 @@ func bubbelApiGetFriendConnections(req: InGetFriendConnections) async throws -> 
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let result = try decoder.decode(ResGetFriendConnections.self, from: data)
+            return result
+        }
+func bubbelApiRemoveFriend(req: InRemoveFriend) async throws -> ResRemoveFriend {
+            let json = try req.jsonData()
+            
+            let url = URL(string: bubbelBathDev + "/api/remove_friend")!
+            var urlRequest = URLRequest(url: url)
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpMethod = "POST"
+            urlRequest.httpBody = json
+            
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            let (dataString) = String(data: data, encoding: .utf8) ?? ""
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let result = try decoder.decode(ResRemoveFriend.self, from: data)
             return result
         }
 func bubbelApiJoinClub(req: InJoinClub) async throws -> ResJoinClub {

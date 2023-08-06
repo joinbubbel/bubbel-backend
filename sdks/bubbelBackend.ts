@@ -23,14 +23,16 @@ const bubbelBathDev = 'https://api.joinbubbel.com';export interface BubbelCodege
     t28?: InGetFriendConnections;
     t29?: ResGetFriendConnections;
     t3?:  ResAuthUser;
-    t30?: InJoinClub;
-    t31?: ResJoinClub;
-    t32?: InUnjoinClub;
-    t33?: ResUnjoinClub;
-    t34?: InGetClubMembers;
-    t35?: ResGetClubMembers;
-    t36?: InGetUserClubs;
-    t37?: ResGetUserClubs;
+    t30?: InRemoveFriend;
+    t31?: ResRemoveFriend;
+    t32?: InJoinClub;
+    t33?: ResJoinClub;
+    t34?: InUnjoinClub;
+    t35?: ResUnjoinClub;
+    t36?: InGetClubMembers;
+    t37?: ResGetClubMembers;
+    t38?: InGetUserClubs;
+    t39?: ResGetUserClubs;
     t4?:  InDeauthUser;
     t5?:  ResDeauthUser;
     t6?:  InVerifyAccount;
@@ -397,6 +399,24 @@ export interface AuthUserOut {
     [property: string]: any;
 }
 
+export interface InRemoveFriend {
+    removal_id: number;
+    token:      string;
+    [property: string]: any;
+}
+
+export interface ResRemoveFriend {
+    error?: null | RemoveFriendError;
+    res?:   { [key: string]: any } | null;
+    [property: string]: any;
+}
+
+export interface RemoveFriendError {
+    type:    FluffyType;
+    ierror?: string;
+    [property: string]: any;
+}
+
 export interface InJoinClub {
     club_id: number;
     token:   string;
@@ -727,6 +747,18 @@ export async function bubbelApiAddFriendConnection(req: InAddFriendConnection): 
         }
 export async function bubbelApiGetFriendConnections(req: InGetFriendConnections): Promise<ResGetFriendConnections> {
             let fetchRes = await fetch(bubbelBathDev + '/api/get_friend_connections', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify(req),
+            });
+            let resText = await fetchRes.text();
+            return JSON.parse(resText);
+        }
+export async function bubbelApiRemoveFriend(req: InRemoveFriend): Promise<ResRemoveFriend> {
+            let fetchRes = await fetch(bubbelBathDev + '/api/remove_friend', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

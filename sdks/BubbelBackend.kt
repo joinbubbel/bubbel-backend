@@ -40,14 +40,16 @@ data class BubbelCodegenOut (
     val t28: InGetFriendConnections? = null,
     val t29: ResGetFriendConnections? = null,
     val t3: ResAuthUser? = null,
-    val t30: InJoinClub? = null,
-    val t31: ResJoinClub? = null,
-    val t32: InUnjoinClub? = null,
-    val t33: ResUnjoinClub? = null,
-    val t34: InGetClubMembers? = null,
-    val t35: ResGetClubMembers? = null,
-    val t36: InGetUserClubs? = null,
-    val t37: ResGetUserClubs? = null,
+    val t30: InRemoveFriend? = null,
+    val t31: ResRemoveFriend? = null,
+    val t32: InJoinClub? = null,
+    val t33: ResJoinClub? = null,
+    val t34: InUnjoinClub? = null,
+    val t35: ResUnjoinClub? = null,
+    val t36: InGetClubMembers? = null,
+    val t37: ResGetClubMembers? = null,
+    val t38: InGetUserClubs? = null,
+    val t39: ResGetUserClubs? = null,
     val t4: InDeauthUser? = null,
     val t5: ResDeauthUser? = null,
     val t6: InVerifyAccount? = null,
@@ -449,6 +451,26 @@ data class AuthUserOut (
     val email: String,
     val token: String,
     val username: String
+)
+
+@Serializable
+data class InRemoveFriend (
+    @SerialName("removal_id")
+    val removalID: Long,
+
+    val token: String
+)
+
+@Serializable
+data class ResRemoveFriend (
+    val error: RemoveFriendError? = null,
+    val res: JsonObject? = null
+)
+
+@Serializable
+data class RemoveFriendError (
+    val type: FluffyType,
+    val ierror: String? = null
 )
 
 @Serializable
@@ -979,6 +1001,31 @@ suspend fun bubbelApiGetFriendConnections(request: InGetFriendConnections): ResG
         val encoder = Json { ignoreUnknownKeys = true }
         val json = encoder.encodeToString(request)
         val url = URL("$BUBBEL_BATH_DEV/api/get_friend_connections")
+        val urlConnection = url.openConnection() as HttpURLConnection
+        urlConnection.requestMethod = "POST"
+        urlConnection.setRequestProperty("Content-Type", "application/json")
+        urlConnection.doOutput = true
+        urlConnection.outputStream.use { outputStream ->
+            outputStream.write(json.toByteArray())
+        }
+
+        val responseCode = urlConnection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseString = urlConnection.inputStream.bufferedReader().use { it.readText() }
+            val decoder = Json { ignoreUnknownKeys = true }
+            try {
+                decoder.decodeFromString(responseString)
+            } catch (ex: SerializationException) {
+                throw Exception("Error decoding response: ${ex.message}")
+            }
+        } else {
+            throw Exception("Error fetching data. Response code: $responseCode")
+        }
+    }
+suspend fun bubbelApiRemoveFriend(request: InRemoveFriend): ResRemoveFriend = withContext(Dispatchers.IO) {
+        val encoder = Json { ignoreUnknownKeys = true }
+        val json = encoder.encodeToString(request)
+        val url = URL("$BUBBEL_BATH_DEV/api/remove_friend")
         val urlConnection = url.openConnection() as HttpURLConnection
         urlConnection.requestMethod = "POST"
         urlConnection.setRequestProperty("Content-Type", "application/json")

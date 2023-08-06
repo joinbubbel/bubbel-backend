@@ -3,5 +3,4 @@ members = [
     "bubbel-bath",
     "bubbel-backend",
     "bubbel-inspector",
-    "bubbel-codegen"
 ]
