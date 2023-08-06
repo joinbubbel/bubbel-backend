@@ -1,18 +1,40 @@
 use super::*;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+
+type Empty = ();
 
 macro_rules! route {
-    ($ROUTER: expr, $CODEGENCTX: expr, $CODEGEN_FN_NAME: expr, $ROUTE: expr, $REQCALL: expr, $REQ: ident, $RES: ident) => {{
-        async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$REQ>) -> Json<$RES> {
+    ($ROUTER: expr, $CODEGENCTX: expr, $CODEGEN_FN_NAME: expr, $ROUTE: expr, $REQCALL: expr,
+     $REQIN: ident,
+     $RESOUT: ident,
+     $RESERROR: ident,
+     $IN: ident,
+     $OUT: ident
+     ) => {{
+        #[derive(Serialize, Deserialize, JsonSchema)]
+        pub struct $IN {
+            #[serde(flatten)]
+            pub req: $REQIN,
+        }
+
+        #[derive(Serialize, Deserialize, JsonSchema)]
+        pub struct $OUT {
+            pub error: Option<$RESERROR>,
+            pub res: Option<$RESOUT>,
+        }
+
+        async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$IN>) -> Json<$OUT> {
             let mut debug = state.debug.write().unwrap();
             debug.push_incoming(&req);
 
             #[allow(clippy::redundant_closure_call)]
-            let res = match ($REQCALL as fn(&AppState, $REQ) -> Result<_, _>)(&state, req) {
-                Ok(res) => $RES {
+            let res = match ($REQCALL as fn(&AppState, $IN) -> Result<_, _>)(&state, req) {
+                Ok(res) => $OUT {
                     error: None,
                     res: Some(res),
                 },
-                Err(e) => $RES {
+                Err(e) => $OUT {
                     error: Some(e),
                     res: None,
                 },
@@ -21,7 +43,7 @@ macro_rules! route {
 
             Json(res)
         }
-        add_codegen_endpoint!($CODEGENCTX, $CODEGEN_FN_NAME, $ROUTE, $REQ, $RES);
+        add_codegen_endpoint!($CODEGENCTX, $CODEGEN_FN_NAME, $ROUTE, $IN, $OUT);
         $ROUTER = $ROUTER.route($ROUTE, post(f));
     }};
 }
@@ -39,6 +61,9 @@ pub fn configure_routes_with_router(
             let mut db = state.db.spawn();
             create_user(&mut db, req.req)
         },
+        CreateUser,
+        CreateUserOut,
+        CreateUserError,
         InCreateUser,
         ResCreateUser
     );
@@ -52,6 +77,9 @@ pub fn configure_routes_with_router(
             let mut auth = state.auth.write().unwrap();
             auth_user(&mut db, &mut auth, req.req)
         },
+        AuthUser,
+        AuthUserOut,
+        AuthUserError,
         InAuthUser,
         ResAuthUser
     );
@@ -65,6 +93,9 @@ pub fn configure_routes_with_router(
             deauth_user(&mut auth, req.req);
             Ok(())
         },
+        DeauthUser,
+        Empty,
+        Empty,
         InDeauthUser,
         ResDeauthUser
     );
@@ -78,6 +109,9 @@ pub fn configure_routes_with_router(
             let mut acc_limbo = state.acc_limbo.lock().unwrap();
             verify_account(&mut db, &mut acc_limbo, req.req)
         },
+        VerifyAccount,
+        Empty,
+        VerifyAccountError,
         InVerifyAccount,
         ResVerifyAccount
     );
@@ -116,6 +150,9 @@ pub fn configure_routes_with_router(
             };
             run()
         },
+        SendVerify,
+        Empty,
+        SendVerifyError,
         InSendVerify,
         ResSendVerify
     );
@@ -129,6 +166,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             set_user_profile(&mut db, &auth, req.req)
         },
+        SetUserProfile,
+        Empty,
+        SetUserProfileError,
         InSetUserProfile,
         ResSetUserProfile
     );
@@ -142,6 +182,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             get_user_profile(&mut db, &auth, req.req)
         },
+        GetUserProfile,
+        GetUserProfileOut,
+        GetUserProfileError,
         InGetUserProfile,
         ResGetUserProfile
     );
@@ -155,6 +198,9 @@ pub fn configure_routes_with_router(
             let mut auth = state.auth.write().unwrap();
             delete_user(&mut db, &mut auth, req.req)
         },
+        DeleteUser,
+        Empty,
+        DeleteUserError,
         InDeleteUser,
         ResDeleteUser
     );
@@ -168,6 +214,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             create_club(&mut db, &auth, req.req)
         },
+        CreateClub,
+        CreateClubOut,
+        CreateClubError,
         InCreateClub,
         ResCreateClub
     );
@@ -181,6 +230,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             get_club_profile(&mut db, &auth, req.req)
         },
+        GetClubProfile,
+        GetClubProfileOut,
+        GetClubProfileError,
         InGetClubProfile,
         ResGetClubProfile
     );
@@ -194,6 +246,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             set_club_profile(&mut db, &auth, req.req)
         },
+        SetClubProfile,
+        SetClubProfileOut,
+        SetClubProfileError,
         InSetClubProfile,
         ResSetClubProfile
     );
@@ -207,6 +262,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             delete_club(&mut db, &auth, req.req)
         },
+        DeleteClub,
+        Empty,
+        DeleteClubError,
         InDeleteClub,
         ResDeleteClub
     );
@@ -220,6 +278,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             get_user_profile_with_username(&mut db, &auth, req.req)
         },
+        GetUserProfileWithUsername,
+        GetUserProfileWithUsernameOut,
+        GetUserProfileWithUsernameError,
         InGetUserProfileWithUsername,
         ResGetUserProfileWithUsername
     );
@@ -233,6 +294,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             add_friend_connection(&mut db, &auth, req.req)
         },
+        AddFriendConnection,
+        AddFriendConnectionOut,
+        AddFriendConnectionError,
         InAddFriendConnection,
         ResAddFriendConnection
     );
@@ -246,6 +310,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             get_friend_connections(&mut db, &auth, req.req)
         },
+        GetFriendConnections,
+        GetFriendConnectionsOut,
+        GetFriendConnectionsError,
         InGetFriendConnections,
         ResGetFriendConnections
     );
@@ -259,6 +326,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             remove_friend(&mut db, &auth, req.req)
         },
+        RemoveFriend,
+        RemoveFriendOut,
+        RemoveFriendError,
         InRemoveFriend,
         ResRemoveFriend
     );
@@ -272,6 +342,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             join_club(&mut db, &auth, req.req)
         },
+        JoinClub,
+        JoinClubOut,
+        JoinClubError,
         InJoinClub,
         ResJoinClub
     );
@@ -285,6 +358,9 @@ pub fn configure_routes_with_router(
             let auth = state.auth.read().unwrap();
             unjoin_club(&mut db, &auth, req.req)
         },
+        UnjoinClub,
+        UnjoinClubOut,
+        UnjoinClubError,
         InUnjoinClub,
         ResUnjoinClub
     );
@@ -297,6 +373,9 @@ pub fn configure_routes_with_router(
             let mut db = state.db.spawn();
             get_club_members(&mut db, req.req)
         },
+        GetClubMembers,
+        GetClubMembersOut,
+        GetClubMembersError,
         InGetClubMembers,
         ResGetClubMembers
     );
@@ -309,6 +388,9 @@ pub fn configure_routes_with_router(
             let mut db = state.db.spawn();
             get_user_clubs(&mut db, req.req)
         },
+        GetUserClubs,
+        GetUserClubsOut,
+        GetUserClubsError,
         InGetUserClubs,
         ResGetUserClubs
     );
