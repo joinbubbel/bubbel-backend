@@ -6,7 +6,7 @@ echo "Hey, if you are not David, please don't run this. Press enter to begin."
 
 read
 
-cargo r --bin bubbel-codegen
+BUBBEL_CODEGEN="" cargo r
 
 git clone https://github.com/davnotdev/bubbel-android /tmp/bubbel-android
 git clone https://github.com/davnotdev/bubbel-ios /tmp/bubbel-ios
@@ -51,6 +51,7 @@ git add .
 git commit -m "Update backend files. (auto)"
 git push
 
+rm -rf /tmp/bubbel
 rm -rf /tmp/bubbel-ios
 rm -rf /tmp/bubbel-android
 
