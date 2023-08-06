@@ -28,17 +28,6 @@ macro_rules! route {
 pub fn configure_routes_with_router(mut router: Router<Arc<AppState>>) -> Router<Arc<AppState>> {
     route!(
         router,
-        "/api/get_user_profile",
-        |state, req| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
-            get_user_profile(&mut db, &auth, req.req)
-        },
-        InGetUserProfile,
-        ResGetUserProfile
-    );
-    route!(
-        router,
         "/api/create_user",
         |state, req| {
             let mut db = state.db.spawn();
