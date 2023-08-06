@@ -18,37 +18,20 @@ cp $DIR/BubbelBackend.kt /tmp/bubbel-android/app/src/main/java/com/example/bubbe
 cp $DIR/BubbelBackend.swift /tmp/bubbel-ios/bubbel/Backend.swift
 cp $DIR/bubbelBackend.ts /tmp/bubbel/lib/bubbelBackend.ts
 
-sed -i '1i import SwiftUI\n' /tmp/bubbel-ios/bubbel/Backend.swift
-
-cat >>/tmp/bubbel-ios/bubbel/Backend.swift << EOL
-
-struct Backend: View {
-    var body: some View {
-        Text("David i added ur backend file happy? Yes, yes I am.")
-    }
-}
-
-struct Backend_Previews: PreviewProvider {
-    static var previews: some View {
-        Backend()
-    }
-}
-
-EOL
 
 cd /tmp/bubbel-android/
 git add .
-git commit -m "Update backend files. (auto)"
+git commit -m "Update backend files. (auto)" || echo
 git push
 
 cd /tmp/bubbel-ios/
 git add .
-git commit -m "Update backend files. (auto)"
+git commit -m "Update backend files. (auto)" || echo
 git push
 
 cd /tmp/bubbel/
 git add .
-git commit -m "Update backend files. (auto)"
+git commit -m "Update backend files. (auto)" || echo
 git push
 
 rm -rf /tmp/bubbel
