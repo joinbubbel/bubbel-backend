@@ -2,7 +2,7 @@ use json::{object, JsonValue};
 use project_root::get_project_root;
 pub use schemars::schema_for;
 
-mod kotlin;
+mod custom_kotlin;
 mod swift;
 mod typescript;
 
@@ -40,6 +40,7 @@ impl CodegenContext {
                 "definitions": {},
                 "properties": {},
             },
+            raw_schemas: vec![],
         };
         let endpoints = vec![];
         CodegenContext { schema, endpoints }
@@ -54,9 +55,6 @@ impl CodegenContext {
         let mut swift_out = project_root.clone();
         swift_out.push("sdks/BubbelBackend.swift");
 
-        let mut kotlin_out = project_root.clone();
-        kotlin_out.push("sdks/BubbelBackend.kt");
-
         let targets = [
             (
                 ts_out,
@@ -70,12 +68,6 @@ impl CodegenContext {
                 swift::post_process as PostProcess,
                 swift::get_fetch as GetFetch,
             ),
-            (
-                kotlin_out,
-                kotlin::get_args as GetArgs,
-                kotlin::post_process as PostProcess,
-                kotlin::get_fetch as GetFetch,
-            ),
         ];
 
         for (out_dir, get_args, post_process, get_fetch) in targets {
@@ -87,6 +79,8 @@ impl CodegenContext {
             }
             std::fs::write(out_dir, out).unwrap();
         }
+
+        custom_kotlin::gen_from_schema(project_root.clone(), self);
     }
 }
 
@@ -100,12 +94,16 @@ pub struct Endpoint {
 pub struct Schema {
     current_num: usize,
     final_val: JsonValue,
+    raw_schemas: Vec<(String, String)>,
 }
 
 impl Schema {
     pub fn push_schema_str(&mut self, s: &str) {
         let val = json::parse(s).unwrap();
         let title = val["title"].as_str().unwrap();
+
+        self.raw_schemas.push((title.to_owned(), s.to_owned()));
+
         self.final_val["definitions"][title] = val.clone();
         self.final_val["properties"][format!("t{}", self.current_num)] = object! {
             "$ref": format!("#/definitions/{}", title)

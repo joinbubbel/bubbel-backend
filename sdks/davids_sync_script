@@ -14,7 +14,10 @@ git clone https://github.com/davnotdev/bubbel /tmp/bubbel
 
 DIR=$(dirname $0)
 
-cp $DIR/BubbelBackend.kt /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend.kt
+mkdir -p /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend/
+cp -f $DIR/kotlin/* /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend/
+mv /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend/backendRepository.kt /tmp/bubbel-android/app/src/main/java/com/example/bubbel/repository/
+
 cp $DIR/BubbelBackend.swift /tmp/bubbel-ios/bubbel/Backend.swift
 cp $DIR/bubbelBackend.ts /tmp/bubbel/lib/bubbelBackend.ts
 
