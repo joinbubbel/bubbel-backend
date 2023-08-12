@@ -38,9 +38,9 @@ impl ClubProfile {
         diesel::insert_into(dsl::club_profiles)
             .values(&ClubProfile {
                 owner: owner_id.0,
-                name,
+                name: name.clone(),
                 description: None,
-                display_name: None,
+                display_name: Some(name),
                 pfp: None,
                 banner: None,
             })
@@ -55,17 +55,34 @@ impl ClubProfile {
         use crate::schema::club_profiles::dsl;
 
         dsl::club_profiles
-            .select((
-                dsl::owner,
-                dsl::name,
-                dsl::description,
-                dsl::display_name,
-                dsl::pfp,
-                dsl::banner,
-            ))
+            .select(ClubProfile::as_select())
             .filter(dsl::id.eq(id.0))
             .load::<ClubProfile>(&mut db.db)
             .map(|v| v.first().cloned())
+            .map_err(DatabaseError::from)
+    }
+
+    /// Of all the clubs, get `batch_index` of `batch_size` of club ids and display names.
+    /// The result is in the order of `club_id`.
+    pub fn get_ordered_batch(
+        db: &mut DataStateInstance,
+        batch_index: usize,
+        batch_size: usize,
+    ) -> Result<Vec<(ClubId, String)>, DatabaseError> {
+        use crate::schema::club_profiles::dsl;
+
+        dsl::club_profiles
+            .select((dsl::id, dsl::display_name))
+            .order_by(dsl::id.asc())
+            .offset((batch_size * batch_index) as i64)
+            .limit(batch_size as i64)
+            .load::<(i32, Option<String>)>(&mut db.db)
+            .map(|v| {
+                v.into_iter()
+                    .filter(|(_, name)| name.is_some())
+                    .map(|(id, name)| (ClubId(id), name.unwrap()))
+                    .collect::<Vec<_>>()
+            })
             .map_err(DatabaseError::from)
     }
 

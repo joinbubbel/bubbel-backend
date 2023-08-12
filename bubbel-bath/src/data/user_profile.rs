@@ -40,17 +40,34 @@ impl UserProfile {
         use crate::schema::user_profiles::dsl;
 
         dsl::user_profiles
-            .select((
-                dsl::user_id,
-                dsl::name,
-                dsl::description,
-                dsl::display_name,
-                dsl::pfp,
-                dsl::banner,
-            ))
+            .select(UserProfile::as_select())
             .filter(dsl::user_id.eq(id.0))
             .load::<UserProfile>(&mut db.db)
             .map(|v| v.first().cloned())
+            .map_err(DatabaseError::from)
+    }
+
+    /// Of all the users, get `batch_index` of `batch_size` of user ids and display names.
+    /// The result is in the order of `user_id`.
+    pub fn get_ordered_batch(
+        db: &mut DataStateInstance,
+        batch_index: usize,
+        batch_size: usize,
+    ) -> Result<Vec<(UserId, String)>, DatabaseError> {
+        use crate::schema::user_profiles::dsl;
+
+        dsl::user_profiles
+            .select((dsl::user_id, dsl::display_name))
+            .order_by(dsl::user_id.asc())
+            .offset((batch_size * batch_index) as i64)
+            .limit(batch_size as i64)
+            .load::<(i32, Option<String>)>(&mut db.db)
+            .map(|v| {
+                v.into_iter()
+                    .filter(|(_, name)| name.is_some())
+                    .map(|(id, name)| (UserId(id), name.unwrap()))
+                    .collect::<Vec<_>>()
+            })
             .map_err(DatabaseError::from)
     }
 }
