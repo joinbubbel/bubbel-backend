@@ -1,5 +1,4 @@
 use json::{object, JsonValue};
-use project_root::get_project_root;
 pub use schemars::schema_for;
 
 mod custom_kotlin;
@@ -46,8 +45,11 @@ impl CodegenContext {
         CodegenContext { schema, endpoints }
     }
 
-    pub fn gen_and_write(&self) {
-        let project_root = std::path::PathBuf::from(option_env!("BUBBEL_CODEGEN").unwrap());
+    pub fn gen_and_write(&self, project_root: &str) {
+        if project_root.is_empty() {
+            panic!("Please set BUBBEL_CODEGEN to the sdk root.")
+        }
+        let project_root = std::path::PathBuf::from(project_root);
 
         let mut ts_out = project_root.clone();
         ts_out.push("bubbelBackend.ts");
