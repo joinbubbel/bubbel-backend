@@ -6,13 +6,12 @@ echo "Hey, if you are not David, please don't run this. Press enter to begin."
 
 read
 
-BUBBEL_CODEGEN="" cargo r
+DIR=$1
+BUBBEL_CODEGEN=$DIR cargo r
 
 git clone https://github.com/davnotdev/bubbel-android /tmp/bubbel-android
 git clone https://github.com/davnotdev/bubbel-ios /tmp/bubbel-ios
 git clone https://github.com/davnotdev/bubbel /tmp/bubbel
-
-DIR=$(dirname $0)
 
 mkdir -p /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend/
 cp -f $DIR/kotlin/* /tmp/bubbel-android/app/src/main/java/com/example/bubbel/model/backend/

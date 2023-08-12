@@ -11,7 +11,7 @@ pub fn gen_from_schema(project_root: std::path::PathBuf, context: &CodegenContex
         joins.push(std::thread::spawn(move || {
             let schema_dir = format!("{}/bubbel_codegen_schema_{}.json", &temp_dir, title);
             let out_dir = format!(
-                "{}/sdks/kotlin/{}.kt",
+                "{}/kotlin/{}.kt",
                 &project_root.to_str().unwrap(),
                 title
             );
@@ -35,12 +35,24 @@ pub fn gen_from_schema(project_root: std::path::PathBuf, context: &CodegenContex
             std::process::Command::new("npx")
                 .args(args.iter())
                 .output()
-                .unwrap()
+                .unwrap();
+            out_dir.clone()
         }));
     }
 
+    let mut out_dirs = vec![];
     for join in joins.into_iter() {
-        join.join().unwrap();
+        out_dirs.push(std::path::PathBuf::from(join.join().unwrap()));
+    }
+
+    for out_dir in out_dirs.iter() {
+        let stem_str = out_dir.file_stem().unwrap().to_str().unwrap();
+        if &stem_str[0..=2] == "Res" {
+            let mut input = std::fs::read_to_string(out_dir).unwrap();
+            input = input.replace(" Type(", &format!(" {}ErrorType(", stem_str));
+            let output = input.replace(" Type,", &format!(" {}ErrorType,", stem_str));
+            std::fs::write(out_dir, output).unwrap();
+        }
     }
 
     let mut out_buf = String::new();
@@ -77,7 +89,7 @@ object RetrofitClient {
             .baseUrl("https://api.joinbubbel.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(loginService::class.java)
+            .create(backendService::class.java)
     }
 }
 
@@ -93,7 +105,7 @@ class BackendRepository {
     out_buf += "\n}";
 
     let out_dir = format!(
-        "{}/sdks/kotlin/backendRepository.kt",
+        "{}/kotlin/backendRepository.kt",
         &project_root.to_str().unwrap(),
     );
 

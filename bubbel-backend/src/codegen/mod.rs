@@ -47,13 +47,13 @@ impl CodegenContext {
     }
 
     pub fn gen_and_write(&self) {
-        let project_root = get_project_root().unwrap();
+        let project_root = std::path::PathBuf::from(option_env!("BUBBEL_CODEGEN").unwrap());
 
         let mut ts_out = project_root.clone();
-        ts_out.push("sdks/bubbelBackend.ts");
+        ts_out.push("bubbelBackend.ts");
 
         let mut swift_out = project_root.clone();
-        swift_out.push("sdks/BubbelBackend.swift");
+        swift_out.push("BubbelBackend.swift");
 
         let targets = [
             (

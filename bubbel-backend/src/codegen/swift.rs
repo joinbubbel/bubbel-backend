@@ -26,7 +26,6 @@ pub fn get_fetch(e: &Endpoint) -> String {
             let (dataString) = String(data: data, encoding: .utf8) ?? \"\"
             
             let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
             let result = try decoder.decode({}.self, from: data)
             return result
         }}",
