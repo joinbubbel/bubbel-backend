@@ -75,7 +75,7 @@ pub fn test_set_club_profile() {
                 token: acc1.clone(),
                 club_id,
                 profile: ClubProfilePartial {
-                    name: Some("YourClub".to_owned()),
+                    display_name: Some("YourClub".to_owned()),
                     ..Default::default()
                 }
             }
@@ -90,7 +90,7 @@ pub fn test_set_club_profile() {
                 token: acc2.clone(),
                 club_id: ClubId(99),
                 profile: ClubProfilePartial {
-                    name: Some("YourClub".to_owned()),
+                    display_name: Some("YourClub".to_owned()),
                     ..Default::default()
                 }
             }
@@ -105,7 +105,7 @@ pub fn test_set_club_profile() {
                 token: acc2.clone(),
                 club_id,
                 profile: ClubProfilePartial {
-                    name: Some("YourClub".to_owned()),
+                    display_name: Some("YourClub".to_owned()),
                     ..Default::default()
                 }
             }
@@ -125,9 +125,9 @@ pub fn test_set_club_profile() {
         Ok(GetClubProfileOut {
             profile: ClubProfile {
                 owner: acc1_id.0,
-                name: "YourClub".to_owned(),
+                name: "MyClub".to_owned(),
                 description: None,
-                display_name: None,
+                display_name: Some("YourClub".to_owned()),
                 pfp: None,
                 banner: None
             }

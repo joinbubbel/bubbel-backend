@@ -23,6 +23,7 @@ pub enum SetClubProfileError {
     },
 
     SettingOwnerNotSupportedYet,
+    SettingNameNotSupportedYet,
 }
 
 pub fn set_club_profile(
@@ -43,7 +44,10 @@ pub fn set_club_profile(
         Err(SetClubProfileError::NoAuthOwner)?
     }
 
-    if let Some(_new_owner) = req.profile.owner {
+    if let Some(_new_name) = req.profile.name.as_ref() {
+        Err(SetClubProfileError::SettingNameNotSupportedYet)?;
+    }
+    if let Some(_new_owner) = req.profile.owner.as_ref() {
         Err(SetClubProfileError::SettingOwnerNotSupportedYet)?;
         // This code does not function properly.
         // if new_owner != user_id.0 {
