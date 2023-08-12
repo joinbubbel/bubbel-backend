@@ -394,5 +394,35 @@ pub fn configure_routes_with_router(
         InGetUserClubs,
         ResGetUserClubs
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiRegexSearchClubs",
+        "/api/regex_search_clubs",
+        |state, req| {
+            let mut db = state.db.spawn();
+            regex_search_clubs(&mut db, req.req)
+        },
+        RegexSearchClubs,
+        RegexSearchClubsOut,
+        RegexSearchClubsError,
+        InRegexSearchClubs,
+        ResRegexSearchClubs
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiRegexSearchUsers",
+        "/api/regex_search_users",
+        |state, req| {
+            let mut db = state.db.spawn();
+            regex_search_users(&mut db, req.req)
+        },
+        RegexSearchUsers,
+        RegexSearchUsersOut,
+        RegexSearchUsersError,
+        InRegexSearchUsers,
+        ResRegexSearchUsers
+    );
     router
 }
