@@ -424,5 +424,20 @@ pub fn configure_routes_with_router(
         InRegexSearchUsers,
         ResRegexSearchUsers
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetRandomClubs",
+        "/api/get_random_clubs",
+        |state, req| {
+            let mut db = state.db.spawn();
+            get_random_clubs(&mut db, req.req)
+        },
+        GetRandomClubs,
+        GetRandomClubsOut,
+        GetRandomClubsError,
+        InGetRandomClubs,
+        ResGetRandomClubs
+    );
     router
 }

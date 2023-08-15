@@ -62,6 +62,22 @@ impl ClubProfile {
             .map_err(DatabaseError::from)
     }
 
+    /// TODO Temporary.
+    pub fn get_random(db: &mut DataStateInstance) -> Result<Vec<(ClubId, Self)>, DatabaseError> {
+        use crate::schema::club_profiles::dsl;
+
+        dsl::club_profiles
+            .select((dsl::id, ClubProfile::as_select()))
+            .limit(30)
+            .load::<(i32, ClubProfile)>(&mut db.db)
+            .map(|v| {
+                v.into_iter()
+                    .map(|(id, profile)| (ClubId(id), profile))
+                    .collect::<Vec<_>>()
+            })
+            .map_err(DatabaseError::from)
+    }
+
     /// Of all the clubs, get `batch_index` of `batch_size` of club ids and display names.
     /// The result is in the order of `club_id`.
     pub fn get_ordered_batch(
