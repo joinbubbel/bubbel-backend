@@ -1,7 +1,10 @@
 use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct GetRandomClubs {}
+pub struct GetRandomClubs {
+    #[serde(default)]
+    _ignore: Option<()>,
+}
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct GetRandomClubsOut {

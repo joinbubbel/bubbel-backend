@@ -9,6 +9,9 @@ read
 DIR=$1
 BUBBEL_CODEGEN=$DIR cargo r
 
+rm -rf /tmp/bubbel/ || echo
+rm -rf /tmp/bubbel-ios/ || echo
+rm -rf /tmp/bubbel-android/ || echo
 git clone https://github.com/davnotdev/bubbel-android /tmp/bubbel-android
 git clone https://github.com/davnotdev/bubbel-ios /tmp/bubbel-ios
 git clone https://github.com/davnotdev/bubbel /tmp/bubbel
