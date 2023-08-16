@@ -10,6 +10,8 @@ pub struct UserProfile {
     pub display_name: Option<String>,
     pub pfp: Option<String>,
     pub banner: Option<String>,
+    pub followers: i32,
+    pub following: i32,
 }
 
 impl UserProfile {
@@ -26,6 +28,8 @@ impl UserProfile {
                 display_name: None,
                 pfp: None,
                 banner: None,
+                followers: 0,
+                following: 0,
             })
             .execute(&mut db.db)
             .map(|_| ())
@@ -81,6 +85,8 @@ pub struct UserProfilePartial {
     pub display_name: Option<String>,
     pub pfp: Option<String>,
     pub banner: Option<String>,
+    pub followers: i32,
+    pub following: i32,
 }
 
 impl UserProfilePartial {
