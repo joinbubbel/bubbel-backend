@@ -2,6 +2,7 @@ use super::*;
 
 mod add_friend_connection;
 mod auth_user;
+mod check_token;
 mod create_club;
 mod create_user;
 mod delete_club;
@@ -26,6 +27,7 @@ mod verify_account;
 
 pub use add_friend_connection::*;
 pub use auth_user::*;
+pub use check_token::*;
 pub use create_club::*;
 pub use create_user::*;
 pub use delete_club::*;

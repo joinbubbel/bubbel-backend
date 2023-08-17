@@ -15,6 +15,7 @@ pub struct CreateClubOut {
 #[serde(tag = "type")]
 pub enum CreateClubError {
     NoAuth,
+    ClubAlreadyExists,
     Internal { ierror: String },
 }
 
@@ -26,10 +27,12 @@ pub fn create_club(
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(CreateClubError::NoAuth)?
     };
-    let club_id =
-        ClubProfile::insert_new(db, &user_id, req.name).map_err(|e| CreateClubError::Internal {
+    let club_id = ClubProfile::insert_new(db, &user_id, req.name).map_err(|e| match e {
+        DatabaseError::UniqueViolation => CreateClubError::ClubAlreadyExists,
+        e => CreateClubError::Internal {
             ierror: e.to_string(),
-        })?;
+        },
+    })?;
 
     join_club(
         db,

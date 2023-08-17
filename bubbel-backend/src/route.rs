@@ -439,5 +439,20 @@ pub fn configure_routes_with_router(
         InGetRandomClubs,
         ResGetRandomClubs
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiCheckToken",
+        "/api/check_token",
+        |state, req| {
+            let auth = state.auth.read().unwrap();
+            check_token(&auth, req.req)
+        },
+        CheckToken,
+        CheckTokenOut,
+        CheckTokenError,
+        InCheckToken,
+        ResCheckToken
+    );
     router
 }

@@ -23,7 +23,9 @@ pub enum AuthUserError {
     /// This error should never occur.
     InvalidPasswordCryto,
     UserNotFound,
-    UserNotVerified,
+    UserNotVerified {
+        user_id: UserId,
+    },
     Internal {
         ierror: String,
     },
@@ -61,7 +63,7 @@ pub fn auth_user(
     let user_id = UserId(user_id);
     is_verified
         .then_some(())
-        .ok_or(AuthUserError::UserNotVerified)?;
+        .ok_or(AuthUserError::UserNotVerified { user_id })?;
 
     let salt = SaltString::from_b64(&db.user_salt).unwrap();
     let argon2 = Argon2::default();
