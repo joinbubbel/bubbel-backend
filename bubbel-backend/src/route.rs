@@ -12,13 +12,13 @@ macro_rules! route {
      $IN: ident,
      $OUT: ident
      ) => {{
-        #[derive(Serialize, Deserialize, JsonSchema)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema)]
         pub struct $IN {
             #[serde(flatten)]
             pub req: $REQIN,
         }
 
-        #[derive(Serialize, Deserialize, JsonSchema)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema)]
         pub struct $OUT {
             pub error: Option<$RESERROR>,
             pub res: Option<$RESOUT>,
@@ -27,6 +27,7 @@ macro_rules! route {
         async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$IN>) -> Json<$OUT> {
             let mut debug = state.debug.write().unwrap();
             debug.push_incoming(&req);
+            trace!("API Call incoming: {} req: {:?}", $ROUTE, req);
 
             #[allow(clippy::redundant_closure_call)]
             let res = match ($REQCALL as fn(&AppState, $IN) -> Result<_, _>)(&state, req) {
@@ -39,6 +40,7 @@ macro_rules! route {
                     res: None,
                 },
             };
+            trace!("API Call outgoing: {} res: {:?}", $ROUTE, res);
             debug.push_outgoing(&res);
 
             Json(res)

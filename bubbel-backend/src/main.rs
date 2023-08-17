@@ -10,6 +10,7 @@ use std::{
     sync::{Arc, Mutex, RwLock},
 };
 use tower_http::{cors::CorsLayer, services::ServeDir};
+use tracing::trace;
 
 #[macro_use]
 mod codegen;
@@ -46,6 +47,8 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt::init();
+
     if let Some(codegen_root) = option_env!("BUBBEL_CODEGEN") {
         let mut codegen_ctx = CodegenContext::new();
         let app = Router::new();

@@ -18,3 +18,5 @@ serde = { version = "1", features = ["derive"] }
 schemars = "0.8"
 lettre = "0.10"
 json = "0.12"
+tracing = "0.1"
+tracing-subscriber = "0.3"
