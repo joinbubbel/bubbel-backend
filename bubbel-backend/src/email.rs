@@ -12,7 +12,7 @@ pub fn send_verify_account_email(
     email: &str,
     code: &str,
 ) -> Result<(), ()> {
-    trace!("Sending verify email to {}.", email);
+    debug!("Sending verify email to {}.", email);
     let image_url =
         "https://res.cloudinary.com/dxmrcocqb/image/upload/v1690213642/Group_1210_akkvya.png";
     let m = Message::builder()

@@ -27,7 +27,7 @@ macro_rules! route {
         async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$IN>) -> Json<$OUT> {
             let mut debug = state.debug.write().unwrap();
             debug.push_incoming(&req);
-            trace!("API Call incoming: {} req: {:?}", $ROUTE, req);
+            debug!("API Call incoming: {} req: {:?}", $ROUTE, req);
 
             #[allow(clippy::redundant_closure_call)]
             let res = match ($REQCALL as fn(&AppState, $IN) -> Result<_, _>)(&state, req) {
@@ -40,7 +40,7 @@ macro_rules! route {
                     res: None,
                 },
             };
-            trace!("API Call outgoing: {} res: {:?}", $ROUTE, res);
+            debug!("API Call outgoing: {} res: {:?}", $ROUTE, res);
             debug.push_outgoing(&res);
 
             Json(res)

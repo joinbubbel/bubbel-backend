@@ -10,7 +10,7 @@ use std::{
     sync::{Arc, Mutex, RwLock},
 };
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
-use tracing::trace;
+use tracing::debug;
 
 #[macro_use]
 mod codegen;
