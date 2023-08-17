@@ -9,7 +9,7 @@ use std::{
     net::SocketAddr,
     sync::{Arc, Mutex, RwLock},
 };
-use tower_http::{cors::CorsLayer, services::ServeDir};
+use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use tracing::trace;
 
 #[macro_use]
@@ -96,6 +96,7 @@ async fn main() {
     let garbage_state = Arc::clone(&state);
 
     let cors = CorsLayer::very_permissive();
+    let trace = TraceLayer::new_for_http();
 
     let tls_config = RustlsConfig::from_pem_file(tls_cert_path, tls_key_path)
         .await
@@ -111,7 +112,8 @@ async fn main() {
             get(get_waive_all_account_verification),
         )
         .route("/api/debug", post(api_debug))
-        .layer(cors.clone())
+        .layer(cors)
+        .layer(trace)
         .with_state(Arc::clone(&state));
 
     let mut tls_app = app.clone();
