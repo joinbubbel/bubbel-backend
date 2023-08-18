@@ -456,5 +456,17 @@ pub fn configure_routes_with_router(
         InCheckToken,
         ResCheckToken
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiUnsafeAddFile",
+        "/api/unsafe_add_file",
+        |_, req| { unsafe_add_file(req.req) },
+        UnsafeAddFile,
+        UnsafeAddFileOut,
+        UnsafeAddFileError,
+        InUnsafeAddFile,
+        ResUnsafeAddFile
+    );
     router
 }
