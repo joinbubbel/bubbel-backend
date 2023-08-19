@@ -9,6 +9,13 @@ type GetArgs = fn() -> Vec<&'static str>;
 type PostProcess = fn(String) -> String;
 type GetFetch = fn(&Endpoint) -> String;
 
+macro_rules! add_codegen_ty {
+    ($CTX: expr, $IN: ty) => {
+        $CTX.schema
+            .push_schema_str(&serde_json::to_string(&schema_for!($IN)).unwrap());
+    };
+}
+
 macro_rules! add_codegen_endpoint {
     ($CTX: expr, $FN_NAME: expr, $ENDPOINT: expr, $IN: ty, $OUT: ty) => {
         $CTX.schema

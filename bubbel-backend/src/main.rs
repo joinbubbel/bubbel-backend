@@ -55,7 +55,8 @@ async fn main() {
     if let Some(codegen_root) = option_env!("BUBBEL_CODEGEN") {
         let mut codegen_ctx = CodegenContext::new();
         let app = Router::new();
-        let _ = route::configure_routes_with_router(app, &mut codegen_ctx);
+        let app = route::configure_routes_with_router(app, &mut codegen_ctx);
+        let _ = dc_api::configure_routes_with_router(app, &mut codegen_ctx);
         codegen_ctx.gen_and_write(codegen_root);
         return;
     }

@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct DataChannelOnNew {
     pub item: DataChannelItem,
 }

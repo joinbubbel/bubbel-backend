@@ -3,8 +3,16 @@ use async_trait::async_trait;
 
 pub fn configure_routes_with_router(
     mut router: Router<Arc<AppState>>,
-    _codegen_ctx: &mut CodegenContext,
+    codegen_ctx: &mut CodegenContext,
 ) -> Router<Arc<AppState>> {
+    //  This will be duplicated.
+    //  add_codegen_ty!(codegen_ctx, DataChannelItem);
+
+    add_codegen_ty!(codegen_ctx, DataChannelInitRequest);
+    add_codegen_ty!(codegen_ctx, DataChannelInitResponse);
+    add_codegen_ty!(codegen_ctx, DataChannelRequest);
+    add_codegen_ty!(codegen_ctx, DataChannelResponse);
+
     router = router.route("/api/dc", get(ws_handler));
     router
 }
@@ -43,7 +51,7 @@ async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
     let text = match init_req {
         Message::Text(text) => text,
         Message::Close(_) => return,
-        _ => panic!("Expected string.")
+        _ => panic!("Expected string."),
     };
     let init_req = serde_json::from_str(&text).unwrap();
     dc_run(&state.inner, init_req, &mut WebSocketSendRecv(socket)).await

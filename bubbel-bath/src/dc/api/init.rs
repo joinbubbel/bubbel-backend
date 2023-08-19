@@ -1,18 +1,19 @@
 use super::*;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct DataChannelInitRequest {
     pub token: UserToken,
     pub channel: DataChannelId,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct DataChannelInitResponse {
     pub current_chunk: Option<DataChunkId>,
     pub error: Option<DataChannelInitError>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
+#[serde(tag = "type")]
 pub enum DataChannelInitError {
     NoAuth,
     ChannelNotFound,

@@ -9,13 +9,13 @@ pub use message::Message;
 
 const DATA_CHUNK_MAX_COUNT: usize = 128;
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DataChunkId(i32);
 
-#[derive(Serialize, Deserialize, Debug, Hash, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Hash, Clone, Copy, PartialEq, Eq)]
 pub struct DataChannelId(i32);
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct UnixTime(u64);
 
 impl UnixTime {
@@ -143,7 +143,7 @@ impl DataChunk {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct DataChannelItem {
     sender: UserId,
     post_time: UnixTime,
