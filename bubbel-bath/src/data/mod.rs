@@ -3,12 +3,16 @@ use std::string::ToString;
 
 mod club_members;
 mod club_profile;
+mod data_channel;
+mod data_chunk;
 mod friend_connection;
 mod user;
 mod user_profile;
 
 pub use club_members::*;
 pub use club_profile::*;
+pub use data_channel::*;
+pub use data_chunk::*;
 pub use friend_connection::*;
 pub use user::*;
 pub use user_profile::*;

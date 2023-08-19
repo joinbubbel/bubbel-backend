@@ -13,7 +13,7 @@ pub fn gen_from_schema(project_root: std::path::PathBuf, context: &CodegenContex
             let out_dir = format!("{}/kotlin/{}.kt", &project_root.to_str().unwrap(), title);
 
             std::fs::write(&schema_dir, schema).unwrap();
-            let args = vec![
+            let args = [
                 "quicktype",
                 "-o",
                 &out_dir,

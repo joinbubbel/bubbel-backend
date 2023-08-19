@@ -1,20 +1,25 @@
 #![feature(async_closure)]
 
 use axum::{
-    extract::{Json, State},
+    extract::{
+        ws::{Message, WebSocket, WebSocketUpgrade},
+        Json, State,
+    },
+    response::IntoResponse,
     routing::{get, post},
     Router,
 };
 use axum_server::tls_rustls::RustlsConfig;
 use bubbel_bath::*;
 use std::{net::SocketAddr, sync::Arc};
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::RwLock;
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use tracing::debug;
 
 #[macro_use]
 mod codegen;
 mod collect_garbage;
+mod dc_api;
 mod debug;
 mod email;
 mod route;
@@ -35,11 +40,9 @@ const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_KEY_PATH";
 const RUST_DOCS_PATH_ENV: &str = "BUBBEL_DOCS_PATH";
 
 pub struct AppState {
-    db: DataState,
-    auth: RwLock<AuthState>,
-    debug: RwLock<DebugState>,
-    acc_limbo: Mutex<AccountLimboState>,
+    inner: InnerState,
 
+    debug: RwLock<DebugState>,
     account_verification_email: String,
     account_verification_email_password: String,
     enabled_waive_all_account_verification: bool,
@@ -85,10 +88,8 @@ async fn main() {
         .map(|(_, p)| p);
 
     let state = Arc::new(AppState {
-        db: DataState::new(&db_url, &user_salt),
-        auth: RwLock::new(AuthState::default()),
+        inner: InnerState::new(&db_url, &user_salt),
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
-        acc_limbo: Mutex::new(AccountLimboState::default()),
         account_verification_email,
         account_verification_email_password,
         enabled_waive_all_account_verification,
@@ -105,6 +106,7 @@ async fn main() {
     let app = Router::new();
     let mut codegen_ctx = CodegenContext::new();
     let app = route::configure_routes_with_router(app, &mut codegen_ctx);
+    let app = dc_api::configure_routes_with_router(app, &mut codegen_ctx);
     let mut app = app
         .route("/", get(root))
         .route(
@@ -144,8 +146,8 @@ async fn root() -> &'static str {
 
 async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
     if state.enabled_waive_all_account_verification {
-        let mut db = state.db.spawn();
-        let mut acc_limbo = state.acc_limbo.lock().await;
+        let mut db = state.inner.db.spawn();
+        let mut acc_limbo = state.inner.acc_limbo.lock().await;
         acc_limbo.waive_user_verification(&mut db);
     }
 }

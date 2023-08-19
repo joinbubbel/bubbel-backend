@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 mod api;
 mod data;
+mod dc;
 mod schema;
 mod state;
 
@@ -14,4 +15,5 @@ mod tests;
 
 pub use api::*;
 pub use data::*;
+pub use dc::*;
 pub use state::*;

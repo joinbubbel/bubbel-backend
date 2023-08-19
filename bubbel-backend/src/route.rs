@@ -60,7 +60,7 @@ pub fn configure_routes_with_router(
         "bubbelApiCreateUser",
         "/api/create_user",
         async move |state: &AppState, req: InCreateUser| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             create_user(&mut db, req.req)
         },
         CreateUser,
@@ -75,8 +75,8 @@ pub fn configure_routes_with_router(
         "bubbelApiAuthUser",
         "/api/auth_user",
         async move |state: &AppState, req: InAuthUser| {
-            let mut db = state.db.spawn();
-            let mut auth = state.auth.write().await;
+            let mut db = state.inner.db.spawn();
+            let mut auth = state.inner.auth.write().await;
             auth_user(&mut db, &mut auth, req.req)
         },
         AuthUser,
@@ -91,7 +91,7 @@ pub fn configure_routes_with_router(
         "bubbelApiDeauthUser",
         "/api/deauth_user",
         async move |state: &AppState, req: InDeauthUser| {
-            let mut auth = state.auth.write().await;
+            let mut auth = state.inner.auth.write().await;
             deauth_user(&mut auth, req.req);
             Ok(())
         },
@@ -107,8 +107,8 @@ pub fn configure_routes_with_router(
         "bubbelApiVerifyAccount",
         "/api/verify_account",
         async move |state: &AppState, req: InVerifyAccount| {
-            let mut db = state.db.spawn();
-            let mut acc_limbo = state.acc_limbo.lock().await;
+            let mut db = state.inner.db.spawn();
+            let mut acc_limbo = state.inner.acc_limbo.lock().await;
             verify_account(&mut db, &mut acc_limbo, req.req)
         },
         VerifyAccount,
@@ -123,8 +123,8 @@ pub fn configure_routes_with_router(
         "bubbelApiSendVerify",
         "/api/send_verify",
         async move |state: &AppState, req: InSendVerify| {
-            let mut db = state.db.spawn();
-            let mut acc_limbo = state.acc_limbo.lock().await;
+            let mut db = state.inner.db.spawn();
+            let mut acc_limbo = state.inner.acc_limbo.lock().await;
             let mut run = || {
                 let user = User::get(&mut db, req.req.user_id)
                     .map_err(|e| SendVerifyError::Internal {
@@ -164,8 +164,8 @@ pub fn configure_routes_with_router(
         "bubbelApiSetUserProfile",
         "/api/set_user_profile",
         async move |state: &AppState, req: InSetUserProfile| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             set_user_profile(&mut db, &auth, req.req)
         },
         SetUserProfile,
@@ -180,8 +180,8 @@ pub fn configure_routes_with_router(
         "bubbelApiGetUserProfile",
         "/api/get_user_profile",
         async move |state: &AppState, req: InGetUserProfile| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             get_user_profile(&mut db, &auth, req.req)
         },
         GetUserProfile,
@@ -196,8 +196,8 @@ pub fn configure_routes_with_router(
         "bubbelApiDeleteUser",
         "/api/delete_user",
         async move |state: &AppState, req: InDeleteUser| {
-            let mut db = state.db.spawn();
-            let mut auth = state.auth.write().await;
+            let mut db = state.inner.db.spawn();
+            let mut auth = state.inner.auth.write().await;
             delete_user(&mut db, &mut auth, req.req)
         },
         DeleteUser,
@@ -212,8 +212,8 @@ pub fn configure_routes_with_router(
         "bubbelApiCreateClub",
         "/api/create_club",
         async move |state: &AppState, req: InCreateClub| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             create_club(&mut db, &auth, req.req)
         },
         CreateClub,
@@ -228,8 +228,8 @@ pub fn configure_routes_with_router(
         "bubbelApiGetClubProfile",
         "/api/get_club_profile",
         async move |state: &AppState, req: InGetClubProfile| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             get_club_profile(&mut db, &auth, req.req)
         },
         GetClubProfile,
@@ -244,8 +244,8 @@ pub fn configure_routes_with_router(
         "bubbelApiSetClubProfile",
         "/api/set_club_profile",
         async move |state: &AppState, req: InSetClubProfile| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             set_club_profile(&mut db, &auth, req.req)
         },
         SetClubProfile,
@@ -260,8 +260,8 @@ pub fn configure_routes_with_router(
         "bubbelApiDeleteClub",
         "/api/delete_club",
         async move |state: &AppState, req: InDeleteClub| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             delete_club(&mut db, &auth, req.req)
         },
         DeleteClub,
@@ -276,8 +276,8 @@ pub fn configure_routes_with_router(
         "bubbelApiGetUserProfileWithUsername",
         "/api/get_user_profile_with_username",
         async move |state: &AppState, req: InGetUserProfileWithUsername| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             get_user_profile_with_username(&mut db, &auth, req.req)
         },
         GetUserProfileWithUsername,
@@ -292,8 +292,8 @@ pub fn configure_routes_with_router(
         "bubbelApiAddFriendConnection",
         "/api/add_friend_connection",
         async move |state: &AppState, req: InAddFriendConnection| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             add_friend_connection(&mut db, &auth, req.req)
         },
         AddFriendConnection,
@@ -308,8 +308,8 @@ pub fn configure_routes_with_router(
         "bubbelApiGetFriendConnections",
         "/api/get_friend_connections",
         async move |state: &AppState, req: InGetFriendConnections| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             get_friend_connections(&mut db, &auth, req.req)
         },
         GetFriendConnections,
@@ -324,8 +324,8 @@ pub fn configure_routes_with_router(
         "bubbelApiRemoveFriend",
         "/api/remove_friend",
         async move |state: &AppState, req: InRemoveFriend| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             remove_friend(&mut db, &auth, req.req)
         },
         RemoveFriend,
@@ -340,8 +340,8 @@ pub fn configure_routes_with_router(
         "bubbelApiJoinClub",
         "/api/join_club",
         async move |state: &AppState, req: InJoinClub| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             join_club(&mut db, &auth, req.req)
         },
         JoinClub,
@@ -356,8 +356,8 @@ pub fn configure_routes_with_router(
         "bubbelApiUnjoinClub",
         "/api/unjoin_club",
         async move |state: &AppState, req: InUnjoinClub| {
-            let mut db = state.db.spawn();
-            let auth = state.auth.read().await;
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
             unjoin_club(&mut db, &auth, req.req)
         },
         UnjoinClub,
@@ -372,7 +372,7 @@ pub fn configure_routes_with_router(
         "bubbelApiGetClubMembers",
         "/api/get_club_members",
         async move |state: &AppState, req: InGetClubMembers| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             get_club_members(&mut db, req.req)
         },
         GetClubMembers,
@@ -387,7 +387,7 @@ pub fn configure_routes_with_router(
         "bubbelApiGetUserClubs",
         "/api/get_user_clubs",
         async move |state: &AppState, req: InGetUserClubs| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             get_user_clubs(&mut db, req.req)
         },
         GetUserClubs,
@@ -402,7 +402,7 @@ pub fn configure_routes_with_router(
         "bubbelApiRegexSearchClubs",
         "/api/regex_search_clubs",
         async move |state: &AppState, req: InRegexSearchClubs| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             regex_search_clubs(&mut db, req.req)
         },
         RegexSearchClubs,
@@ -417,7 +417,7 @@ pub fn configure_routes_with_router(
         "bubbelApiRegexSearchUsers",
         "/api/regex_search_users",
         async move |state: &AppState, req: InRegexSearchUsers| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             regex_search_users(&mut db, req.req)
         },
         RegexSearchUsers,
@@ -432,7 +432,7 @@ pub fn configure_routes_with_router(
         "bubbelApiGetRandomClubs",
         "/api/get_random_clubs",
         async move |state: &AppState, req: InGetRandomClubs| {
-            let mut db = state.db.spawn();
+            let mut db = state.inner.db.spawn();
             get_random_clubs(&mut db, req.req)
         },
         GetRandomClubs,
@@ -447,7 +447,7 @@ pub fn configure_routes_with_router(
         "bubbelApiCheckToken",
         "/api/check_token",
         async move |state: &AppState, req: InCheckToken| {
-            let auth = state.auth.read().await;
+            let auth = state.inner.auth.read().await;
             check_token(&auth, req.req)
         },
         CheckToken,

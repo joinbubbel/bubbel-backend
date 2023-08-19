@@ -21,6 +21,20 @@ diesel::table! {
 }
 
 diesel::table! {
+    data_channels (id) {
+        id -> Int4,
+        data_channel -> Varchar,
+    }
+}
+
+diesel::table! {
+    data_chunks (id) {
+        id -> Int4,
+        data_chunk -> Varchar,
+    }
+}
+
+diesel::table! {
     friend_connections (id) {
         id -> Int4,
         send_user_id -> Int4,
@@ -52,6 +66,8 @@ diesel::table! {
 diesel::allow_tables_to_appear_in_same_query!(
     club_members,
     club_profiles,
+    data_channels,
+    data_chunks,
     friend_connections,
     user_profiles,
     users,
