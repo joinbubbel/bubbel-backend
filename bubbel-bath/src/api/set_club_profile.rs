@@ -22,6 +22,7 @@ pub enum SetClubProfileError {
         ierror: String,
     },
 
+    SettingDCNotSupportedYet,
     SettingOwnerNotSupportedYet,
     SettingNameNotSupportedYet,
 }
@@ -34,9 +35,10 @@ pub fn set_club_profile(
     let Some(profile) =
         ClubProfile::get(db, &req.club_id).map_err(|e| SetClubProfileError::Internal {
             ierror: e.to_string(),
-        })? else {
-            Err(SetClubProfileError::ClubNotFound)?
-        };
+        })?
+    else {
+        Err(SetClubProfileError::ClubNotFound)?
+    };
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(SetClubProfileError::NoAuth)?
     };
@@ -44,6 +46,9 @@ pub fn set_club_profile(
         Err(SetClubProfileError::NoAuthOwner)?
     }
 
+    if let Some(_dc_id) = req.profile.dc_id.as_ref() {
+        Err(SetClubProfileError::SettingDCNotSupportedYet)?;
+    }
     if let Some(_new_name) = req.profile.name.as_ref() {
         Err(SetClubProfileError::SettingNameNotSupportedYet)?;
     }

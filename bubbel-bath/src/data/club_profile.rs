@@ -20,6 +20,7 @@ pub struct ClubId(pub i32);
 pub struct ClubProfile {
     pub owner: i32,
     pub name: String,
+    pub dc_id: i32,
     pub description: Option<String>,
     pub display_name: Option<String>,
     pub pfp: Option<String>,
@@ -31,6 +32,7 @@ impl ClubProfile {
     pub fn insert_new(
         db: &mut DataStateInstance,
         owner_id: &UserId,
+        dc_id: &DataChannelId,
         name: String,
     ) -> Result<ClubId, DatabaseError> {
         use crate::schema::club_profiles::dsl;
@@ -39,6 +41,7 @@ impl ClubProfile {
             .values(&ClubProfile {
                 owner: owner_id.0,
                 name: name.clone(),
+                dc_id: dc_id.0,
                 description: None,
                 display_name: Some(name),
                 pfp: None,
@@ -136,6 +139,7 @@ impl ClubProfile {
 pub struct ClubProfilePartial {
     pub owner: Option<i32>,
     pub name: Option<String>,
+    pub dc_id: Option<i32>,
     pub description: Option<String>,
     pub display_name: Option<String>,
     pub pfp: Option<String>,

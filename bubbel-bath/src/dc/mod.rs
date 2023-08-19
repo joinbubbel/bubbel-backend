@@ -13,7 +13,7 @@ const DATA_CHUNK_MAX_COUNT: usize = 128;
 pub struct DataChunkId(i32);
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Hash, Clone, Copy, PartialEq, Eq)]
-pub struct DataChannelId(i32);
+pub struct DataChannelId(pub i32);
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct UnixTime(u64);

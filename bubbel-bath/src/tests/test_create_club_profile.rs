@@ -125,6 +125,7 @@ pub fn test_set_club_profile() {
         Ok(GetClubProfileOut {
             profile: ClubProfile {
                 owner: acc1_id.0,
+                dc_id: 1,
                 name: "MyClub".to_owned(),
                 description: None,
                 display_name: Some("YourClub".to_owned()),

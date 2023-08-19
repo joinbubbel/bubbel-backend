@@ -13,6 +13,7 @@ diesel::table! {
         id -> Int4,
         owner -> Int4,
         name -> Varchar,
+        dc_id -> Int4,
         description -> Nullable<Varchar>,
         display_name -> Nullable<Varchar>,
         pfp -> Nullable<Varchar>,

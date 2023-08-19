@@ -27,7 +27,12 @@ pub fn create_club(
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(CreateClubError::NoAuth)?
     };
-    let club_id = ClubProfile::insert_new(db, &user_id, req.name).map_err(|e| match e {
+
+    let (_, dc_id) = DataChannel::insert_new(db).map_err(|e| CreateClubError::Internal {
+        ierror: e.to_string(),
+    })?;
+
+    let club_id = ClubProfile::insert_new(db, &user_id, &dc_id, req.name).map_err(|e| match e {
         DatabaseError::UniqueViolation => CreateClubError::ClubAlreadyExists,
         e => CreateClubError::Internal {
             ierror: e.to_string(),
