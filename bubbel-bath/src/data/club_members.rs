@@ -103,34 +103,3 @@ impl ClubMembers {
             .map_err(DatabaseError::from)
     }
 }
-
-#[derive(AsChangeset, Serialize, Deserialize, JsonSchema, Debug, Default, Clone, PartialEq, Eq)]
-#[diesel(table_name = crate::schema::club_profiles)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct ClubProfilePartial {
-    pub owner: Option<i32>,
-    pub name: Option<String>,
-    pub description: Option<String>,
-    pub display_name: Option<String>,
-    pub pfp: Option<String>,
-    pub banner: Option<String>,
-}
-
-impl ClubProfilePartial {
-    /// Partially update a club profile.
-    /// fields that are `None` will have no affect on the database.
-    pub fn unchecked_partial_update(
-        &self,
-        db: &mut DataStateInstance,
-        club_id: &ClubId,
-    ) -> Result<(), DatabaseError> {
-        use crate::schema::club_profiles::dsl;
-
-        diesel::update(dsl::club_profiles)
-            .set(self)
-            .filter(dsl::id.eq(club_id.0))
-            .execute(&mut db.db)
-            .map(|_| ())
-            .map_err(DatabaseError::from)
-    }
-}
