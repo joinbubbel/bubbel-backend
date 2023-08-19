@@ -15,7 +15,7 @@ async fn collect_auth_garbage(app: &Arc<AppState>) {
         tokio::time::sleep(AUTH_COLLECT_GARBAGE_INTERVAL).await;
         debug!("Auth garbage collection in progress.");
         {
-            let mut auth = app.auth.write().unwrap();
+            let mut auth = app.auth.write().await;
             auth.collect_garbage();
         }
         debug!("Auth garbage collection complete.");
@@ -31,7 +31,7 @@ async fn collect_acc_limbo_garbage(app: &Arc<AppState>) {
         debug!("Account limbo garbage collection in progress.");
         {
             let mut db = app.db.spawn();
-            let mut acc_limbo = app.acc_limbo.lock().unwrap();
+            let mut acc_limbo = app.acc_limbo.lock().await;
             acc_limbo.collect_garbage(&mut db);
         }
         debug!("Account limbo garbage collection complete.");

@@ -82,7 +82,7 @@ pub async fn api_debug(
     State(state): State<Arc<AppState>>,
     Json(req): Json<InDebug>,
 ) -> Json<ResDebug> {
-    let debug = state.debug.read().unwrap();
+    let debug = state.debug.read().await;
 
     if req.password == debug.password && debug.enabled {
         Json(ResDebug {

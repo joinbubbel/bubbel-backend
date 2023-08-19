@@ -1,3 +1,5 @@
+#![feature(async_closure)]
+
 use axum::{
     extract::{Json, State},
     routing::{get, post},
@@ -5,10 +7,8 @@ use axum::{
 };
 use axum_server::tls_rustls::RustlsConfig;
 use bubbel_bath::*;
-use std::{
-    net::SocketAddr,
-    sync::{Arc, Mutex, RwLock},
-};
+use std::{net::SocketAddr, sync::Arc};
+use tokio::sync::{Mutex, RwLock};
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 use tracing::debug;
 
@@ -145,7 +145,7 @@ async fn root() -> &'static str {
 async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
     if state.enabled_waive_all_account_verification {
         let mut db = state.db.spawn();
-        let mut acc_limbo = state.acc_limbo.lock().unwrap();
+        let mut acc_limbo = state.acc_limbo.lock().await;
         acc_limbo.waive_user_verification(&mut db);
     }
 }

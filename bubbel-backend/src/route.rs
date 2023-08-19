@@ -25,12 +25,12 @@ macro_rules! route {
         }
 
         async fn f(State(state): State<Arc<AppState>>, Json(req): Json<$IN>) -> Json<$OUT> {
-            let mut debug = state.debug.write().unwrap();
+            let mut debug = state.debug.write().await;
             debug.push_incoming(&req);
             debug!("API Call incoming: {} req: {:?}", $ROUTE, req);
 
             #[allow(clippy::redundant_closure_call)]
-            let res = match ($REQCALL as fn(&AppState, $IN) -> Result<_, _>)(&state, req) {
+            let res = match ($REQCALL)(&state, req).await {
                 Ok(res) => $OUT {
                     error: None,
                     res: Some(res),
@@ -59,7 +59,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiCreateUser",
         "/api/create_user",
-        |state, req| {
+        async move |state: &AppState, req: InCreateUser| {
             let mut db = state.db.spawn();
             create_user(&mut db, req.req)
         },
@@ -74,9 +74,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiAuthUser",
         "/api/auth_user",
-        |state, req| {
+        async move |state: &AppState, req: InAuthUser| {
             let mut db = state.db.spawn();
-            let mut auth = state.auth.write().unwrap();
+            let mut auth = state.auth.write().await;
             auth_user(&mut db, &mut auth, req.req)
         },
         AuthUser,
@@ -90,8 +90,8 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiDeauthUser",
         "/api/deauth_user",
-        |state, req| {
-            let mut auth = state.auth.write().unwrap();
+        async move |state: &AppState, req: InDeauthUser| {
+            let mut auth = state.auth.write().await;
             deauth_user(&mut auth, req.req);
             Ok(())
         },
@@ -106,9 +106,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiVerifyAccount",
         "/api/verify_account",
-        |state, req| {
+        async move |state: &AppState, req: InVerifyAccount| {
             let mut db = state.db.spawn();
-            let mut acc_limbo = state.acc_limbo.lock().unwrap();
+            let mut acc_limbo = state.acc_limbo.lock().await;
             verify_account(&mut db, &mut acc_limbo, req.req)
         },
         VerifyAccount,
@@ -122,9 +122,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiSendVerify",
         "/api/send_verify",
-        |state, req| {
+        async move |state: &AppState, req: InSendVerify| {
             let mut db = state.db.spawn();
-            let mut acc_limbo = state.acc_limbo.lock().unwrap();
+            let mut acc_limbo = state.acc_limbo.lock().await;
             let mut run = || {
                 let user = User::get(&mut db, req.req.user_id)
                     .map_err(|e| SendVerifyError::Internal {
@@ -163,9 +163,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiSetUserProfile",
         "/api/set_user_profile",
-        |state, req| {
+        async move |state: &AppState, req: InSetUserProfile| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             set_user_profile(&mut db, &auth, req.req)
         },
         SetUserProfile,
@@ -179,9 +179,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetUserProfile",
         "/api/get_user_profile",
-        |state, req| {
+        async move |state: &AppState, req: InGetUserProfile| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             get_user_profile(&mut db, &auth, req.req)
         },
         GetUserProfile,
@@ -195,9 +195,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiDeleteUser",
         "/api/delete_user",
-        |state, req| {
+        async move |state: &AppState, req: InDeleteUser| {
             let mut db = state.db.spawn();
-            let mut auth = state.auth.write().unwrap();
+            let mut auth = state.auth.write().await;
             delete_user(&mut db, &mut auth, req.req)
         },
         DeleteUser,
@@ -211,9 +211,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiCreateClub",
         "/api/create_club",
-        |state, req| {
+        async move |state: &AppState, req: InCreateClub| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             create_club(&mut db, &auth, req.req)
         },
         CreateClub,
@@ -227,9 +227,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetClubProfile",
         "/api/get_club_profile",
-        |state, req| {
+        async move |state: &AppState, req: InGetClubProfile| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             get_club_profile(&mut db, &auth, req.req)
         },
         GetClubProfile,
@@ -243,9 +243,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiSetClubProfile",
         "/api/set_club_profile",
-        |state, req| {
+        async move |state: &AppState, req: InSetClubProfile| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             set_club_profile(&mut db, &auth, req.req)
         },
         SetClubProfile,
@@ -259,9 +259,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiDeleteClub",
         "/api/delete_club",
-        |state, req| {
+        async move |state: &AppState, req: InDeleteClub| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             delete_club(&mut db, &auth, req.req)
         },
         DeleteClub,
@@ -275,9 +275,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetUserProfileWithUsername",
         "/api/get_user_profile_with_username",
-        |state, req| {
+        async move |state: &AppState, req: InGetUserProfileWithUsername| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             get_user_profile_with_username(&mut db, &auth, req.req)
         },
         GetUserProfileWithUsername,
@@ -291,9 +291,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiAddFriendConnection",
         "/api/add_friend_connection",
-        |state, req| {
+        async move |state: &AppState, req: InAddFriendConnection| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             add_friend_connection(&mut db, &auth, req.req)
         },
         AddFriendConnection,
@@ -307,9 +307,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetFriendConnections",
         "/api/get_friend_connections",
-        |state, req| {
+        async move |state: &AppState, req: InGetFriendConnections| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             get_friend_connections(&mut db, &auth, req.req)
         },
         GetFriendConnections,
@@ -323,9 +323,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiRemoveFriend",
         "/api/remove_friend",
-        |state, req| {
+        async move |state: &AppState, req: InRemoveFriend| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             remove_friend(&mut db, &auth, req.req)
         },
         RemoveFriend,
@@ -339,9 +339,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiJoinClub",
         "/api/join_club",
-        |state, req| {
+        async move |state: &AppState, req: InJoinClub| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             join_club(&mut db, &auth, req.req)
         },
         JoinClub,
@@ -355,9 +355,9 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiUnjoinClub",
         "/api/unjoin_club",
-        |state, req| {
+        async move |state: &AppState, req: InUnjoinClub| {
             let mut db = state.db.spawn();
-            let auth = state.auth.read().unwrap();
+            let auth = state.auth.read().await;
             unjoin_club(&mut db, &auth, req.req)
         },
         UnjoinClub,
@@ -371,7 +371,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetClubMembers",
         "/api/get_club_members",
-        |state, req| {
+        async move |state: &AppState, req: InGetClubMembers| {
             let mut db = state.db.spawn();
             get_club_members(&mut db, req.req)
         },
@@ -386,7 +386,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetUserClubs",
         "/api/get_user_clubs",
-        |state, req| {
+        async move |state: &AppState, req: InGetUserClubs| {
             let mut db = state.db.spawn();
             get_user_clubs(&mut db, req.req)
         },
@@ -401,7 +401,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiRegexSearchClubs",
         "/api/regex_search_clubs",
-        |state, req| {
+        async move |state: &AppState, req: InRegexSearchClubs| {
             let mut db = state.db.spawn();
             regex_search_clubs(&mut db, req.req)
         },
@@ -416,7 +416,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiRegexSearchUsers",
         "/api/regex_search_users",
-        |state, req| {
+        async move |state: &AppState, req: InRegexSearchUsers| {
             let mut db = state.db.spawn();
             regex_search_users(&mut db, req.req)
         },
@@ -431,7 +431,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiGetRandomClubs",
         "/api/get_random_clubs",
-        |state, req| {
+        async move |state: &AppState, req: InGetRandomClubs| {
             let mut db = state.db.spawn();
             get_random_clubs(&mut db, req.req)
         },
@@ -446,8 +446,8 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiCheckToken",
         "/api/check_token",
-        |state, req| {
-            let auth = state.auth.read().unwrap();
+        async move |state: &AppState, req: InCheckToken| {
+            let auth = state.auth.read().await;
             check_token(&auth, req.req)
         },
         CheckToken,
@@ -461,7 +461,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiUnsafeAddFile",
         "/api/unsafe_add_file",
-        |_, req| { unsafe_add_file(req.req) },
+        async move |_, req: InUnsafeAddFile| { unsafe_add_file(req.req) },
         UnsafeAddFile,
         UnsafeAddFileOut,
         UnsafeAddFileError,
