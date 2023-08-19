@@ -10,11 +10,7 @@ pub fn gen_from_schema(project_root: std::path::PathBuf, context: &CodegenContex
         let project_root = project_root.clone();
         joins.push(std::thread::spawn(move || {
             let schema_dir = format!("{}/bubbel_codegen_schema_{}.json", &temp_dir, title);
-            let out_dir = format!(
-                "{}/kotlin/{}.kt",
-                &project_root.to_str().unwrap(),
-                title
-            );
+            let out_dir = format!("{}/kotlin/{}.kt", &project_root.to_str().unwrap(), title);
 
             std::fs::write(&schema_dir, schema).unwrap();
             let args = vec![
@@ -36,6 +32,11 @@ pub fn gen_from_schema(project_root: std::path::PathBuf, context: &CodegenContex
                 .args(args.iter())
                 .output()
                 .unwrap();
+
+            let out = std::fs::read_to_string(&out_dir).unwrap();
+            let out = post_process_types(&out);
+            std::fs::write(&out_dir, out).unwrap();
+
             out_dir.clone()
         }));
     }
@@ -67,11 +68,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 interface backendService {"#;
 
@@ -167,4 +163,9 @@ fn get_repo(e: &Endpoint) -> String {
         e.out_ty,
         e.out_ty
     )
+}
+
+fn post_process_types(s: &str) -> String {
+    //  GSON support.
+    s.replace("SerialName", "SerializedName")
 }
