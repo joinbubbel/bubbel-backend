@@ -65,6 +65,21 @@ impl ClubProfile {
             .map_err(DatabaseError::from)
     }
 
+    /// Try to get a club using `name`.
+    pub fn get_club_id_with_name(
+        db: &mut DataStateInstance,
+        name: &str,
+    ) -> Result<Option<ClubId>, DatabaseError> {
+        use crate::schema::club_profiles::dsl;
+
+        dsl::club_profiles
+            .select(dsl::id)
+            .filter(dsl::name.eq(name))
+            .load::<i32>(&mut db.db)
+            .map(|u| u.first().map(|&u| ClubId(u)))
+            .map_err(DatabaseError::from)
+    }
+
     /// TODO Temporary.
     pub fn get_random(db: &mut DataStateInstance) -> Result<Vec<(ClubId, Self)>, DatabaseError> {
         use crate::schema::club_profiles::dsl;
@@ -102,21 +117,6 @@ impl ClubProfile {
                     .map(|(id, name)| (ClubId(id), name.unwrap()))
                     .collect::<Vec<_>>()
             })
-            .map_err(DatabaseError::from)
-    }
-
-    /// Try to get a club using `name`.
-    pub fn get_club_id_with_name(
-        db: &mut DataStateInstance,
-        name: &str,
-    ) -> Result<Option<ClubId>, DatabaseError> {
-        use crate::schema::club_profiles::dsl;
-
-        dsl::club_profiles
-            .select(dsl::id)
-            .filter(dsl::name.eq(name))
-            .load::<i32>(&mut db.db)
-            .map(|u| u.first().map(|&u| ClubId(u)))
             .map_err(DatabaseError::from)
     }
 

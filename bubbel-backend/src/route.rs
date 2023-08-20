@@ -484,5 +484,21 @@ pub fn configure_routes_with_router(
         InGetDataChannelChunk,
         ResGetDataChannelChunk
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetClubProfileWithName",
+        "/api/get_club_profile_with_name",
+        async move |state: &AppState, req: InGetClubProfileWithName| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_club_profile_with_name(&mut db, &auth, req.req)
+        },
+        GetClubProfileWithName,
+        GetClubProfileWithNameOut,
+        GetClubProfileWithNameError,
+        InGetClubProfileWithName,
+        ResGetClubProfileWithName
+    );
     router
 }
