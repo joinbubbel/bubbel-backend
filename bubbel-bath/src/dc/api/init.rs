@@ -8,7 +8,7 @@ pub struct DataChannelInitRequest {
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct DataChannelInitResponse {
-    pub current_chunk: Option<DataChunkId>,
+    pub current_chunk: Option<DataChunkIndex>,
     pub error: Option<DataChannelInitError>,
 }
 
@@ -26,7 +26,7 @@ pub(super) fn dc_init(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: &DataChannelInitRequest,
-) -> Result<DataChunkId, DataChannelInitError> {
+) -> Result<DataChunkIndex, DataChannelInitError> {
     auth.check_user_with_token(&req.token)
         .ok_or(DataChannelInitError::NoAuth)?;
     DataChannel::get(db, &req.channel)
@@ -34,5 +34,5 @@ pub(super) fn dc_init(
             ierror: e.to_string(),
         })?
         .ok_or(DataChannelInitError::ChannelNotFound)
-        .map(|dc| DataChunkId((dc.chunks.len() - 1) as i32))
+        .map(|dc| DataChunkIndex(dc.chunks.len() - 1))
 }

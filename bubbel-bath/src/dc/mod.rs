@@ -10,6 +10,9 @@ pub use message::Message;
 const DATA_CHUNK_MAX_COUNT: usize = 128;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DataChunkIndex(pub usize);
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DataChunkId(i32);
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Hash, Clone, Copy, PartialEq, Eq)]
@@ -31,7 +34,7 @@ impl UnixTime {
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 pub struct DataChannel {
-    chunks: Vec<DataChunkId>,
+    pub chunks: Vec<DataChunkId>,
 }
 
 impl DataChannel {
@@ -92,7 +95,7 @@ impl DataChannel {
     }
 }
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, JsonSchema, Default, Debug, Clone, PartialEq, Eq)]
 pub struct DataChunk {
     items: Vec<Option<DataChannelItem>>,
 }

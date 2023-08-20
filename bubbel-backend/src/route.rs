@@ -468,5 +468,21 @@ pub fn configure_routes_with_router(
         InUnsafeAddFile,
         ResUnsafeAddFile
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetDataChannelChunk",
+        "/api/get_data_channel_chunk",
+        async move |state: &AppState, req: InGetDataChannelChunk| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_data_channel_chunk(&mut db, &auth, req.req)
+        },
+        GetDataChannelChunk,
+        GetDataChannelChunkOut,
+        GetDataChannelChunkError,
+        InGetDataChannelChunk,
+        ResGetDataChannelChunk
+    );
     router
 }
