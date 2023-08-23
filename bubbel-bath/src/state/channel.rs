@@ -47,7 +47,8 @@ impl ChannelState {
         }
         let channel_broadcasts = self.channel_broadcasts.read().unwrap();
         for sender in channel_broadcasts.get(id).unwrap() {
-            sender.send(res.clone()).unwrap();
+            //  TODO Sweep away bad senders.
+            let _ = sender.send(res.clone());
         }
     }
 }
