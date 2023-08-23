@@ -130,8 +130,9 @@ pub fn test_set_club_profile() {
                 description: None,
                 display_name: Some("YourClub".to_owned()),
                 pfp: None,
-                banner: None
-            }
+                banner: None,
+            },
+            is_member: None,
         })
     );
 

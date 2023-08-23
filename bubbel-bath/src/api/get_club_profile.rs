@@ -10,6 +10,7 @@ pub struct GetClubProfile {
 pub struct GetClubProfileOut {
     #[serde(flatten)]
     pub profile: ClubProfile,
+    pub is_member: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
@@ -22,7 +23,7 @@ pub enum GetClubProfileError {
 
 pub fn get_club_profile(
     db: &mut DataStateInstance,
-    _auth: &AuthState,
+    auth: &AuthState,
     req: GetClubProfile,
 ) -> Result<GetClubProfileOut, GetClubProfileError> {
     let Some(profile) =
@@ -32,5 +33,18 @@ pub fn get_club_profile(
     else {
         Err(GetClubProfileError::ClubNotFound)?
     };
-    Ok(GetClubProfileOut { profile })
+
+    let is_member = req
+        .token
+        .and_then(|token| auth.check_user_with_token(&token))
+        .map(|user_id| {
+            ClubMembers::is_user_in_club(db, &user_id, &req.club_id).map_err(|e| {
+                GetClubProfileError::Internal {
+                    ierror: e.to_string(),
+                }
+            })
+        })
+        .transpose()?;
+
+    Ok(GetClubProfileOut { profile, is_member })
 }
