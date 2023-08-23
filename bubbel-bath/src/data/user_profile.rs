@@ -1,6 +1,17 @@
 use super::*;
 
-#[derive(Queryable, Selectable, Insertable, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Queryable,
+    Selectable,
+    Insertable,
+    Serialize,
+    Deserialize,
+    JsonSchema,
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+)]
 #[diesel(table_name = crate::schema::user_profiles)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UserProfile {
@@ -66,6 +77,22 @@ impl UserProfile {
                 v.into_iter()
                     .filter(|(_, name)| name.is_some())
                     .map(|(id, name)| (UserId(id), name.unwrap()))
+                    .collect::<Vec<_>>()
+            })
+            .map_err(DatabaseError::from)
+    }
+
+    /// TODO Temporary.
+    pub fn get_random(db: &mut DataStateInstance) -> Result<Vec<(UserId, Self)>, DatabaseError> {
+        use crate::schema::user_profiles::dsl;
+
+        dsl::user_profiles
+            .select((dsl::user_id, UserProfile::as_select()))
+            .limit(30)
+            .load::<(i32, UserProfile)>(&mut db.db)
+            .map(|v| {
+                v.into_iter()
+                    .map(|(id, profile)| (UserId(id), profile))
                     .collect::<Vec<_>>()
             })
             .map_err(DatabaseError::from)

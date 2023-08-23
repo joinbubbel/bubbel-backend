@@ -27,9 +27,11 @@ pub fn unjoin_club(
         Err(UnjoinClubError::NoAuth)?
     };
 
-    let Some(club_profile) = ClubProfile::get(db, &req.club_id).map_err(|e| UnjoinClubError::Internal {
-        ierror: e.to_string(),
-    })? else {
+    let Some(club_profile) =
+        ClubProfile::get(db, &req.club_id).map_err(|e| UnjoinClubError::Internal {
+            ierror: e.to_string(),
+        })?
+    else {
         Err(UnjoinClubError::ClubNotFound)?
     };
 

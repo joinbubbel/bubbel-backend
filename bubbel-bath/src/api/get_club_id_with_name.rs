@@ -25,7 +25,8 @@ pub fn get_club_id_with_name(
         GetClubIdWithNameError::Internal {
             ierror: e.to_string(),
         }
-    })? else {
+    })?
+    else {
         Err(GetClubIdWithNameError::ClubNotFound)?
     };
 

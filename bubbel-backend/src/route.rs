@@ -500,5 +500,20 @@ pub fn configure_routes_with_router(
         InGetClubProfileWithName,
         ResGetClubProfileWithName
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetRandomUsers",
+        "/api/get_random_users",
+        async move |state: &AppState, req: InGetRandomUsers| {
+            let mut db = state.inner.db.spawn();
+            get_random_users(&mut db, req.req)
+        },
+        GetRandomUsers,
+        GetRandomUsersOut,
+        GetRandomUsersError,
+        InGetRandomUsers,
+        ResGetRandomUsers
+    );
     router
 }

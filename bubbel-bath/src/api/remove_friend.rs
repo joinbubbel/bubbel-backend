@@ -21,7 +21,7 @@ pub fn remove_friend(
     auth: &AuthState,
     req: RemoveFriend,
 ) -> Result<RemoveFriendOut, RemoveFriendError> {
-    let Some(user_id) = auth.check_user_with_token(&req.token)  else {
+    let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(RemoveFriendError::NoAuth)?
     };
 

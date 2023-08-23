@@ -26,9 +26,10 @@ pub fn delete_club(
     let Some(profile) =
         ClubProfile::get(db, &req.club_id).map_err(|e| DeleteClubError::Internal {
             ierror: e.to_string(),
-        })? else {
-            Err(DeleteClubError::ClubNotFound)?
-        };
+        })?
+    else {
+        Err(DeleteClubError::ClubNotFound)?
+    };
     let Some(user_id) = auth.check_user_with_token(&req.token) else {
         Err(DeleteClubError::NoAuth)?
     };

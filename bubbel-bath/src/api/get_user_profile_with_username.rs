@@ -32,7 +32,8 @@ pub fn get_user_profile_with_username(
         GetUserProfileWithUsernameError::Internal {
             ierror: e.to_string(),
         }
-    })? else {
+    })?
+    else {
         Err(GetUserProfileWithUsernameError::UserNotFound)?
     };
 

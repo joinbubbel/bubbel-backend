@@ -28,8 +28,9 @@ pub fn get_club_profile(
     let Some(profile) =
         ClubProfile::get(db, &req.club_id).map_err(|e| GetClubProfileError::Internal {
             ierror: e.to_string(),
-        })? else {
-            Err(GetClubProfileError::ClubNotFound)?
-        };
+        })?
+    else {
+        Err(GetClubProfileError::ClubNotFound)?
+    };
     Ok(GetClubProfileOut { profile })
 }
