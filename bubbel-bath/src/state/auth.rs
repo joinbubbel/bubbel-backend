@@ -29,7 +29,7 @@ pub struct AuthState {
 
 /// How long tokens take to expire after a user is "inactive".
 /// Inactivity is determined by the number of called to [`AuthState::check_user_with_token`].
-const TOKEN_INACTIVE_EXPIRE: Duration = Duration::from_secs(18000);
+const TOKEN_INACTIVE_EXPIRE: Duration = Duration::from_secs(1209600);
 
 impl AuthState {
     /// Check if a user is logged in using `token`.
