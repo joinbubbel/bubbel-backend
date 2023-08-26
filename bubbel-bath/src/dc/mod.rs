@@ -12,7 +12,7 @@ const DATA_CHUNK_MAX_COUNT: usize = 128;
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DataChunkIndex(pub usize);
 
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DataChunkId(i32);
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Hash, Clone, Copy, PartialEq, Eq)]
