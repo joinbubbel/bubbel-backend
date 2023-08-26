@@ -515,5 +515,20 @@ pub fn configure_routes_with_router(
         InGetRandomUsers,
         ResGetRandomUsers
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiUsernameToId",
+        "/api/username_to_id",
+        async move |state: &AppState, req: InUsernameToId| {
+            let mut db = state.inner.db.spawn();
+            username_to_id(&mut db, req.req)
+        },
+        UsernameToId,
+        UsernameToIdOut,
+        UsernameToIdError,
+        InUsernameToId,
+        ResUsernameToId
+    );
     router
 }

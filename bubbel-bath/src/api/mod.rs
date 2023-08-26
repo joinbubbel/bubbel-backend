@@ -27,6 +27,7 @@ mod set_club_profile;
 mod set_user_profile;
 mod unjoin_club;
 mod unsafe_add_file;
+mod username_to_id;
 mod verify_account;
 
 pub use add_friend_connection::*;
@@ -56,4 +57,5 @@ pub use set_club_profile::*;
 pub use set_user_profile::*;
 pub use unjoin_club::*;
 pub use unsafe_add_file::*;
+pub use username_to_id::*;
 pub use verify_account::*;
