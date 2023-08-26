@@ -167,5 +167,6 @@ fn get_repo(e: &Endpoint) -> String {
 
 fn post_process_types(s: &str) -> String {
     //  GSON support.
+    let s = "import com.google.gson.annotations.SerializedName\n".to_owned() + s;
     s.replace("SerialName", "SerializedName")
 }
