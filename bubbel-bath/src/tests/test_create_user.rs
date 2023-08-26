@@ -69,7 +69,7 @@ pub fn test_create_multiple_users() {
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Err(CreateUserError::EmailOrUsernametaken)
+        Err(CreateUserError::EmailOrUsernameTaken)
     );
 
     assert_eq!(
@@ -81,6 +81,6 @@ pub fn test_create_multiple_users() {
                 password: "gfjkdlsfjkds".to_owned(),
             },
         ),
-        Err(CreateUserError::EmailOrUsernametaken)
+        Err(CreateUserError::EmailOrUsernameTaken)
     );
 }

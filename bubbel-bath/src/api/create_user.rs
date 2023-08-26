@@ -96,7 +96,7 @@ pub fn create_user(
         .values(&new_user)
         .execute(&mut db.db)
         .map_err(|e| match DatabaseError::from(e) {
-            DatabaseError::UniqueViolation => CreateUserError::EmailOrUsernametaken,
+            DatabaseError::UniqueViolation => CreateUserError::EmailOrUsernameTaken,
             e => CreateUserError::Internal {
                 ierror: e.to_string(),
             },
