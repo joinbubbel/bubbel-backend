@@ -56,7 +56,7 @@ pub enum CreateUserError {
     /// This error should never occur.
     InvalidPasswordCryto,
     /// Email or Username already taken.
-    EmailOrUsernametaken,
+    EmailOrUsernameTaken,
     Internal {
         ierror: String,
     },
