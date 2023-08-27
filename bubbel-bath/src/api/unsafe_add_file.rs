@@ -22,14 +22,15 @@ pub fn unsafe_add_file(req: UnsafeAddFile) -> Result<UnsafeAddFileOut, UnsafeAdd
     let token = generate_token_alphanumeric(32);
     let engine = general_purpose::STANDARD_NO_PAD;
 
+   
     let clean_data = req.data.replace(" ", "").replace("\n", "").replace("\r", "");
     let padded_data = if clean_data.len() % 4 != 0 {
-        clean_data + &"=".repeat(4 - (clean_data.len() % 4))
+        clean_data.clone() + &"=".repeat(4 - (clean_data.len() % 4))
     } else {
         clean_data
     };
 
-  
+   
     let decoded_data = engine.decode(padded_data.as_bytes())
         .map_err(|e| UnsafeAddFileError::Internal { ierror: e.to_string() })?;
 
