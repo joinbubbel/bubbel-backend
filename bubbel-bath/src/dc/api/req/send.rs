@@ -69,7 +69,11 @@ pub async fn dc_send(
     chs.broadcast(
         channel_id,
         DataChannelResponse {
-            res: Some(DataChannelResponseType::OnNew(DataChannelOnNew { item })),
+            res: Some(DataChannelResponseType::OnNew(DataChannelOnNew {
+                item,
+                chunk: DataChunkIndex(channel.chunks.len() - 1),
+                index: chunk.items.len() - 1,
+            })),
             error: None,
         },
     );
