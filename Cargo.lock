@@ -134,6 +134,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "b64"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7afdd34e1f84d4a66e30add7c0d8c784c2b8b2240dbc7feaccee75682a369f26"
+
+[[package]]
 name = "backtrace"
 version = "0.3.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -222,7 +228,7 @@ version = "0.1.0"
 dependencies = [
  "argon2",
  "async-trait",
- "base64",
+ "b64",
  "bimap",
  "diesel",
  "password-hash",

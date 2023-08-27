@@ -17,8 +17,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 schemars = "0.8"
 async-trait = "0.1"
-base64 = "0.21.3"
-
+b64 = "0.4"
 
 [dev-dependencies]
 serial_test = "0.4"
