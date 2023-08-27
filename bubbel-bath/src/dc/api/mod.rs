@@ -9,6 +9,17 @@ pub use init::*;
 pub use req::*;
 pub use res::*;
 
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
+#[serde(tag = "type")]
+pub enum DataChannelError {
+    NoAuth,
+    ChannelNotFound,
+    ChunkNotFound,
+    DataItemNotFound,
+    DataItemDeleted,
+    Internal { ierror: String },
+}
+
 #[async_trait]
 pub trait SendRecv {
     async fn send(&mut self, res: DataChannelResponse);
@@ -82,6 +93,15 @@ pub async fn handle_recv(
             let auth = state.auth.read().await;
             dc_send(&mut db, &auth, &state.chs, channel, &req, cmd).await
         }
-        DataChannelCommandType::Delete(_) => todo!(),
+        DataChannelCommandType::Delete(cmd) => {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().await;
+            dc_delete(&mut db, &auth, &state.chs, channel, &req, cmd).await
+        }
+        DataChannelCommandType::Edit(cmd) => {
+            let mut db = state.db.spawn();
+            let auth = state.auth.read().await;
+            dc_edit(&mut db, &auth, &state.chs, channel, &req, cmd).await
+        }
     }
 }

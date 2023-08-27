@@ -1,18 +1,19 @@
 use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
-pub struct DataChannelCommandDelete {
+pub struct DataChannelCommandEdit {
     chunk: DataChunkIndex,
     index: usize,
+    new_message: Message,
 }
 
-pub async fn dc_delete(
+pub async fn dc_edit(
     db: &mut DataStateInstance,
     auth: &AuthState,
     chs: &ChannelState,
     channel_id: &DataChannelId,
     req: &DataChannelRequest,
-    cmd: &DataChannelCommandDelete,
+    cmd: &DataChannelCommandEdit,
 ) -> Result<(), DataChannelError> {
     let sender = auth
         .check_user_with_token(&req.token)
@@ -38,15 +39,18 @@ pub async fn dc_delete(
         .get_mut(cmd.index)
         .ok_or(DataChannelError::DataItemNotFound)?;
 
-    if let Some(item_inner) = item {
-        if item_inner.sender != sender {
+    let item = if let Some(item) = item {
+        if item.sender != sender {
             return Err(DataChannelError::NoAuth);
         }
+
+        item.message = cmd.new_message.clone();
+        item.edit_time = Some(UnixTime::now());
+
+        item.clone()
     } else {
         return Err(DataChannelError::DataItemDeleted);
-    }
-
-    *item = None;
+    };
 
     chunk
         .update(db, chunk_id)
@@ -57,9 +61,10 @@ pub async fn dc_delete(
     chs.broadcast(
         channel_id,
         DataChannelResponse {
-            res: Some(DataChannelResponseType::OnDelete(DataChannelOnDelete {
+            res: Some(DataChannelResponseType::OnEdit(DataChannelOnEdit {
                 chunk: cmd.chunk,
                 index: cmd.index,
+                new_item: item,
             })),
             error: None,
         },
