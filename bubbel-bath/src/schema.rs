@@ -44,6 +44,22 @@ diesel::table! {
 }
 
 diesel::table! {
+    message_room_members (user_id) {
+        user_id -> Int4,
+        room_id -> Int4,
+    }
+}
+
+diesel::table! {
+    message_rooms (room_id) {
+        room_id -> Int4,
+        name -> Nullable<Varchar>,
+        club_id -> Int4,
+        dc_id -> Int4,
+    }
+}
+
+diesel::table! {
     user_profiles (user_id) {
         user_id -> Int4,
         name -> Nullable<Varchar>,
@@ -64,12 +80,17 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(message_room_members -> message_rooms (room_id));
+diesel::joinable!(message_rooms -> club_profiles (club_id));
+
 diesel::allow_tables_to_appear_in_same_query!(
     club_members,
     club_profiles,
     data_channels,
     data_chunks,
     friend_connections,
+    message_room_members,
+    message_rooms,
     user_profiles,
     users,
 );

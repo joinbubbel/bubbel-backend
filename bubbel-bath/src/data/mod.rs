@@ -4,12 +4,16 @@ use std::string::ToString;
 mod club_members;
 mod club_profile;
 mod friend_connection;
+mod message_room;
+mod message_room_members;
 mod user;
 mod user_profile;
 
 pub use club_members::*;
 pub use club_profile::*;
 pub use friend_connection::*;
+pub use message_room::*;
+pub use message_room_members::*;
 pub use user::*;
 pub use user_profile::*;
 
