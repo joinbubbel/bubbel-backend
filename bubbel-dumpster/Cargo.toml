@@ -1,0 +1,11 @@
+[package]
+name = "bubbel-dumpster"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = "1"
+libdumpster = { version = "*", git = "https://github.com/joinbubbel/dumpster" }
+dumpster-axum = { version = "*", git = "https://github.com/joinbubbel/dumpster" }
