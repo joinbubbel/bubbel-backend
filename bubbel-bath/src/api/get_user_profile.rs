@@ -23,7 +23,7 @@ pub enum GetUserProfileError {
     Internal { ierror: String },
 }
 
-pub fn get_user_profile(
+pub async fn get_user_profile(
     db: &mut DataStateInstance,
     _auth: &AuthState,
     req: GetUserProfile,

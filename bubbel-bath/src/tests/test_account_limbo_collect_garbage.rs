@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_account_collect_garbage() {
+pub async fn test_account_collect_garbage() {
     use crate::schema::users::dsl;
 
     let dbs = new_data_state();
@@ -17,6 +17,7 @@ pub fn test_account_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     let acc1_code = acc_limbo.push_user(acc1);
@@ -29,11 +30,14 @@ pub fn test_account_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     let _ = acc_limbo.push_user(acc2);
 
-    verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: acc1_code }).unwrap();
+    verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: acc1_code })
+        .await
+        .unwrap();
 
     acc_limbo.collect_garbage_with_expire(&mut db, std::time::Duration::from_secs(0));
 

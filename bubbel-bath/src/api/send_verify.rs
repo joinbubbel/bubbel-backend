@@ -20,7 +20,7 @@ pub enum SendVerifyError {
 
 const VERIFICATION_RESEND_MIN_TIME: Duration = Duration::from_secs(10);
 
-pub fn send_verify(
+pub async fn send_verify(
     acc_limbo: &mut AccountLimboState,
     req: SendVerify,
 ) -> Result<(), SendVerifyError> {

@@ -23,7 +23,7 @@ pub enum GetUserProfileWithUsernameError {
     Internal { ierror: String },
 }
 
-pub fn get_user_profile_with_username(
+pub async fn get_user_profile_with_username(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetUserProfileWithUsername,
@@ -45,6 +45,7 @@ pub fn get_user_profile_with_username(
             token: req.token,
         },
     )
+    .await
     .map_err(|e| match e {
         GetUserProfileError::NoAuth => GetUserProfileWithUsernameError::NoAuth,
         GetUserProfileError::UserNotFound => GetUserProfileWithUsernameError::UserNotFound,

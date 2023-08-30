@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_resend_verify() {
+pub async fn test_resend_verify() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     let mut acc_limbo = AccountLimboState::default();
@@ -15,12 +15,13 @@ pub fn test_resend_verify() {
             password: "password123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     let old_code = acc_limbo.push_user(acc);
 
     assert_eq!(
-        send_verify(&mut acc_limbo, SendVerify { user_id: acc }),
+        send_verify(&mut acc_limbo, SendVerify { user_id: acc }).await,
         Err(SendVerifyError::ResendTooSoon)
     );
 
@@ -34,14 +35,14 @@ pub fn test_resend_verify() {
     );
 
     assert_eq!(
-        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: old_code },),
+        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: old_code },).await,
         Err(VerifyAccountError::CodeTimedOutOrAlreadyVerifiedOrInvalidCode)
     );
 
     let new_code = acc_limbo.get_code(&acc).unwrap().clone();
 
     assert_eq!(
-        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: new_code },),
+        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: new_code },).await,
         Ok(())
     );
 }

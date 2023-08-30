@@ -21,7 +21,7 @@ pub enum GetClubProfileError {
     Internal { ierror: String },
 }
 
-pub fn get_club_profile(
+pub async fn get_club_profile(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetClubProfile,

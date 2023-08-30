@@ -14,7 +14,7 @@ pub enum SetUserProfileError {
     Internal { ierror: String },
 }
 
-pub fn set_user_profile(
+pub async fn set_user_profile(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: SetUserProfile,

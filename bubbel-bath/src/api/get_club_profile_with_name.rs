@@ -20,7 +20,7 @@ pub enum GetClubProfileWithNameError {
     Internal { ierror: String },
 }
 
-pub fn get_club_profile_with_name(
+pub async fn get_club_profile_with_name(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetClubProfileWithName,

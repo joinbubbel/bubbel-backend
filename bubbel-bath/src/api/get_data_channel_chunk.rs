@@ -21,7 +21,7 @@ pub enum GetDataChannelChunkError {
     Internal { ierror: String },
 }
 
-pub fn get_data_channel_chunk(
+pub async fn get_data_channel_chunk(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetDataChannelChunk,

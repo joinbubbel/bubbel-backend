@@ -18,7 +18,7 @@ pub enum UnjoinClubError {
     Internal { ierror: String },
 }
 
-pub fn unjoin_club(
+pub async fn unjoin_club(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: UnjoinClub,

@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_join_clubs() {
+pub async fn test_join_clubs() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     let mut auth = AuthState::default();
@@ -16,6 +16,7 @@ pub fn test_join_clubs() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc1);
@@ -28,11 +29,12 @@ pub fn test_join_clubs() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc2);
 
-    acc_limbo.waive_user_verification(&mut db);
+    acc_limbo.waive_user_verification(&mut db).await;
 
     let acc1_token = auth_user(
         &mut db,
@@ -42,6 +44,7 @@ pub fn test_join_clubs() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
@@ -53,6 +56,7 @@ pub fn test_join_clubs() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
@@ -64,6 +68,7 @@ pub fn test_join_clubs() {
             name: "Acc1 Club".to_owned(),
         },
     )
+    .await
     .unwrap()
     .club_id;
 
@@ -75,7 +80,8 @@ pub fn test_join_clubs() {
                 token: acc1_token.clone(),
                 club_id,
             },
-        ),
+        )
+        .await,
         Err(UnjoinClubError::CannotUnjoinAsOwner)
     );
 
@@ -87,6 +93,7 @@ pub fn test_join_clubs() {
             club_id,
         },
     )
+    .await
     .unwrap();
 
     assert_eq!(
@@ -97,7 +104,8 @@ pub fn test_join_clubs() {
                 token: acc2_token.clone(),
                 club_id,
             },
-        ),
+        )
+        .await,
         Err(JoinClubError::AlreadyJoined)
     );
 
@@ -109,10 +117,12 @@ pub fn test_join_clubs() {
             club_id,
         },
     )
+    .await
     .unwrap();
 
     assert_eq!(
         get_club_members(&mut db, GetClubMembers { club_id })
+            .await
             .unwrap()
             .users,
         vec![acc1]

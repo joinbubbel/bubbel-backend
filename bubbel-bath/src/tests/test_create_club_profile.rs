@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_set_club_profile() {
+pub async fn test_set_club_profile() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     let mut auth = AuthState::default();
@@ -16,6 +16,7 @@ pub fn test_set_club_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc1_id);
@@ -28,11 +29,12 @@ pub fn test_set_club_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc2_id);
 
-    acc_limbo.waive_user_verification(&mut db);
+    acc_limbo.waive_user_verification(&mut db).await;
 
     let acc1 = auth_user(
         &mut db,
@@ -42,6 +44,7 @@ pub fn test_set_club_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
@@ -53,6 +56,7 @@ pub fn test_set_club_profile() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
@@ -63,7 +67,8 @@ pub fn test_set_club_profile() {
             token: acc1.clone(),
             name: "MyClub".to_owned(),
         },
-    );
+    )
+    .await;
     assert_eq!(res, Ok(CreateClubOut { club_id: ClubId(1) }));
     let club_id = res.unwrap().club_id;
 
@@ -79,7 +84,8 @@ pub fn test_set_club_profile() {
                     ..Default::default()
                 }
             }
-        ),
+        )
+        .await,
         Ok(SetClubProfileOut {})
     );
     assert_eq!(
@@ -94,7 +100,8 @@ pub fn test_set_club_profile() {
                     ..Default::default()
                 }
             }
-        ),
+        )
+        .await,
         Err(SetClubProfileError::ClubNotFound)
     );
     assert_eq!(
@@ -109,7 +116,8 @@ pub fn test_set_club_profile() {
                     ..Default::default()
                 }
             }
-        ),
+        )
+        .await,
         Err(SetClubProfileError::NoAuthOwner)
     );
 
@@ -121,7 +129,8 @@ pub fn test_set_club_profile() {
                 token: None,
                 club_id,
             }
-        ),
+        )
+        .await,
         Ok(GetClubProfileOut {
             profile: ClubProfile {
                 owner: acc1_id.0,
@@ -144,7 +153,8 @@ pub fn test_set_club_profile() {
                 token: acc1,
                 club_id,
             }
-        ),
+        )
+        .await,
         Ok(())
     );
     assert_eq!(
@@ -155,7 +165,8 @@ pub fn test_set_club_profile() {
                 token: None,
                 club_id: ClubId(1),
             }
-        ),
+        )
+        .await,
         Err(GetClubProfileError::ClubNotFound)
-    );
+    )
 }

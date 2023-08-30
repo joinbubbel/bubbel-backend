@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_basic_deauth_user() {
+pub async fn test_basic_deauth_user() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     let mut auth = AuthState::default();
@@ -16,11 +16,12 @@ pub fn test_basic_deauth_user() {
             password: "password123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc);
 
-    acc_limbo.waive_user_verification(&mut db);
+    acc_limbo.waive_user_verification(&mut db).await;
 
     assert_eq!(
         auth_user(
@@ -30,7 +31,8 @@ pub fn test_basic_deauth_user() {
                 username: "usr21p1".to_owned(),
                 password: "password".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(AuthUserError::InvalidCredentials)
     );
 
@@ -42,7 +44,8 @@ pub fn test_basic_deauth_user() {
                 username: "usr21p".to_owned(),
                 password: "password123".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(AuthUserError::UserNotFound)
     );
 
@@ -53,12 +56,13 @@ pub fn test_basic_deauth_user() {
             username: "usr21p1".to_owned(),
             password: "password123".to_owned(),
         },
-    );
+    )
+    .await;
     assert!(auth_user_res.is_ok());
     let auth_user_res = auth_user_res.unwrap();
     assert_eq!(auth_user_res.username, "usr21p1");
     assert_eq!(auth_user_res.email, "a@gmail.com");
 
     let token = auth_user_res.token;
-    deauth_user(&mut auth, DeauthUser { token });
+    deauth_user(&mut auth, DeauthUser { token }).await;
 }

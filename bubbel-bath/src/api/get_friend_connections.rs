@@ -18,7 +18,7 @@ pub enum GetFriendConnectionsError {
     Internal { ierror: String },
 }
 
-pub fn get_friend_connections(
+pub async fn get_friend_connections(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: GetFriendConnections,

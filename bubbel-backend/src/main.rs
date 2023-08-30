@@ -34,7 +34,6 @@ const DEBUG_PASSWORD_ENV: &str = "BUBBEL_DEBUG_INSPECTOR_PASSWORD";
 const ACCOUNT_VERIFICATION_FROM_EMAIL: &str = "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL";
 const ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD: &str =
     "BUBBEL_ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD";
-const WAIVE_ALL_ACCOUNT_VERIFICATION: &str = "BUBBEL_ENABLE_WAIVE_ALL_ACCOUNT_VERIFICATION";
 const TLS_CERTIFICATE_PATH_ENV: &str = "BUBBEL_TLS_CERT_PATH";
 const TLS_KEY_PATH_ENV: &str = "BUBBEL_TLS_KEY_PATH";
 const RUST_DOCS_PATH_ENV: &str = "BUBBEL_DOCS_PATH";
@@ -45,7 +44,6 @@ pub struct AppState {
     debug: RwLock<DebugState>,
     account_verification_email: String,
     account_verification_email_password: String,
-    enabled_waive_all_account_verification: bool,
 }
 
 #[tokio::main]
@@ -74,9 +72,6 @@ async fn main() {
         .find(|(k, _)| k == ACCOUNT_VERIFICATION_FROM_EMAIL_PASSWORD)
         .unwrap();
 
-    let enabled_waive_all_account_verification =
-        std::env::vars().any(|(k, _)| k == WAIVE_ALL_ACCOUNT_VERIFICATION);
-
     let (_, tls_cert_path) = std::env::vars()
         .find(|(k, _)| k == TLS_CERTIFICATE_PATH_ENV)
         .unwrap();
@@ -93,7 +88,6 @@ async fn main() {
         debug: RwLock::new(DebugState::new(debug_enabled, debug_password)),
         account_verification_email,
         account_verification_email_password,
-        enabled_waive_all_account_verification,
     });
     let garbage_state = Arc::clone(&state);
 
@@ -110,10 +104,6 @@ async fn main() {
     let app = dc_api::configure_routes_with_router(app, &mut codegen_ctx);
     let mut app = app
         .route("/", get(root))
-        .route(
-            "/api/waive_all_account_verification",
-            get(get_waive_all_account_verification),
-        )
         .route("/api/debug", post(api_debug))
         .layer(cors)
         .layer(trace)
@@ -143,12 +133,4 @@ async fn main() {
 
 async fn root() -> &'static str {
     "Hello, World"
-}
-
-async fn get_waive_all_account_verification(State(state): State<Arc<AppState>>) {
-    if state.enabled_waive_all_account_verification {
-        let mut db = state.inner.db.spawn();
-        let mut acc_limbo = state.inner.acc_limbo.lock().await;
-        acc_limbo.waive_user_verification(&mut db);
-    }
 }

@@ -17,7 +17,7 @@ pub enum UsernameToIdError {
     Internal { ierror: String },
 }
 
-pub fn username_to_id(
+pub async fn username_to_id(
     db: &mut DataStateInstance,
     req: UsernameToId,
 ) -> Result<UsernameToIdOut, UsernameToIdError> {

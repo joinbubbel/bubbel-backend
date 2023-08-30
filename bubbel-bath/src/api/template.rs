@@ -12,7 +12,7 @@ pub enum FooError {
     Internal { ierror: String },
 }
 
-pub fn foo(
+pub async fn foo(
     //  db: &mut DataStateInstance,
     //  auth: &AuthState,
     req: Foo,

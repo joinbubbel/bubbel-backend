@@ -16,7 +16,10 @@ pub enum CheckTokenError {
     Ignore,
 }
 
-pub fn check_token(auth: &AuthState, req: CheckToken) -> Result<CheckTokenOut, CheckTokenError> {
+pub async fn check_token(
+    auth: &AuthState,
+    req: CheckToken,
+) -> Result<CheckTokenOut, CheckTokenError> {
     Ok(CheckTokenOut {
         user_id: auth.check_user_with_token(&req.token),
     })

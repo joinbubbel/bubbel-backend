@@ -21,7 +21,7 @@ pub enum CreateRoomError {
     Internal { ierror: String },
 }
 
-pub fn create_room(
+pub async fn create_room(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: CreateRoom,
@@ -60,6 +60,7 @@ pub fn create_room(
             message_room_id,
         },
     )
+    .await
     .map_err(|e| match e {
         JoinRoomError::Internal { ierror } => CreateRoomError::Internal { ierror },
         e => CreateRoomError::Internal {

@@ -12,7 +12,7 @@ pub enum DeleteUserError {
     Internal { ierror: String },
 }
 
-pub fn delete_user(
+pub async fn delete_user(
     db: &mut DataStateInstance,
     auth: &mut AuthState,
     req: DeleteUser,

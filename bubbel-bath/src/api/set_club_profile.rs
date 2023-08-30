@@ -27,7 +27,7 @@ pub enum SetClubProfileError {
     SettingNameNotSupportedYet,
 }
 
-pub fn set_club_profile(
+pub async fn set_club_profile(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: SetClubProfile,

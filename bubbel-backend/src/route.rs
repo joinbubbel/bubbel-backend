@@ -61,7 +61,7 @@ pub fn configure_routes_with_router(
         "/api/create_user",
         async move |state: &AppState, req: InCreateUser| {
             let mut db = state.inner.db.spawn();
-            create_user(&mut db, req.req)
+            create_user(&mut db, req.req).await
         },
         CreateUser,
         CreateUserOut,
@@ -77,7 +77,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InAuthUser| {
             let mut db = state.inner.db.spawn();
             let mut auth = state.inner.auth.write().await;
-            auth_user(&mut db, &mut auth, req.req)
+            auth_user(&mut db, &mut auth, req.req).await
         },
         AuthUser,
         AuthUserOut,
@@ -92,7 +92,7 @@ pub fn configure_routes_with_router(
         "/api/deauth_user",
         async move |state: &AppState, req: InDeauthUser| {
             let mut auth = state.inner.auth.write().await;
-            deauth_user(&mut auth, req.req);
+            deauth_user(&mut auth, req.req).await;
             Ok(())
         },
         DeauthUser,
@@ -109,7 +109,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InVerifyAccount| {
             let mut db = state.inner.db.spawn();
             let mut acc_limbo = state.inner.acc_limbo.lock().await;
-            verify_account(&mut db, &mut acc_limbo, req.req)
+            verify_account(&mut db, &mut acc_limbo, req.req).await
         },
         VerifyAccount,
         Empty,
@@ -125,32 +125,29 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InSendVerify| {
             let mut db = state.inner.db.spawn();
             let mut acc_limbo = state.inner.acc_limbo.lock().await;
-            let mut run = || {
-                let user = User::get(&mut db, req.req.user_id)
-                    .map_err(|e| SendVerifyError::Internal {
-                        ierror: e.to_string(),
-                    })?
-                    .ok_or(SendVerifyError::UserNotFound)?;
-                send_verify(&mut acc_limbo, req.req.clone())?;
+            let user = User::get(&mut db, req.req.user_id)
+                .map_err(|e| SendVerifyError::Internal {
+                    ierror: e.to_string(),
+                })?
+                .ok_or(SendVerifyError::UserNotFound)?;
+            send_verify(&mut acc_limbo, req.req.clone()).await?;
 
-                let code = acc_limbo.get_code(&req.req.user_id).unwrap();
+            let code = acc_limbo.get_code(&req.req.user_id).unwrap();
 
-                if email::send_verify_account_email(
-                    &state.account_verification_email,
-                    &state.account_verification_email_password,
-                    &user.email,
-                    code,
-                )
-                .is_err()
-                {
-                    User::remove(&mut db, req.req.user_id).map_err(|e| SendVerifyError::Internal {
-                        ierror: e.to_string(),
-                    })
-                } else {
-                    Ok(())
-                }
-            };
-            run()
+            if email::send_verify_account_email(
+                &state.account_verification_email,
+                &state.account_verification_email_password,
+                &user.email,
+                code,
+            )
+            .is_err()
+            {
+                User::remove(&mut db, req.req.user_id).map_err(|e| SendVerifyError::Internal {
+                    ierror: e.to_string(),
+                })
+            } else {
+                Ok(())
+            }
         },
         SendVerify,
         Empty,
@@ -166,7 +163,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InSetUserProfile| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            set_user_profile(&mut db, &auth, req.req)
+            set_user_profile(&mut db, &auth, req.req).await
         },
         SetUserProfile,
         Empty,
@@ -182,7 +179,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetUserProfile| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_user_profile(&mut db, &auth, req.req)
+            get_user_profile(&mut db, &auth, req.req).await
         },
         GetUserProfile,
         GetUserProfileOut,
@@ -198,7 +195,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InDeleteUser| {
             let mut db = state.inner.db.spawn();
             let mut auth = state.inner.auth.write().await;
-            delete_user(&mut db, &mut auth, req.req)
+            delete_user(&mut db, &mut auth, req.req).await
         },
         DeleteUser,
         Empty,
@@ -214,7 +211,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InCreateClub| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            create_club(&mut db, &auth, req.req)
+            create_club(&mut db, &auth, req.req).await
         },
         CreateClub,
         CreateClubOut,
@@ -230,7 +227,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetClubProfile| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_club_profile(&mut db, &auth, req.req)
+            get_club_profile(&mut db, &auth, req.req).await
         },
         GetClubProfile,
         GetClubProfileOut,
@@ -246,7 +243,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InSetClubProfile| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            set_club_profile(&mut db, &auth, req.req)
+            set_club_profile(&mut db, &auth, req.req).await
         },
         SetClubProfile,
         SetClubProfileOut,
@@ -262,7 +259,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InDeleteClub| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            delete_club(&mut db, &auth, req.req)
+            delete_club(&mut db, &auth, req.req).await
         },
         DeleteClub,
         Empty,
@@ -278,7 +275,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetUserProfileWithUsername| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_user_profile_with_username(&mut db, &auth, req.req)
+            get_user_profile_with_username(&mut db, &auth, req.req).await
         },
         GetUserProfileWithUsername,
         GetUserProfileWithUsernameOut,
@@ -294,7 +291,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InAddFriendConnection| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            add_friend_connection(&mut db, &auth, req.req)
+            add_friend_connection(&mut db, &auth, req.req).await
         },
         AddFriendConnection,
         AddFriendConnectionOut,
@@ -310,7 +307,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetFriendConnections| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_friend_connections(&mut db, &auth, req.req)
+            get_friend_connections(&mut db, &auth, req.req).await
         },
         GetFriendConnections,
         GetFriendConnectionsOut,
@@ -326,7 +323,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InRemoveFriend| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            remove_friend(&mut db, &auth, req.req)
+            remove_friend(&mut db, &auth, req.req).await
         },
         RemoveFriend,
         RemoveFriendOut,
@@ -342,7 +339,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InJoinClub| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            join_club(&mut db, &auth, req.req)
+            join_club(&mut db, &auth, req.req).await
         },
         JoinClub,
         JoinClubOut,
@@ -358,7 +355,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InUnjoinClub| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            unjoin_club(&mut db, &auth, req.req)
+            unjoin_club(&mut db, &auth, req.req).await
         },
         UnjoinClub,
         UnjoinClubOut,
@@ -373,7 +370,7 @@ pub fn configure_routes_with_router(
         "/api/get_club_members",
         async move |state: &AppState, req: InGetClubMembers| {
             let mut db = state.inner.db.spawn();
-            get_club_members(&mut db, req.req)
+            get_club_members(&mut db, req.req).await
         },
         GetClubMembers,
         GetClubMembersOut,
@@ -388,7 +385,7 @@ pub fn configure_routes_with_router(
         "/api/get_user_clubs",
         async move |state: &AppState, req: InGetUserClubs| {
             let mut db = state.inner.db.spawn();
-            get_user_clubs(&mut db, req.req)
+            get_user_clubs(&mut db, req.req).await
         },
         GetUserClubs,
         GetUserClubsOut,
@@ -403,7 +400,7 @@ pub fn configure_routes_with_router(
         "/api/regex_search_clubs",
         async move |state: &AppState, req: InRegexSearchClubs| {
             let mut db = state.inner.db.spawn();
-            regex_search_clubs(&mut db, req.req)
+            regex_search_clubs(&mut db, req.req).await
         },
         RegexSearchClubs,
         RegexSearchClubsOut,
@@ -418,7 +415,7 @@ pub fn configure_routes_with_router(
         "/api/regex_search_users",
         async move |state: &AppState, req: InRegexSearchUsers| {
             let mut db = state.inner.db.spawn();
-            regex_search_users(&mut db, req.req)
+            regex_search_users(&mut db, req.req).await
         },
         RegexSearchUsers,
         RegexSearchUsersOut,
@@ -433,7 +430,7 @@ pub fn configure_routes_with_router(
         "/api/get_random_clubs",
         async move |state: &AppState, req: InGetRandomClubs| {
             let mut db = state.inner.db.spawn();
-            get_random_clubs(&mut db, req.req)
+            get_random_clubs(&mut db, req.req).await
         },
         GetRandomClubs,
         GetRandomClubsOut,
@@ -448,7 +445,7 @@ pub fn configure_routes_with_router(
         "/api/check_token",
         async move |state: &AppState, req: InCheckToken| {
             let auth = state.inner.auth.read().await;
-            check_token(&auth, req.req)
+            check_token(&auth, req.req).await
         },
         CheckToken,
         CheckTokenOut,
@@ -461,7 +458,7 @@ pub fn configure_routes_with_router(
         codegen_ctx,
         "bubbelApiUnsafeAddFile",
         "/api/unsafe_add_file",
-        async move |_, req: InUnsafeAddFile| { unsafe_add_file(req.req) },
+        async move |_, req: InUnsafeAddFile| { unsafe_add_file(req.req).await },
         UnsafeAddFile,
         UnsafeAddFileOut,
         UnsafeAddFileError,
@@ -476,7 +473,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetDataChannelChunk| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_data_channel_chunk(&mut db, &auth, req.req)
+            get_data_channel_chunk(&mut db, &auth, req.req).await
         },
         GetDataChannelChunk,
         GetDataChannelChunkOut,
@@ -492,7 +489,7 @@ pub fn configure_routes_with_router(
         async move |state: &AppState, req: InGetClubProfileWithName| {
             let mut db = state.inner.db.spawn();
             let auth = state.inner.auth.read().await;
-            get_club_profile_with_name(&mut db, &auth, req.req)
+            get_club_profile_with_name(&mut db, &auth, req.req).await
         },
         GetClubProfileWithName,
         GetClubProfileWithNameOut,
@@ -507,7 +504,7 @@ pub fn configure_routes_with_router(
         "/api/get_random_users",
         async move |state: &AppState, req: InGetRandomUsers| {
             let mut db = state.inner.db.spawn();
-            get_random_users(&mut db, req.req)
+            get_random_users(&mut db, req.req).await
         },
         GetRandomUsers,
         GetRandomUsersOut,
@@ -522,7 +519,7 @@ pub fn configure_routes_with_router(
         "/api/username_to_id",
         async move |state: &AppState, req: InUsernameToId| {
             let mut db = state.inner.db.spawn();
-            username_to_id(&mut db, req.req)
+            username_to_id(&mut db, req.req).await
         },
         UsernameToId,
         UsernameToIdOut,

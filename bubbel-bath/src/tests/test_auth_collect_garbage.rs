@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_auth_collect_garbage() {
+pub async fn test_auth_collect_garbage() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     let mut auth = AuthState::default();
@@ -16,6 +16,7 @@ pub fn test_auth_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc1);
@@ -28,11 +29,12 @@ pub fn test_auth_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc2);
 
-    acc_limbo.waive_user_verification(&mut db);
+    acc_limbo.waive_user_verification(&mut db).await;
 
     let acc1 = auth_user(
         &mut db,
@@ -42,6 +44,7 @@ pub fn test_auth_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
@@ -55,6 +58,7 @@ pub fn test_auth_collect_garbage() {
             password: "passwordnot123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 

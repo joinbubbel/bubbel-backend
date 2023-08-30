@@ -21,7 +21,7 @@ pub enum RegexSearchUsersError {
 
 const USER_SEARCH_BATCH_SIZE: usize = 30;
 
-pub fn regex_search_users(
+pub async fn regex_search_users(
     db: &mut DataStateInstance,
     req: RegexSearchUsers,
 ) -> Result<RegexSearchUsersOut, RegexSearchUsersError> {

@@ -17,7 +17,7 @@ pub enum JoinClubError {
     Internal { ierror: String },
 }
 
-pub fn join_club(
+pub async fn join_club(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: JoinClub,

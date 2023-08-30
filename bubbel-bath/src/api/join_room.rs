@@ -19,7 +19,7 @@ pub enum JoinRoomError {
     Internal { ierror: String },
 }
 
-pub fn join_room(
+pub async fn join_room(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: JoinRoom,

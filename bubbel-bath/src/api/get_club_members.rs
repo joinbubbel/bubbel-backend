@@ -16,7 +16,7 @@ pub enum GetClubMembersError {
     Internal { ierror: String },
 }
 
-pub fn get_club_members(
+pub async fn get_club_members(
     db: &mut DataStateInstance,
     req: GetClubMembers,
 ) -> Result<GetClubMembersOut, GetClubMembersError> {

@@ -62,7 +62,7 @@ pub enum CreateUserError {
     },
 }
 
-pub fn create_user(
+pub async fn create_user(
     db: &mut DataStateInstance,
     req: CreateUser,
 ) -> Result<CreateUserOut, CreateUserError> {

@@ -21,7 +21,7 @@ pub enum RegexSearchClubsError {
 
 const CLUB_SEARCH_BATCH_SIZE: usize = 30;
 
-pub fn regex_search_clubs(
+pub async fn regex_search_clubs(
     db: &mut DataStateInstance,
     req: RegexSearchClubs,
 ) -> Result<RegexSearchClubsOut, RegexSearchClubsError> {

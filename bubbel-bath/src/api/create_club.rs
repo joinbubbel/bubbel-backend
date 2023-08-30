@@ -19,7 +19,7 @@ pub enum CreateClubError {
     Internal { ierror: String },
 }
 
-pub fn create_club(
+pub async fn create_club(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: CreateClub,
@@ -47,6 +47,7 @@ pub fn create_club(
             club_id,
         },
     )
+    .await
     .map_err(|e| match e {
         JoinClubError::NoAuth => CreateClubError::Internal {
             ierror: "Reached impossible token case.".to_owned(),

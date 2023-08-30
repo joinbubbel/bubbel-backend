@@ -31,7 +31,7 @@ pub enum AuthUserError {
     },
 }
 
-pub fn auth_user(
+pub async fn auth_user(
     db: &mut DataStateInstance,
     auth: &mut AuthState,
     req: AuthUser,
@@ -90,6 +90,6 @@ pub struct DeauthUser {
     pub token: UserToken,
 }
 
-pub fn deauth_user(auth: &mut AuthState, req: DeauthUser) {
+pub async fn deauth_user(auth: &mut AuthState, req: DeauthUser) {
     auth.deauth_user(&req.token);
 }

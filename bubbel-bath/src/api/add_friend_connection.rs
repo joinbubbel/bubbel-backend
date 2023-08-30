@@ -18,7 +18,7 @@ pub enum AddFriendConnectionError {
     Internal { ierror: String },
 }
 
-pub fn add_friend_connection(
+pub async fn add_friend_connection(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: AddFriendConnection,

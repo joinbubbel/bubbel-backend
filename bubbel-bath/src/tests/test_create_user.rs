@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_create_multiple_users() {
+pub async fn test_create_multiple_users() {
     let dbs = new_data_state();
     let mut db = dbs.spawn();
     assert_eq!(
@@ -13,7 +13,8 @@ pub fn test_create_multiple_users() {
                 username: "fklakfdsb".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(CreateUserError::InvalidEmail)
     );
     assert_eq!(
@@ -24,7 +25,8 @@ pub fn test_create_multiple_users() {
                 username: "a".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(CreateUserError::InvalidUsername)
     );
     assert_eq!(
@@ -35,7 +37,8 @@ pub fn test_create_multiple_users() {
                 username: "akdfsljkdfjks".to_owned(),
                 password: "a b".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(CreateUserError::InvalidPassword)
     );
     assert_eq!(
@@ -46,7 +49,8 @@ pub fn test_create_multiple_users() {
                 username: "abcjkdsf".to_owned(),
                 password: "gfdjksafdljksa".to_owned(),
             },
-        ),
+        )
+        .await,
         Ok(CreateUserOut { user_id: UserId(1) })
     );
     assert_eq!(
@@ -57,7 +61,8 @@ pub fn test_create_multiple_users() {
                 username: "fskdjfklakfdsb".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
-        ),
+        )
+        .await,
         Ok(CreateUserOut { user_id: UserId(2) })
     );
     assert_eq!(
@@ -68,7 +73,8 @@ pub fn test_create_multiple_users() {
                 username: "fskdjfklakfdsb".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(CreateUserError::EmailOrUsernameTaken)
     );
 
@@ -80,7 +86,8 @@ pub fn test_create_multiple_users() {
                 username: "abcdef".to_owned(),
                 password: "gfjkdlsfjkds".to_owned(),
             },
-        ),
+        )
+        .await,
         Err(CreateUserError::EmailOrUsernameTaken)
     );
 }

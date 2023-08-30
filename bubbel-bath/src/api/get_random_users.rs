@@ -17,7 +17,7 @@ pub enum GetRandomUsersError {
     Internal { ierror: String },
 }
 
-pub fn get_random_users(
+pub async fn get_random_users(
     db: &mut DataStateInstance,
     _: GetRandomUsers,
 ) -> Result<GetRandomUsersOut, GetRandomUsersError> {

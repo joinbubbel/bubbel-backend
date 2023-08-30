@@ -16,7 +16,7 @@ pub enum RemoveFriendError {
     Internal { ierror: String },
 }
 
-pub fn remove_friend(
+pub async fn remove_friend(
     db: &mut DataStateInstance,
     auth: &AuthState,
     req: RemoveFriend,

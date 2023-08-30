@@ -17,7 +17,7 @@ pub enum GetRandomClubsError {
     Internal { ierror: String },
 }
 
-pub fn get_random_clubs(
+pub async fn get_random_clubs(
     db: &mut DataStateInstance,
     _: GetRandomClubs,
 ) -> Result<GetRandomClubsOut, GetRandomClubsError> {

@@ -19,7 +19,7 @@ pub enum UnsafeAddFileError {
     Internal { ierror: String },
 }
 
-pub fn unsafe_add_file(req: UnsafeAddFile) -> Result<UnsafeAddFileOut, UnsafeAddFileError> {
+pub async fn unsafe_add_file(req: UnsafeAddFile) -> Result<UnsafeAddFileOut, UnsafeAddFileError> {
     let token = generate_token_alphanumeric(32);
     let write_dir = "/tmp/unsafe_data/".to_owned() + &token + &req.extension;
     let data = req

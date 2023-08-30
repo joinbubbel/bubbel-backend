@@ -85,9 +85,11 @@ impl AccountLimboState {
 
     /// Waive all users that are apart of [`AccountLimboState`].
     /// Mainly for the purposes of testing.
-    pub fn waive_user_verification(&mut self, db: &mut DataStateInstance) {
-        self.account_codes.clone().iter().for_each(|(code, _)| {
-            verify_account(db, self, VerifyAccount { code: code.clone() }).unwrap();
-        });
+    pub async fn waive_user_verification(&mut self, db: &mut DataStateInstance) {
+        for (code, _) in self.account_codes.clone().iter() {
+            verify_account(db, self, VerifyAccount { code: code.clone() })
+                .await
+                .unwrap();
+        }
     }
 }

@@ -1,8 +1,8 @@
 use super::*;
 
-#[test]
+#[tokio::test]
 #[serial_test::serial]
-pub fn test_delete_user() {
+pub async fn test_delete_user() {
     use crate::schema::users::dsl;
 
     let dbs = new_data_state();
@@ -18,6 +18,7 @@ pub fn test_delete_user() {
             password: "abcdef123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc1);
@@ -30,11 +31,12 @@ pub fn test_delete_user() {
             password: "abcdef123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .user_id;
     acc_limbo.push_user(acc2);
 
-    acc_limbo.waive_user_verification(&mut db);
+    acc_limbo.waive_user_verification(&mut db).await;
 
     let acc = auth_user(
         &mut db,
@@ -44,10 +46,13 @@ pub fn test_delete_user() {
             password: "abcdef123".to_owned(),
         },
     )
+    .await
     .unwrap()
     .token;
 
-    delete_user(&mut db, &mut auth, DeleteUser { token: acc.clone() }).unwrap();
+    delete_user(&mut db, &mut auth, DeleteUser { token: acc.clone() })
+        .await
+        .unwrap();
 
     let usernames: Vec<String> = dsl::users
         .select(dsl::username)
@@ -56,7 +61,7 @@ pub fn test_delete_user() {
     assert_eq!(usernames, vec!["davnotdev2"]);
 
     assert_eq!(
-        delete_user(&mut db, &mut auth, DeleteUser { token: acc }),
+        delete_user(&mut db, &mut auth, DeleteUser { token: acc }).await,
         Err(DeleteUserError::NoAuth),
     );
 
@@ -68,7 +73,8 @@ pub fn test_delete_user() {
                 username: "davnotdev".to_owned(),
                 password: "abcdef123".to_owned()
             }
-        ),
+        )
+        .await,
         Err(AuthUserError::UserNotFound),
     );
 }
