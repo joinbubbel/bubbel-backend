@@ -23,7 +23,7 @@ impl MessageRoomMember {
     pub fn insert_new(
         db: &mut DataStateInstance,
         user_id: UserId,
-        room_id: RoomId,
+        room_id: MessageRoomId,
     ) -> Result<(), DatabaseError> {
         use crate::schema::message_room_members::dsl;
 
@@ -35,5 +35,22 @@ impl MessageRoomMember {
             .execute(&mut db.db)
             .map(|_| ())
             .map_err(DatabaseError::from)
+    }
+
+    pub fn is_user_in_message_room(
+        db: &mut DataStateInstance,
+        user_id: &UserId,
+        club_id: &MessageRoomId,
+    ) -> Result<bool, DatabaseError> {
+        use crate::schema::message_room_members::dsl;
+
+        Ok(dsl::message_room_members
+            .select(dsl::room_id)
+            .filter(dsl::user_id.eq(user_id.0))
+            .filter(dsl::room_id.eq(club_id.0))
+            .load::<i32>(&mut db.db)
+            .map_err(DatabaseError::from)?
+            .len()
+            == 1)
     }
 }

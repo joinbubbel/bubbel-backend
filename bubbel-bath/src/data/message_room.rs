@@ -1,7 +1,7 @@
 use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, Hash, PartialEq, Eq)]
-pub struct RoomId(pub i32);
+pub struct MessageRoomId(pub i32);
 
 #[derive(
     Queryable,
@@ -29,7 +29,7 @@ impl MessageRoom {
         name: String,
         club_id: ClubId,
         dc_id: DataChannelId,
-    ) -> Result<(), DatabaseError> {
+    ) -> Result<MessageRoomId, DatabaseError> {
         use crate::schema::message_rooms::dsl;
 
         diesel::insert_into(dsl::message_rooms)
@@ -38,8 +38,9 @@ impl MessageRoom {
                 club_id: club_id.0,
                 dc_id: dc_id.0,
             })
-            .execute(&mut db.db)
-            .map(|_| ())
+            .returning(dsl::room_id)
+            .get_result::<i32>(&mut db.db)
+            .map(MessageRoomId)
             .map_err(DatabaseError::from)
     }
 }
