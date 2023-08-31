@@ -116,8 +116,8 @@ async fn main() {
         tls_app = tls_app.nest_service("/docs", ServeDir::new(rust_docs_path));
     }
 
-    app = app.nest_service("/unsafe_data", ServeDir::new("/tmp/unsafe_data"));
-    tls_app = tls_app.nest_service("/unsafe_data", ServeDir::new("/tmp/unsafe_data"));
+    app = app.nest_service("/unsafe_data", ServeDir::new("/bubbel/unsafe_data"));
+    tls_app = tls_app.nest_service("/unsafe_data", ServeDir::new("/bubbel/unsafe_data"));
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
     let tls_addr = SocketAddr::from(([0, 0, 0, 0], 8443));
