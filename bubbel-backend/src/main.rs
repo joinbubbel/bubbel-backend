@@ -111,6 +111,9 @@ async fn main() {
 
     let mut tls_app = app.clone();
 
+    app = app.nest_service("/dumpster", ServeDir::new("/bubbel/dumpster"));
+    tls_app = tls_app.nest_service("/dumpster", ServeDir::new("/bubbel/dumpster"));
+
     if let Some(rust_docs_path) = rust_docs_path {
         app = app.nest_service("/docs", ServeDir::new(rust_docs_path.clone()));
         tls_app = tls_app.nest_service("/docs", ServeDir::new(rust_docs_path));
