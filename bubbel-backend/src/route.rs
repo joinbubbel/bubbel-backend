@@ -527,5 +527,100 @@ pub fn configure_routes_with_router(
         InUsernameToId,
         ResUsernameToId
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiCreateMessageRoom",
+        "/api/create_message_room",
+        async move |state: &AppState, req: InCreateMessageRoom| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            create_message_room(&mut db, &auth, req.req).await
+        },
+        CreateMessageRoom,
+        CreateMessageRoomOut,
+        CreateMessageRoomError,
+        InCreateMessageRoom,
+        ResCreateMessageRoom
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetMessageRoom",
+        "/api/get_message_room",
+        async move |state: &AppState, req: InGetMessageRoom| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_message_room(&mut db, &auth, req.req).await
+        },
+        GetMessageRoom,
+        GetMessageRoomOut,
+        GetMessageRoomError,
+        InGetMessageRoom,
+        ResGetMessageRoom
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiJoinMessageRoom",
+        "/api/join_message_room",
+        async move |state: &AppState, req: InJoinMessageRoom| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            join_message_room(&mut db, &auth, req.req).await
+        },
+        JoinMessageRoom,
+        JoinMessageRoomOut,
+        JoinMessageRoomError,
+        InJoinMessageRoom,
+        ResJoinMessageRoom
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetClubMessageRooms",
+        "/api/get_club_message_rooms",
+        async move |state: &AppState, req: InGetClubMessageRooms| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_club_message_rooms(&mut db, &auth, req.req).await
+        },
+        GetClubMessageRooms,
+        GetClubMessageRoomsOut,
+        GetClubMessageRoomsError,
+        InGetClubMessageRooms,
+        ResGetClubMessageRooms
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetMessageRoomMembers",
+        "/api/get_message_room_members",
+        async move |state: &AppState, req: InGetMessageRoomMembers| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_message_room_members(&mut db, &auth, req.req).await
+        },
+        GetMessageRoomMembers,
+        GetMessageRoomMembersOut,
+        GetMessageRoomMembersError,
+        InGetMessageRoomMembers,
+        ResGetMessageRoomMembers
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiUploadBase64",
+        "/api/upload_base64",
+        async move |state: &AppState, req: InUploadBase64| {
+            let auth = state.inner.auth.read().await;
+            upload_base64(&auth, req.req).await
+        },
+        UploadBase64,
+        UploadBase64Out,
+        UploadBase64Error,
+        InUploadBase64,
+        ResUploadBase64
+    );
     router
 }

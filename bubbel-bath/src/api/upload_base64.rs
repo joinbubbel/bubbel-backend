@@ -23,7 +23,7 @@ pub enum UploadBase64Error {
     Internal { ierror: String },
 }
 
-pub async fn dumpster_put(
+pub async fn upload_base64(
     auth: &AuthState,
     req: UploadBase64,
 ) -> Result<UploadBase64Out, UploadBase64Error> {
