@@ -46,13 +46,13 @@ diesel::table! {
 diesel::table! {
     message_room_members (user_id) {
         user_id -> Int4,
-        room_id -> Int4,
+        message_room_id -> Int4,
     }
 }
 
 diesel::table! {
-    message_rooms (room_id) {
-        room_id -> Int4,
+    message_rooms (message_room_id) {
+        message_room_id -> Int4,
         name -> Nullable<Varchar>,
         club_id -> Int4,
         dc_id -> Int4,
@@ -80,7 +80,7 @@ diesel::table! {
     }
 }
 
-diesel::joinable!(message_room_members -> message_rooms (room_id));
+diesel::joinable!(message_room_members -> message_rooms (message_room_id));
 diesel::joinable!(message_rooms -> club_profiles (club_id));
 
 diesel::allow_tables_to_appear_in_same_query!(

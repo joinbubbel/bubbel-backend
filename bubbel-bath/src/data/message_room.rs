@@ -38,9 +38,37 @@ impl MessageRoom {
                 club_id: club_id.0,
                 dc_id: dc_id.0,
             })
-            .returning(dsl::room_id)
+            .returning(dsl::message_room_id)
             .get_result::<i32>(&mut db.db)
             .map(MessageRoomId)
+            .map_err(DatabaseError::from)
+    }
+
+    pub fn get(
+        db: &mut DataStateInstance,
+        id: &MessageRoomId,
+    ) -> Result<Option<Self>, DatabaseError> {
+        use crate::schema::message_rooms::dsl;
+
+        dsl::message_rooms
+            .select(MessageRoom::as_select())
+            .filter(dsl::message_room_id.eq(id.0))
+            .load::<MessageRoom>(&mut db.db)
+            .map(|v| v.first().cloned())
+            .map_err(DatabaseError::from)
+    }
+
+    pub fn get_club_message_rooms(
+        db: &mut DataStateInstance,
+        club_id: &ClubId,
+    ) -> Result<Vec<MessageRoomId>, DatabaseError> {
+        use crate::schema::message_rooms::dsl;
+
+        dsl::message_rooms
+            .select(dsl::message_room_id)
+            .filter(dsl::club_id.eq(club_id.0))
+            .load::<i32>(&mut db.db)
+            .map(|ids| ids.into_iter().map(MessageRoomId).collect())
             .map_err(DatabaseError::from)
     }
 }

@@ -1,5 +1,5 @@
 CREATE TABLE message_rooms (
-    room_id INT PRIMARY KEY,
+    message_room_id INT PRIMARY KEY,
     name VARCHAR,
     club_id INT NOT NULL,
     dc_id INT NOT NULL,
@@ -8,6 +8,6 @@ CREATE TABLE message_rooms (
 
 CREATE TABLE message_room_members (
     user_id INT PRIMARY KEY,
-    room_id INT NOT NULL,
-    FOREIGN KEY (room_id) REFERENCES message_rooms (room_id)
+    message_room_id INT NOT NULL,
+    FOREIGN KEY (message_room_id) REFERENCES message_rooms (message_room_id)
 );
