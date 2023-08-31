@@ -19,7 +19,7 @@ async fn main() {
                 .add_step(ImageOperationStep::MaxSize(1200, 200))
                 .build(),
         ))
-        .store("banner150x150.jpeg")
+        .store("banner1200x200.jpeg")
         .build();
 
     let mount_dir = "/bubbel/dumpster";

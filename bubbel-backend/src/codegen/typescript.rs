@@ -5,7 +5,11 @@ pub fn get_args() -> Vec<&'static str> {
 }
 
 pub fn post_process(s: String) -> String {
-    format!("const bubbelBathDev = 'https://api.joinbubbel.com';{}", s)
+    format!(
+        "const bubbelBathDev = 'https://api.joinbubbel.com';{}\n{}",
+        s,
+        goodies()
+    )
 }
 
 pub fn get_fetch(e: &Endpoint) -> String {
@@ -24,4 +28,8 @@ pub fn get_fetch(e: &Endpoint) -> String {
         }}",
         e.fn_name, e.in_ty, e.out_ty, e.endpoint
     )
+}
+
+fn goodies() -> &'static str {
+    include_str!("./goodies.ts")
 }
