@@ -10,6 +10,7 @@ async fn main() {
                 .add_step(ImageOperationStep::Resize(150, 150))
                 .build(),
         ))
+        .store("pfp150x150.jpeg")
         .build();
 
     let banner_picture = Class::builder("banner_picture")
@@ -18,6 +19,7 @@ async fn main() {
                 .add_step(ImageOperationStep::MaxSize(1200, 200))
                 .build(),
         ))
+        .store("banner150x150.jpeg")
         .build();
 
     let mount_dir = "/bubbel/dumpster";
