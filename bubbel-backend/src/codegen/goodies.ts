@@ -7,5 +7,5 @@ export function bubbelDumpsterBannerPicture1200x200(objectName: string): string 
 }
 
 export function bubbelDumpsterLoose(objectName: string): string {
-    return `https://api.joinbubbel.com/loose/${objectName}`;
+    return `https://api.joinbubbel.com/dumpster/loose/${objectName}`;
 }
