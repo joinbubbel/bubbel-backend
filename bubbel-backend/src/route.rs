@@ -622,5 +622,20 @@ pub fn configure_routes_with_router(
         InUploadBase64,
         ResUploadBase64
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiUploadLooseBase64",
+        "/api/upload_loose_base64",
+        async move |state: &AppState, req: InUploadLooseBase64| {
+            let auth = state.inner.auth.read().await;
+            upload_loose_base64(&auth, req.req).await
+        },
+        UploadLooseBase64,
+        UploadLooseBase64Out,
+        UploadLooseBase64Error,
+        InUploadLooseBase64,
+        ResUploadLooseBase64
+    );
     router
 }
