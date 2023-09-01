@@ -43,19 +43,18 @@ pub async fn upload_base64(
     })
     .unwrap();
 
-    let res: ResUploadBase64 = client
+    let res = client
         .post("http://localhost:5757/upload_base64")
         .body(req_body)
         .send()
         .await
         .map_err(|_| UploadBase64Error::Internal {
             ierror: "Internal dumpster is offline.".to_owned(),
-        })?
-        .json()
-        .await
-        .map_err(|_| UploadBase64Error::Internal {
-            ierror: "Internal serialization error.".to_owned(),
         })?;
+    eprintln!("{:?}", res);
+    let res: ResUploadBase64 = res.json().await.map_err(|_| UploadBase64Error::Internal {
+        ierror: "Internal serialization error.".to_owned(),
+    })?;
 
     if let Some(e) = res.error {
         Err(match e {
