@@ -16,7 +16,7 @@ async fn main() {
     let banner_picture = Class::builder("banner_picture")
         .op(Arc::new(
             ImageOperation::builder(ImageFormat::Jpeg)
-                .add_step(ImageOperationStep::MaxSize(1200, 200))
+                .add_step(ImageOperationStep::Resize(1200, 200))
                 .build(),
         ))
         .store("banner1200x200.jpeg")
