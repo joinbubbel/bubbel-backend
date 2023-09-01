@@ -24,7 +24,7 @@ async fn main() {
 
     let mount_dir = "/bubbel/dumpster";
     let fs = tokio_fs::TokioFileSystem::mount(mount_dir).await.unwrap();
-    let exec = Executor::new(fs, &[profile_picture, banner_picture]).await;
+    let exec = Executor::new(fs, &[profile_picture, banner_picture], &[]).await;
     let addr = SocketAddr::from(([0, 0, 0, 0], 5757));
     run_with_axum(exec, mount_dir, addr).await;
 }

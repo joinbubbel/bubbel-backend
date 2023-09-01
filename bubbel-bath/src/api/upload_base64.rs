@@ -1,5 +1,7 @@
 use super::*;
-use dumpster_axum::{InUpload, ResError, ResUpload};
+use dumpster_axum::{
+    InUploadBase64, ResUploadBase64, UploadBase64Error as DumpsterUploadBase64Error,
+};
 use reqwest::Client;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
@@ -19,7 +21,8 @@ pub struct UploadBase64Out {
 pub enum UploadBase64Error {
     NoAuth,
     InvalidBase64,
-    DataRejected,
+    DataCorrupt,
+    DataConstraint,
     Internal { ierror: String },
 }
 
@@ -34,13 +37,13 @@ pub async fn upload_base64(
     //  TODO Check User Dumpster Limits.
 
     let client = Client::new();
-    let req_body = serde_json::to_string(&InUpload {
+    let req_body = serde_json::to_string(&InUploadBase64 {
         base64_data: req.data,
         class_name: req.class_name,
     })
     .unwrap();
 
-    let res: ResUpload = client
+    let res: ResUploadBase64 = client
         .post("http://localhost:5757/upload_base64")
         .body(req_body)
         .send()
@@ -56,8 +59,9 @@ pub async fn upload_base64(
 
     if let Some(e) = res.error {
         Err(match e {
-            ResError::DataRejected => UploadBase64Error::DataRejected,
-            ResError::InvalidBase64 => UploadBase64Error::InvalidBase64,
+            DumpsterUploadBase64Error::DataCorrupt => UploadBase64Error::DataCorrupt,
+            DumpsterUploadBase64Error::DataConstraint => UploadBase64Error::DataConstraint,
+            DumpsterUploadBase64Error::InvalidBase64 => UploadBase64Error::InvalidBase64,
         })?;
     }
 
