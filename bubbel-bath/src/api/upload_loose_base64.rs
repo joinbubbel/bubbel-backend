@@ -7,14 +7,14 @@ use reqwest::Client;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct UploadLooseBase64 {
-    token: UserToken,
-    file_name: String,
-    data: String,
+    pub token: UserToken,
+    pub file_name: String,
+    pub data: String,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct UploadLooseBase64Out {
-    object_name: String,
+    pub object_name: String,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]

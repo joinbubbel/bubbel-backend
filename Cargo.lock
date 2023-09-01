@@ -247,6 +247,7 @@ dependencies = [
  "serde_json",
  "serial_test",
  "tokio",
+ "url",
 ]
 
 [[package]]

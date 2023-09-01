@@ -637,5 +637,20 @@ pub fn configure_routes_with_router(
         InUploadLooseBase64,
         ResUploadLooseBase64
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiResolveAndUpload",
+        "/api/resolve_and_upload",
+        async move |state: &AppState, req: InResolveAndUpload| {
+            let auth = state.inner.auth.read().await;
+            resolve_and_upload(&auth, req.req).await
+        },
+        ResolveAndUpload,
+        ResolveAndUploadOut,
+        ResolveAndUploadError,
+        InResolveAndUpload,
+        ResResolveAndUpload
+    );
     router
 }
