@@ -37,24 +37,23 @@ pub async fn upload_base64(
     //  TODO Check User Dumpster Limits.
 
     let client = Client::new();
-    let req_body = serde_json::to_string(&InUploadBase64 {
-        base64_data: req.data,
-        class_name: req.class_name,
-    })
-    .unwrap();
 
-    let res = client
+    let res: ResUploadBase64 = client
         .post("http://localhost:5757/upload_base64")
-        .body(req_body)
+        .json(&InUploadBase64 {
+            base64_data: req.data,
+            class_name: req.class_name,
+        })
         .send()
         .await
         .map_err(|_| UploadBase64Error::Internal {
             ierror: "Internal dumpster is offline.".to_owned(),
+        })?
+        .json()
+        .await
+        .map_err(|_| UploadBase64Error::Internal {
+            ierror: "Internal serialization error.".to_owned(),
         })?;
-    eprintln!("{:?}", res);
-    let res: ResUploadBase64 = res.json().await.map_err(|_| UploadBase64Error::Internal {
-        ierror: "Internal serialization error.".to_owned(),
-    })?;
 
     if let Some(e) = res.error {
         Err(match e {
