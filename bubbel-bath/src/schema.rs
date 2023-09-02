@@ -44,6 +44,21 @@ diesel::table! {
 }
 
 diesel::table! {
+    message_group_members (user_id) {
+        user_id -> Int4,
+        message_group_id -> Int4,
+    }
+}
+
+diesel::table! {
+    message_groups (message_group_id) {
+        message_group_id -> Int4,
+        name -> Nullable<Varchar>,
+        dc_id -> Int4,
+    }
+}
+
+diesel::table! {
     message_room_members (user_id) {
         user_id -> Int4,
         message_room_id -> Int4,
@@ -80,6 +95,7 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(message_group_members -> message_groups (message_group_id));
 diesel::joinable!(message_room_members -> message_rooms (message_room_id));
 diesel::joinable!(message_rooms -> club_profiles (club_id));
 
@@ -89,6 +105,8 @@ diesel::allow_tables_to_appear_in_same_query!(
     data_channels,
     data_chunks,
     friend_connections,
+    message_group_members,
+    message_groups,
     message_room_members,
     message_rooms,
     user_profiles,
