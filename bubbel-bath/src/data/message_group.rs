@@ -25,14 +25,14 @@ pub struct MessageGroup {
 impl MessageGroup {
     pub fn insert_new(
         db: &mut DataStateInstance,
-        name: String,
+        name: Option<String>,
         dc_id: DataChannelId,
     ) -> Result<MessageGroupId, DatabaseError> {
         use crate::schema::message_groups::dsl;
 
         diesel::insert_into(dsl::message_groups)
             .values(&MessageGroup {
-                name: Some(name),
+                name,
                 dc_id: dc_id.0,
             })
             .returning(dsl::message_group_id)

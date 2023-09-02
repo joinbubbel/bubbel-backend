@@ -652,5 +652,37 @@ pub fn configure_routes_with_router(
         InResolveAndUpload,
         ResResolveAndUpload
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiCreateMessageGroup",
+        "/api/create_message_group",
+        async move |state: &AppState, req: InCreateMessageGroup| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            create_message_group(&mut db, &auth, req.req).await
+        },
+        CreateMessageGroup,
+        CreateMessageGroupOut,
+        CreateMessageGroupError,
+        InCreateMessageGroup,
+        ResCreateMessageGroup
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiAddUserToMessageGroup",
+        "/api/add_user_to_message_group",
+        async move |state: &AppState, req: InAddUserToMessageGroup| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            add_user_to_message_group(&mut db, &auth, req.req).await
+        },
+        AddUserToMessageGroup,
+        AddUserToMessageGroupOut,
+        AddUserToMessageGroupError,
+        InAddUserToMessageGroup,
+        ResAddUserToMessageGroup
+    );
     router
 }

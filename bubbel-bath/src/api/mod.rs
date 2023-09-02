@@ -1,9 +1,11 @@
 use super::*;
 
 mod add_friend_connection;
+mod add_user_to_message_group;
 mod auth_user;
 mod check_token;
 mod create_club;
+mod create_message_group;
 mod create_message_room;
 mod create_user;
 mod delete_club;
@@ -39,9 +41,11 @@ mod username_to_id;
 mod verify_account;
 
 pub use add_friend_connection::*;
+pub use add_user_to_message_group::*;
 pub use auth_user::*;
 pub use check_token::*;
 pub use create_club::*;
+pub use create_message_group::*;
 pub use create_message_room::*;
 pub use create_user::*;
 pub use delete_club::*;
