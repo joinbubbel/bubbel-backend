@@ -14,7 +14,7 @@ use bubbel_bath::*;
 use std::{net::SocketAddr, sync::Arc};
 use tokio::sync::RwLock;
 use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
-use tracing::debug;
+use tracing::{debug, warn};
 
 #[macro_use]
 mod codegen;
@@ -96,7 +96,7 @@ async fn main() {
 
     let tls_config = RustlsConfig::from_pem_file(tls_cert_path, tls_key_path)
         .await
-        .unwrap();
+        .ok();
 
     let app = Router::new();
     let mut codegen_ctx = CodegenContext::new();
@@ -127,7 +127,16 @@ async fn main() {
 
     tokio::join!(
         axum_server::bind(addr).serve(app.into_make_service()),
-        axum_server::bind_rustls(tls_addr, tls_config).serve(tls_app.into_make_service()),
+        tokio::spawn(async move {
+            if let Some(tls_config) = tls_config {
+                axum_server::bind_rustls(tls_addr, tls_config)
+                    .serve(tls_app.into_make_service())
+                    .await
+            } else {
+                warn!("Running without TLS");
+                Ok(()) as Result<(), std::io::Error>
+            }
+        }),
         collect_garbage::collect_garbage(garbage_state)
     )
     .0
