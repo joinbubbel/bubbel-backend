@@ -21,7 +21,7 @@ pub enum ResolveAndUploadError {
     CannotGetUrlFileName,
     ConvertToBase64Failed,
     NoAuth,
-    DataConstraint,
+    DataConstraint { data_constraint_error: String },
     Internal { ierror: String },
 }
 
@@ -59,7 +59,11 @@ pub async fn resolve_and_upload(
     .await
     .map_err(|e| match e {
         UploadLooseBase64Error::NoAuth => ResolveAndUploadError::NoAuth,
-        UploadLooseBase64Error::DataConstraint => ResolveAndUploadError::DataConstraint,
+        UploadLooseBase64Error::DataConstraint {
+            data_constraint_error,
+        } => ResolveAndUploadError::DataConstraint {
+            data_constraint_error,
+        },
         UploadLooseBase64Error::Internal { ierror } => ResolveAndUploadError::Internal { ierror },
         UploadLooseBase64Error::InvalidBase64 => ResolveAndUploadError::Internal {
             ierror: "Internal Invalid Base64".to_owned(),

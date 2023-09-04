@@ -22,7 +22,7 @@ pub struct UploadLooseBase64Out {
 pub enum UploadLooseBase64Error {
     NoAuth,
     InvalidBase64,
-    DataConstraint,
+    DataConstraint { data_constraint_error: String },
     Internal { ierror: String },
 }
 
@@ -59,8 +59,10 @@ pub async fn upload_loose_base64(
 
     if let Some(e) = res.error {
         Err(match e {
-            DumpsterUploadLooseBase64Error::DataConstraint => {
-                UploadLooseBase64Error::DataConstraint
+            DumpsterUploadLooseBase64Error::DataConstraint { reason } => {
+                UploadLooseBase64Error::DataConstraint {
+                    data_constraint_error: reason,
+                }
             }
             DumpsterUploadLooseBase64Error::InvalidBase64 => UploadLooseBase64Error::InvalidBase64,
         })?;

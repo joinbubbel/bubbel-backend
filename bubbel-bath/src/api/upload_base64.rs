@@ -21,8 +21,8 @@ pub struct UploadBase64Out {
 pub enum UploadBase64Error {
     NoAuth,
     InvalidBase64,
-    DataCorrupt,
-    DataConstraint,
+    DataCorrupt { data_corrupt_error: String },
+    DataConstraint { data_constraint_error: String },
     Internal { ierror: String },
 }
 
@@ -57,8 +57,14 @@ pub async fn upload_base64(
 
     if let Some(e) = res.error {
         Err(match e {
-            DumpsterUploadBase64Error::DataCorrupt => UploadBase64Error::DataCorrupt,
-            DumpsterUploadBase64Error::DataConstraint => UploadBase64Error::DataConstraint,
+            DumpsterUploadBase64Error::DataCorrupt { reason } => UploadBase64Error::DataCorrupt {
+                data_corrupt_error: reason,
+            },
+            DumpsterUploadBase64Error::DataConstraint { reason } => {
+                UploadBase64Error::DataConstraint {
+                    data_constraint_error: reason,
+                }
+            }
             DumpsterUploadBase64Error::InvalidBase64 => UploadBase64Error::InvalidBase64,
         })?;
     }
