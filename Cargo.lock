@@ -488,7 +488,7 @@ dependencies = [
 [[package]]
 name = "dumpster-axum"
 version = "0.1.0"
-source = "git+https://github.com/joinbubbel/dumpster#a7a4bbd70fecddc698a59df18349ec46c6cb45e6"
+source = "git+https://github.com/joinbubbel/dumpster#55a7ff542918767122aa3dc306287b5b5e94613a"
 dependencies = [
  "axum",
  "b64",
@@ -1013,7 +1013,7 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 [[package]]
 name = "libdumpster"
 version = "0.1.0"
-source = "git+https://github.com/joinbubbel/dumpster#a7a4bbd70fecddc698a59df18349ec46c6cb45e6"
+source = "git+https://github.com/joinbubbel/dumpster#55a7ff542918767122aa3dc306287b5b5e94613a"
 dependencies = [
  "async-trait",
  "image",
