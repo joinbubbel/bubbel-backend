@@ -5,14 +5,10 @@ use axum::{
         ws::{Message, WebSocket, WebSocketUpgrade},
         Json, State,
     },
-    http::Request,
-    middleware::{self, Next},
     response::IntoResponse,
-    response::Response,
     routing::{get, post},
     Router,
 };
-use axum_client_ip::{InsecureClientIp, SecureClientIp, SecureClientIpSource};
 use axum_server::tls_rustls::RustlsConfig;
 use bubbel_bath::*;
 use std::{net::SocketAddr, sync::Arc};
@@ -102,16 +98,6 @@ async fn main() {
         .await
         .ok();
 
-    async fn log_ip<B>(
-        insecure_ip: InsecureClientIp,
-        secure_ip: SecureClientIp,
-        request: Request<B>,
-        next: Next<B>,
-    ) -> Response {
-        debug!("Incoming IP: {:?} {:?}", insecure_ip, secure_ip);
-        next.run(request).await
-    }
-
     let app = Router::new();
     let mut codegen_ctx = CodegenContext::new();
     let app = route::configure_routes_with_router(app, &mut codegen_ctx);
@@ -121,8 +107,6 @@ async fn main() {
         .route("/api/debug", post(api_debug))
         .layer(cors)
         .layer(trace)
-        .layer(SecureClientIpSource::ConnectInfo.into_extension())
-        .layer(middleware::from_fn(log_ip))
         .with_state(Arc::clone(&state));
 
     let mut tls_app = app.clone();
@@ -142,11 +126,11 @@ async fn main() {
     let tls_addr = SocketAddr::from(([0, 0, 0, 0], 8443));
 
     tokio::join!(
-        axum_server::bind(addr).serve(app.into_make_service_with_connect_info::<SocketAddr>()),
+        axum_server::bind(addr).serve(app.into_make_service()),
         tokio::spawn(async move {
             if let Some(tls_config) = tls_config {
                 axum_server::bind_rustls(tls_addr, tls_config)
-                    .serve(tls_app.into_make_service_with_connect_info::<SocketAddr>())
+                    .serve(tls_app.into_make_service())
                     .await
             } else {
                 warn!("Running without TLS");
