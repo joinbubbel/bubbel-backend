@@ -121,8 +121,8 @@ async fn main() {
         .route("/api/debug", post(api_debug))
         .layer(cors)
         .layer(trace)
-        .layer(SecureClientIpSource::ConnectInfo.into_extension())
         .layer(middleware::from_fn(log_ip))
+        .layer(SecureClientIpSource::ConnectInfo.into_extension())
         .with_state(Arc::clone(&state));
 
     let mut tls_app = app.clone();
