@@ -1,5 +1,5 @@
 CREATE TABLE message_rooms (
-    message_room_id INT PRIMARY KEY,
+    message_room_id SERIAL PRIMARY KEY,
     name VARCHAR,
     club_id INT NOT NULL,
     dc_id INT NOT NULL,

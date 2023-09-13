@@ -2,14 +2,14 @@ use super::*;
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct CreateMessageRoom {
-    token: UserToken,
-    club_id: ClubId,
-    name: String,
+    pub token: UserToken,
+    pub club_id: ClubId,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
 pub struct CreateMessageRoomOut {
-    message_room_id: MessageRoomId,
+    pub message_room_id: MessageRoomId,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq, Eq)]
