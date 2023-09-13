@@ -684,5 +684,20 @@ pub fn configure_routes_with_router(
         InAddUserToMessageGroup,
         ResAddUserToMessageGroup
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetClubIdWithName",
+        "/api/get_club_id_with_name",
+        async move |state: &AppState, req: InGetClubIdWithName| {
+            let mut db = state.inner.db.spawn();
+            get_club_id_with_name(&mut db, req.req).await
+        },
+        GetClubIdWithName,
+        GetClubIdWithNameOut,
+        GetClubIdWithNameError,
+        InGetClubIdWithName,
+        ResGetClubIdWithName
+    );
     router
 }
