@@ -35,7 +35,7 @@ pub async fn get_message_room(
             ierror: e.to_string(),
         },
     )? {
-        Err(GetMessageRoomError::NotMessageRoomMember)?;
+        // Err(GetMessageRoomError::NotMessageRoomMember)?;
     }
 
     let message_room = MessageRoom::get(db, &req.message_room_id)
