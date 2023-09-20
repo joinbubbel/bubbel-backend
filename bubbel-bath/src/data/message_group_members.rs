@@ -67,4 +67,18 @@ impl MessageGroupMember {
             .len()
             == 1)
     }
+
+    pub fn get_user_message_groups(
+        db: &mut DataStateInstance,
+        user_id: &UserId,
+    ) -> Result<Vec<MessageGroupId>, DatabaseError> {
+        use crate::schema::message_group_members::dsl;
+
+        dsl::message_group_members
+            .select(dsl::message_group_id)
+            .filter(dsl::user_id.eq(user_id.0))
+            .load::<i32>(&mut db.db)
+            .map(|ids| ids.into_iter().map(MessageGroupId).collect())
+            .map_err(DatabaseError::from)
+    }
 }

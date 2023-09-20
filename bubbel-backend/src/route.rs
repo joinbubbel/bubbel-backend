@@ -699,5 +699,53 @@ pub fn configure_routes_with_router(
         InGetClubIdWithName,
         ResGetClubIdWithName
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetMessageGroup",
+        "/api/get_message_group",
+        async move |state: &AppState, req: InGetMessageGroup| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_message_group(&mut db, &auth, req.req).await
+        },
+        GetMessageGroup,
+        GetMessageGroupOut,
+        GetMessageGroupError,
+        InGetMessageGroup,
+        ResGetMessageGroup
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetMessageGroupMembers",
+        "/api/get_message_group_members",
+        async move |state: &AppState, req: InGetMessageGroupMembers| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_message_group_members(&mut db, &auth, req.req).await
+        },
+        GetMessageGroupMembers,
+        GetMessageGroupMembersOut,
+        GetMessageGroupMembersError,
+        InGetMessageGroupMembers,
+        ResGetMessageGroupMembers
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetUserMessageGroups",
+        "/api/get_user_message_groups",
+        async move |state: &AppState, req: InGetUserMessageGroups| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_user_message_groups(&mut db, &auth, req.req).await
+        },
+        GetUserMessageGroups,
+        GetUserMessageGroupsOut,
+        GetUserMessageGroupsError,
+        InGetUserMessageGroups,
+        ResGetUserMessageGroups
+    );
     router
 }

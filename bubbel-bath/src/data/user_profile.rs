@@ -26,15 +26,20 @@ pub struct UserProfile {
 impl UserProfile {
     /// Inserts an empty user profile with `user_id`.
     /// This function should only be called in [`create_user`].
-    pub fn insert_new(db: &mut DataStateInstance, user_id: &UserId) -> Result<(), DatabaseError> {
+    pub fn insert_new(
+        db: &mut DataStateInstance,
+        user_id: &UserId,
+        name: Option<String>,
+        display_name: Option<String>,
+    ) -> Result<(), DatabaseError> {
         use crate::schema::user_profiles::dsl;
 
         diesel::insert_into(dsl::user_profiles)
             .values(&UserProfile {
                 user_id: user_id.0,
-                name: None,
+                name,
                 description: None,
-                display_name: None,
+                display_name,
                 pfp: None,
                 banner: None,
             })

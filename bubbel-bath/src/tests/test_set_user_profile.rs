@@ -130,7 +130,7 @@ pub async fn test_set_user_profile() {
         Ok(GetUserProfileOut {
             name: Some("David Zhong".to_owned()),
             description: None,
-            display_name: None,
+            display_name: Some("davnotdev".to_owned()),
             pfp: Some("https://www.youtube.com/watch?v=dQw4w9WgXcQ".to_owned()),
             banner: None
         })
@@ -149,7 +149,7 @@ pub async fn test_set_user_profile() {
         Ok(GetUserProfileOut {
             name: None,
             description: None,
-            display_name: None,
+            display_name: Some("davnotdev2".to_owned()),
             pfp: None,
             banner: None
         })

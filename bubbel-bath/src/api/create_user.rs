@@ -104,7 +104,7 @@ pub async fn create_user(
 
     let ids = dsl::users
         .select(dsl::id)
-        .filter(dsl::username.eq(req.username))
+        .filter(dsl::username.eq(&req.username))
         .load::<i32>(&mut db.db)
         .map_err(|e| CreateUserError::Internal {
             ierror: e.to_string(),
@@ -112,8 +112,10 @@ pub async fn create_user(
     assert_eq!(ids.len(), 1);
     let id = UserId(*ids.first().unwrap());
 
-    UserProfile::insert_new(db, &id).map_err(|e| CreateUserError::Internal {
-        ierror: e.to_string(),
+    UserProfile::insert_new(db, &id, None, Some(req.username.clone())).map_err(|e| {
+        CreateUserError::Internal {
+            ierror: e.to_string(),
+        }
     })?;
 
     Ok(CreateUserOut { user_id: id })
