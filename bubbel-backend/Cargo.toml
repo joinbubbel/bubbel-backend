@@ -23,3 +23,5 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 hyper = "0.14"
 axum-client-ip = "0.4"
+libdumpster = { version = "*", git = "https://github.com/joinbubbel/dumpster" }
+dumpster-axum = { version = "*", git = "https://github.com/joinbubbel/dumpster" }

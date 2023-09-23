@@ -25,6 +25,7 @@ mod codegen;
 mod collect_garbage;
 mod dc_api;
 mod debug;
+mod dumpy;
 mod email;
 mod route;
 
@@ -153,7 +154,8 @@ async fn main() {
                 Ok(()) as Result<(), std::io::Error>
             }
         }),
-        collect_garbage::collect_garbage(garbage_state)
+        collect_garbage::collect_garbage(garbage_state),
+        dumpy::dumpy_main()
     )
     .0
     .unwrap();
