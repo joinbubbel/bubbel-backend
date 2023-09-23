@@ -35,14 +35,24 @@ pub async fn test_resend_verify() {
     );
 
     assert_eq!(
-        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: old_code },).await,
+        verify_account(
+            &mut db,
+            None,
+            &mut acc_limbo,
+            VerifyAccount { code: old_code },
+        )
+        .await,
         Err(VerifyAccountError::CodeTimedOutOrAlreadyVerifiedOrInvalidCode)
     );
 
     let new_code = acc_limbo.get_code(&acc).unwrap().clone();
 
-    assert_eq!(
-        verify_account(&mut db, &mut acc_limbo, VerifyAccount { code: new_code },).await,
-        Ok(())
-    );
+    assert!(verify_account(
+        &mut db,
+        None,
+        &mut acc_limbo,
+        VerifyAccount { code: new_code },
+    )
+    .await
+    .is_ok(),);
 }

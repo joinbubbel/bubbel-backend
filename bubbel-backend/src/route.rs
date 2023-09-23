@@ -108,11 +108,12 @@ pub fn configure_routes_with_router(
         "/api/verify_account",
         async move |state: &AppState, req: InVerifyAccount| {
             let mut db = state.inner.db.spawn();
+            let mut auth = state.inner.auth.write().await;
             let mut acc_limbo = state.inner.acc_limbo.lock().await;
-            verify_account(&mut db, &mut acc_limbo, req.req).await
+            verify_account(&mut db, Some(&mut auth), &mut acc_limbo, req.req).await
         },
         VerifyAccount,
-        Empty,
+        VerifyAccountOut,
         VerifyAccountError,
         InVerifyAccount,
         ResVerifyAccount

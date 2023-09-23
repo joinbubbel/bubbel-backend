@@ -85,9 +85,10 @@ impl AccountLimboState {
 
     /// Waive all users that are apart of [`AccountLimboState`].
     /// Mainly for the purposes of testing.
+    /// The user is not authenticated.
     pub async fn waive_user_verification(&mut self, db: &mut DataStateInstance) {
         for (code, _) in self.account_codes.clone().iter() {
-            verify_account(db, self, VerifyAccount { code: code.clone() })
+            verify_account(db, None, self, VerifyAccount { code: code.clone() })
                 .await
                 .unwrap();
         }
