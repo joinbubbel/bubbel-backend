@@ -54,4 +54,18 @@ impl MessageGroup {
             .map(|v| v.first().cloned())
             .map_err(DatabaseError::from)
     }
+
+    pub fn set_name(
+        db: &mut DataStateInstance,
+        id: &MessageGroupId,
+        name: String,
+    ) -> Result<(), DatabaseError> {
+        use crate::schema::message_groups::dsl;
+
+        diesel::update(dsl::message_groups.find(id.0))
+            .set(dsl::name.eq(name))
+            .execute(&mut db.db)
+            .map(|_| ())
+            .map_err(DatabaseError::from)
+    }
 }
