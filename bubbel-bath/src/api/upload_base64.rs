@@ -58,8 +58,10 @@ pub async fn upload_base64(
         .build();
     let exec = Executor::new(fs, &[profile_picture, banner_picture], &[]).await;
 
+    let (_, base64_data) = req.data.split_once(',').unwrap_or(("", &req.data));
+
     let object_name = exec
-        .incoming(&req.class_name, req.data.from_base64().unwrap())
+        .incoming(&req.class_name, base64_data.from_base64().unwrap())
         .await;
 
     let object_name = match object_name {
