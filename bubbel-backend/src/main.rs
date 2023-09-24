@@ -155,7 +155,6 @@ async fn main() {
             }
         }),
         collect_garbage::collect_garbage(garbage_state),
-        dumpy::dumpy_main()
     )
     .0
     .unwrap();
