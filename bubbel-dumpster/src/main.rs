@@ -4,6 +4,9 @@ use std::{net::SocketAddr, sync::Arc};
 
 #[tokio::main]
 async fn main() {
+    let mount_dir = "/bubbel/dumpster";
+    let _ = std::fs::create_dir_all(mount_dir);
+
     let profile_picture = Class::builder("profile_picture")
         .op(Arc::new(
             ImageOperation::builder(ImageFormat::Jpeg)
@@ -22,8 +25,6 @@ async fn main() {
         .store("banner1200x200.jpeg")
         .build();
 
-    let mount_dir = "/bubbel/dumpster";
-    let _ = std::fs::create_dir_all(mount_dir);
     let fs = tokio_fs::TokioFileSystem::mount(mount_dir).await.unwrap();
     let exec = Executor::new(fs, &[profile_picture, banner_picture], &[]).await;
     let addr = SocketAddr::from(([0, 0, 0, 0], 5757));
