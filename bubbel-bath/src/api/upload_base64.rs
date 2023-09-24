@@ -36,7 +36,7 @@ pub async fn upload_base64(
     //  TODO
 
     let mount_dir = "/bubbel/dumpster";
-    let _ = fs::create_dir_all(mount_dir);
+    fs::create_dir_all(mount_dir).unwrap();
     let fs = tokio_fs::TokioFileSystem::mount(mount_dir).await.unwrap();
 
     let profile_picture = Class::builder("profile_picture")
