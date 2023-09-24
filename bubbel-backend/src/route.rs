@@ -748,5 +748,37 @@ pub fn configure_routes_with_router(
         InGetUserMessageGroups,
         ResGetUserMessageGroups
     );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiGetMessageGroupName",
+        "/api/get_message_group_name",
+        async move |state: &AppState, req: InGetMessageGroupName| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            get_message_group_name(&mut db, &auth, req.req).await
+        },
+        GetMessageGroupName,
+        GetMessageGroupNameOut,
+        GetMessageGroupNameError,
+        InGetMessageGroupName,
+        ResGetMessageGroupName
+    );
+    route!(
+        router,
+        codegen_ctx,
+        "bubbelApiSetMessageGroupName",
+        "/api/set_message_group_name",
+        async move |state: &AppState, req: InSetMessageGroupName| {
+            let mut db = state.inner.db.spawn();
+            let auth = state.inner.auth.read().await;
+            set_message_group_name(&mut db, &auth, req.req).await
+        },
+        SetMessageGroupName,
+        SetMessageGroupNameOut,
+        SetMessageGroupNameError,
+        InSetMessageGroupName,
+        ResSetMessageGroupName
+    );
     router
 }

@@ -64,6 +64,7 @@ pub use get_data_channel_chunk::*;
 pub use get_friend_connections::*;
 pub use get_message_group::*;
 pub use get_message_group_members::*;
+pub use get_message_group_name::*;
 pub use get_message_room::*;
 pub use get_message_room_members::*;
 pub use get_random_clubs::*;

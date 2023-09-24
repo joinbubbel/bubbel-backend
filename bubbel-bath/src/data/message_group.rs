@@ -18,7 +18,7 @@ pub struct MessageGroupId(pub i32);
 #[diesel(table_name = crate::schema::message_groups)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct MessageGroup {
-    name: Option<String>,
+    pub name: Option<String>,
     dc_id: i32,
 }
 
