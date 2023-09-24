@@ -1,30 +1,19 @@
-use dumpster_axum::*;
-use libdumpster::*;
-use std::{net::SocketAddr, sync::Arc};
+use std::fs;
 
-pub async fn dumpy_main() {
-    let profile_picture = Class::builder("profile_picture")
-        .op(Arc::new(
-            ImageOperation::builder(ImageFormat::Jpeg)
-                .add_step(ImageOperationStep::Resize(150, 150))
-                .build(),
-        ))
-        .store("pfp150x150.jpeg")
-        .build();
+pub fn put_default_stuff() {
+    let pfp = include_bytes!("./defaults/pfp.jpeg");
+    let banner = include_bytes!("./defaults/banner.jpeg");
 
-    let banner_picture = Class::builder("banner_picture")
-        .op(Arc::new(
-            ImageOperation::builder(ImageFormat::Jpeg)
-                .add_step(ImageOperationStep::Resize(1200, 200))
-                .build(),
-        ))
-        .store("banner1200x200.jpeg")
-        .build();
+    let _ =
+        fs::create_dir_all("/bubbel/dumpster/profile_picture/7avTMWf4xDcGekB9N59uuXQU5lk6Oepu/");
+    let _ = fs::create_dir_all("/bubbel/dumpster/banner_picture/4pFqco0xtk6NaRGNLF0AU2ZP3CvP2483/");
 
-    let mount_dir = "/bubbel/dumpster";
-    let fs = tokio_fs::TokioFileSystem::mount(mount_dir).await.unwrap();
-    let exec = Executor::new(fs, &[profile_picture, banner_picture], &[]).await;
-    let addr = SocketAddr::from(([0, 0, 0, 0], 5757));
-    run_with_axum(exec, mount_dir, addr).await;
-
+    let _ = fs::write(
+        "/bubbel/dumpster/profile_picture/7avTMWf4xDcGekB9N59uuXQU5lk6Oepu/pfp150x150.jpeg",
+        pfp,
+    );
+    let _ = fs::write(
+        "/bubbel/dumpster/banner_picture/4pFqco0xtk6NaRGNLF0AU2ZP3CvP2483/banner1200x200.jpeg",
+        banner,
+    );
 }

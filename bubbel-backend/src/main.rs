@@ -142,6 +142,8 @@ async fn main() {
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
     let tls_addr = SocketAddr::from(([0, 0, 0, 0], 8443));
 
+    dumpy::put_default_stuff();
+
     tokio::join!(
         axum_server::bind(addr).serve(app.into_make_service_with_connect_info::<SocketAddr>()),
         tokio::spawn(async move {
