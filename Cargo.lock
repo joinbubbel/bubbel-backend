@@ -253,6 +253,7 @@ dependencies = [
  "bimap",
  "diesel",
  "dumpster-axum",
+ "libdumpster",
  "password-hash",
  "rand",
  "regex",

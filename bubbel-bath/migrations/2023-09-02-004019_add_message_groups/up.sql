@@ -5,7 +5,9 @@ CREATE TABLE message_groups (
 );
 
 CREATE TABLE message_group_members (
-    user_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
     message_group_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (message_group_id) REFERENCES message_groups (message_group_id)
 );

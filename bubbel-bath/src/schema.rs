@@ -44,7 +44,8 @@ diesel::table! {
 }
 
 diesel::table! {
-    message_group_members (user_id) {
+    message_group_members (id) {
+        id -> Int4,
         user_id -> Int4,
         message_group_id -> Int4,
     }
@@ -96,6 +97,7 @@ diesel::table! {
 }
 
 diesel::joinable!(message_group_members -> message_groups (message_group_id));
+diesel::joinable!(message_group_members -> users (user_id));
 diesel::joinable!(message_room_members -> message_rooms (message_room_id));
 diesel::joinable!(message_rooms -> club_profiles (club_id));
 
